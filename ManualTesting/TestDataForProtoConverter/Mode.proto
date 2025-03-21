@@ -1,0 +1,9 @@
+﻿syntax = "proto3";
+
+package Testing;
+
+enum Mode {
+	MODE_UNSPECIFIED = 0;
+	MODE_UNIVERSAL = 1;
+	MODE_SINGLE = 2;
+}

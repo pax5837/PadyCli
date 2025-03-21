@@ -1,0 +1,6 @@
+@TestDataForBuilderGeneratorWebApi_HostAddress = http://localhost:5149
+
+GET {{TestDataForBuilderGeneratorWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

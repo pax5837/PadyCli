@@ -1,0 +1,11 @@
+# .editorconfig
+
+# Top-most EditorConfig file
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+
+[*.cs]
+csharp_wrap_arguments_style = chop_if_long

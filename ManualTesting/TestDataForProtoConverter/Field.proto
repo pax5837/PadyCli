@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+import "Mode.proto";
+
+package Testing;
+
+message Field {
+	string key = 1;
+	Mode mode = 2;
+	oneof value {
+		string stringValue = 3;
+		int32 intValue = 4;
+		int64 longValue = 5;
+	}
+}

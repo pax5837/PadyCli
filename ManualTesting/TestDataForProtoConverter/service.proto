@@ -1,0 +1,10 @@
+﻿syntax = "proto3";
+
+import "BlaRequest.proto";
+import "BlaResponse.proto";
+
+package Testing;
+
+service BlaService {
+	rpc Bla(BlaRequest) returns (BlaResponse) {}
+}
