@@ -1,0 +1,49 @@
+﻿using System.Collections.Immutable;
+
+namespace ProtoToUmlConverter.Services.UmlGeneration;
+
+internal class MermaidGenerator : IUmlGenerator
+{
+    public IImmutableList<string> GetCompleteUmlLines(IImmutableSet<RawProtoBuffType> protoBuffTypes)
+    {
+        return protoBuffTypes
+            .SelectMany(GenerateClassDoc)
+            .Prepend("classDiagram")
+            .ToImmutableList();
+    }
+
+    private IImmutableList<string> GenerateClassDoc(RawProtoBuffType rawProtoBuffType)
+    {
+        return GenerateClass(rawProtoBuffType)
+            .Union(GenerateDependencies(rawProtoBuffType))
+            .ToImmutableList();
+    }
+
+    private IImmutableList<string> GenerateDependencies(RawProtoBuffType rawProtoBuffType)
+    {
+        return rawProtoBuffType.DependenciesWithNameSpace
+            .Where(d => !string.IsNullOrWhiteSpace(d.Namespace))
+            .Select(d => $"{rawProtoBuffType.Name} --> {d.TypeName}")
+            .ToImmutableList();
+    }
+
+    private IImmutableList<string> GenerateClass(RawProtoBuffType rawProtoBuffType)
+    {
+        return rawProtoBuffType.DependenciesWithNameSpace
+            .Select(d => $"   {d.TypeName} {d.FieldName}")
+            .Union(GenerateEnumValues(rawProtoBuffType))
+            .Prepend($"class {rawProtoBuffType.Name} {{")
+            .Append("}")
+            .ToImmutableList();
+    }
+
+    private static IEnumerable<string> GenerateEnumValues(RawProtoBuffType rawProtoBuffType)
+    {
+        if (rawProtoBuffType.EnumValues.Count < 1)
+        {
+            return [];
+        }
+
+        return rawProtoBuffType.EnumValues.Select(d => $"   {d}").Prepend("   <<enumeration>>");
+    }
+}

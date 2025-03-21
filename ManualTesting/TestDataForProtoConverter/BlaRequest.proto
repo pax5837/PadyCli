@@ -1,0 +1,28 @@
+﻿syntax = "proto3";
+
+import "Field.proto";
+
+package Testing;
+
+message BlaRequest {
+	enum RequestType {
+		REQUESTTYPE_INVALID = 0;
+		REQUESTTYPE_IMMEDIATE = 1;
+		REQUESTTYPE_DEFERED = 22;
+	}
+
+	string name = 1;
+	int32 age = 2;
+	int64 id = 3;
+	repeated int32 values = 4;
+	repeated Field fields = 5;
+	oneof intOrString {
+		int32 intVal = 6;
+		string strVal = 7;
+	}
+	oneof blabli {
+		int32 intValTwo = 8;
+		string strValTwo = 9;
+	}
+	RequestType request_type = 10;
+}

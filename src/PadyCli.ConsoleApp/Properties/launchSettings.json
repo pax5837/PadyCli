@@ -1,0 +1,52 @@
+﻿{
+	"$schema": "http://json.schemastore.org/launchsettings.json",
+	"profiles": {
+		"PadyCli no args": {
+			"commandName": "Project",
+			"environmentVariables": {
+			}
+		},
+		"PadyCli (gentestclass --help)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --help"
+		},
+		"PadyCli (gentestclass --class Class1)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\ManualTesting\\TestSetupGeneratorManualTestProject\\Implementations\\Feature1",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --class Class1"
+		},
+		"PadyCli (gentestclass --class Class1 webApi)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\ManualTesting\\TestSetupGeneratorManualTestWebApi\\Implementations\\Feature1",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --class Class1"
+		},
+		"PadyCli (guids)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "guids"
+		},
+		"PadyCli (genprotouml)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\ManualTesting\\TestDataForProtoConverter",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "genprotouml -e BlaRequest"
+		},
+		"PadyCli (genprotouml with mermaid)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\ManualTesting\\TestDataForProtoConverter",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "genprotouml -e BlaRequest -t mermaid"
+		}
+	}
+}
