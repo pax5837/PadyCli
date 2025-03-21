@@ -1,2 +1,2 @@
 # Pady Cli
-A dotnet cli app with utilites for development
+A dotnet cli app with utilities for development
