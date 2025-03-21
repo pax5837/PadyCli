@@ -4,6 +4,8 @@ using DotnetInfrastructure;
 using Infrastructure.DebugServices;
 using Microsoft.Extensions.DependencyInjection;
 using PadyCli.ConsoleApp.Features;
+using PadyCli.ConsoleApp.Features.About;
+using PadyCli.ConsoleApp.Features.About.Implementations;
 using PadyCli.ConsoleApp.Features.CsProjectMover;
 using PadyCli.ConsoleApp.Features.GuidGeneration;
 using PadyCli.ConsoleApp.Features.ProtoToUmlConverter;
@@ -26,6 +28,7 @@ var switchToVerboseAction = () => logLevelSwitch.MinimumLevel = LogEventLevel.Ve
 
 var serviceProvider = new ServiceCollection()
     .AddLogging(builder => builder.AddSerilog())
+    .AddAbout()
     .AddFeatures()
     .AddDebugServices()
     .AddDotnetInfrastructure()
@@ -43,7 +46,8 @@ var parserResult = Parser.Default
         TestClassGeneratorOptions,
         GuidGeneratorOptions,
         ProtoConverterOptions,
-        CsProjectMoverOptions>(args);
+        CsProjectMoverOptions,
+        AboutOptions>(args);
 
 await parserResult.WithParsedAsync(async (TestClassGeneratorOptions opts)
     => await serviceProvider.GetService<TestClassGeneratorAdapter>()!.RunAsync(
@@ -59,3 +63,6 @@ parserResult.WithParsed((ProtoConverterOptions opts)
 
 parserResult.WithParsed((CsProjectMoverOptions opts)
     => serviceProvider.GetService<CsProjectMoverAdapter>()!.Run(opts));
+
+await parserResult.WithParsedAsync((AboutOptions opts)
+    => serviceProvider.GetService<About>()!.RunAsync(opts));

@@ -30,4 +30,12 @@
         <ProjectReference Include="..\TestingHelpers\TestingHelpers.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Content Include="THIRD-PARTY-NOTICES.TXT">
+            <Pack>true</Pack>
+        </Content>
+        <None Update="THIRD-PARTY-NOTICES.TXT">
+        </None>
+    </ItemGroup>
+
 </Project>
