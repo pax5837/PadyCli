@@ -8,15 +8,20 @@
     <Project Path="ProtoToUmlConverter\ProtoToUmlConverter.csproj" Type="Classic C#" />
     <Project Path="TestingHelpers\TestingHelpers.csproj" Type="Classic C#" />
   </Folder>
-  <Folder Name="/ManualTesting/">
-    <Project Path="..\ManualTesting\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="Classic C#" />
-    <Project Path="..\ManualTesting\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" Type="Classic C#" />
-    <Project Path="..\ManualTesting\TestSetupGeneratorManualTestWebApi\TestSetupGeneratorManualTestWebApi.csproj" Type="Classic C#" />
+  <Folder Name="/Features/TestDataFactoryGenration/">
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" Type="Classic C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ManualTestConsoleApp\TestDataFactoryGenerator.ManualTestConsoleApp.csproj" Type="Classic C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/TestData/">
+    <Project Path="..\TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="Classic C#" />
+    <Project Path="..\TestData\TestDataForTestDataFactoryGenerator\TestDataForTestDataFactoryGenerator.csproj" Type="Classic C#" />
+    <Project Path="..\TestData\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" Type="Classic C#" />
+    <Project Path="..\TestData\TestSetupGeneratorManualTestWebApi\TestSetupGeneratorManualTestWebApi.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/_SolutionItems/">
     <File Path="..\.gitignore" />
     <File Path="..\.editorconfig" />
   </Folder>
-  <Project Path="..\ManualTesting\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="Classic C#" />
   <Project Path="PadyCli.ConsoleApp\PadyCli.ConsoleApp.csproj" Type="Classic C#" />
 </Solution>

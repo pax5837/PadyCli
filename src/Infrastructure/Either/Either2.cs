@@ -18,6 +18,10 @@ public class Either<TA, TB>
         _discriminant = Discriminant.B;
     }
 
+    public bool IsA => _discriminant == Discriminant.A;
+
+    public bool IsB => _discriminant == Discriminant.B;
+
     internal static Either<TA, TB> From(TA ta)
     {
         if (ta == null)

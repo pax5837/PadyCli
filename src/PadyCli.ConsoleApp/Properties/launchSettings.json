@@ -14,17 +14,24 @@
 		},
 		"PadyCli (gentestclass --class Class1)": {
 			"commandName": "Project",
-			"workingDirectory": "..\\ManualTesting\\TestSetupGeneratorManualTestProject\\Implementations\\Feature1",
+			"workingDirectory": "..\\TestData\\TestSetupGeneratorManualTestProject\\Implementations\\Feature1",
 			"environmentVariables": {
 			},
 			"commandLineArgs": "gentestclass --class Class1"
 		},
 		"PadyCli (gentestclass --class Class1 webApi)": {
 			"commandName": "Project",
-			"workingDirectory": "..\\ManualTesting\\TestSetupGeneratorManualTestWebApi\\Implementations\\Feature1",
+			"workingDirectory": "..\\TestData\\TestSetupGeneratorManualTestWebApi\\Implementations\\Feature1",
 			"environmentVariables": {
 			},
 			"commandLineArgs": "gentestclass --class Class1"
+		},
+		"PadyCli (gen-tdf)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\..\\..\\..\\..\\TestData\\TestDataForTestDataFactoryGenerator",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gen-tdf --classes Order --namespace TdfNamespace --tdf-name MyTdf"
 		},
 		"PadyCli (guids)": {
 			"commandName": "Project",
@@ -34,7 +41,7 @@
 		},
 		"PadyCli (genprotouml)": {
 			"commandName": "Project",
-			"workingDirectory": "..\\ManualTesting\\TestDataForProtoConverter",
+			"workingDirectory": "..\\TestData\\TestDataForProtoConverter",
 
 			"environmentVariables": {
 			},
@@ -42,7 +49,7 @@
 		},
 		"PadyCli (genprotouml with mermaid)": {
 			"commandName": "Project",
-			"workingDirectory": "..\\ManualTesting\\TestDataForProtoConverter",
+			"workingDirectory": "..\\TestData\\TestDataForProtoConverter",
 
 			"environmentVariables": {
 			},
