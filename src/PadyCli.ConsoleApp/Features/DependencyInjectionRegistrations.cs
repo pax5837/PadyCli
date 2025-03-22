@@ -14,7 +14,8 @@ internal static class DependencyInjectionRegistrations
             .AddSingleton<ProtToUmlConverter>()
             .AddSingleton<TestClassGeneratorAdapter>()
             .AddSingleton<GuidGenerator>()
-            .AddSingleton<CsProjectMoverAdapter>();
+            .AddSingleton<CsProjectMoverAdapter>()
+            .AddSingleton<TestDataFactoryGeneration.TestDataFactoryGenerator>();
 
         return services;
     }

@@ -6,7 +6,8 @@ namespace TestingHelpers;
 
 public static class ServiceConfigurator
 {
-    public static IServiceCollection AddTestHelpers(this IServiceCollection services)
+    public static IServiceCollection AddTestHelpers(
+        this IServiceCollection services)
     {
         services
             .AddSingleton<ITestClassGenerator, TestClassGenerator>()
