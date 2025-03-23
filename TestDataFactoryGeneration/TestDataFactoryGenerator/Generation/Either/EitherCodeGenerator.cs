@@ -47,15 +47,18 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
         var genericArguments = type.GenericTypeArguments.ToImmutableList();
         var genericArgumentsCount = genericArguments.Count;
 
+        var eitherTypeAsString = _eitherInformationService.GetEitherTypeAsString(type, _typeNameGenerator.GetTypeNameForParameter);
+
         lines.Add(
-            $"\tpublic {_eitherInformationService.GetEitherTypeAsString(type, _typeNameGenerator.GetTypeNameForParameter)} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()");
+            $"\tpublic {eitherTypeAsString} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()");
         lines.Add("\t{");
         lines.Add($"\t\tvar genericTypeNumber = _random.Next(0, {genericArgumentsCount});");
         lines.Add($"\t\treturn genericTypeNumber switch {{");
         for (int i = 0; i < genericArgumentsCount; i++)
         {
-            lines.Add(
-                $"\t\t\t{i} => {_eitherInformationService.GetEitherTypeAsString(type, _typeNameGenerator.GetTypeNameForParameter)}.From({parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericArguments[i], dependencies)}),");
+            var parameterInstantiation = parameterInstantiationCodeGenerator
+                .GenerateParameterInstantiation(genericArguments[i], dependencies);
+            lines.Add($"\t\t\t{i} => {eitherTypeAsString}.From({parameterInstantiation}),");
         }
 
         lines.Add("\t\t\t_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
