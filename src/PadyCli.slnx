@@ -1,16 +1,21 @@
 ﻿<Solution>
   <Folder Name="/Features/">
-    <Project Path="BuilderGenerator\BuilderGenerator.csproj" Type="Classic C#" />
-    <Project Path="CsProjMover\CsProjMover.csproj" Type="Classic C#" />
-    <Project Path="DotnetInfrastructure.Contracts\DotnetInfrastructure.Contracts.csproj" Type="Classic C#" />
-    <Project Path="DotnetInfrastructure\DotnetInfrastructure.csproj" Type="Classic C#" />
-    <Project Path="Infrastructure\Infrastructure.csproj" Type="Classic C#" />
     <Project Path="ProtoToUmlConverter\ProtoToUmlConverter.csproj" Type="Classic C#" />
     <Project Path="TestingHelpers\TestingHelpers.csproj" Type="Classic C#" />
   </Folder>
-  <Folder Name="/Features/TestDataFactoryGenration/">
+  <Folder Name="/Features/CsProjectMover/">
+    <Project Path="CsProjMover\CsprojMover\CsProjMover.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/DotnetInfrastructure/">
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" Type="Classic C#" />
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/Infrastructure/">
+    <Project Path="Infrastructure\Infrastructure\Infrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/TestDataFactoryGeneration/">
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" Type="Classic C#" />
     <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" Type="Classic C#" />
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ManualTestConsoleApp\TestDataFactoryGenerator.ManualTestConsoleApp.csproj" Type="Classic C#" />
     <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/TestData/">

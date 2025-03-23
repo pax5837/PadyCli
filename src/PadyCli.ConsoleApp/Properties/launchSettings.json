@@ -28,7 +28,7 @@
 		},
 		"PadyCli (gen-tdf)": {
 			"commandName": "Project",
-			"workingDirectory": "..\\..\\..\\..\\..\\TestData\\TestDataForTestDataFactoryGenerator",
+			"workingDirectory": "..\\TestData\\TestDataForTestDataFactoryGenerator",
 			"environmentVariables": {
 			},
 			"commandLineArgs": "gen-tdf --classes Order --namespace TdfNamespace --tdf-name MyTdf"

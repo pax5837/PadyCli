@@ -18,12 +18,12 @@ internal class TestDataFactoryGenerator
         Func<LogEventLevel> switchToVerboseAction,
         CancellationToken cancellationToken)
     {
-        var generationParameters = new IExternalAssemblyTestDataFactoryGenerator.GenerationParameters(
+        var generationParameters = new GenerationParameters(
             TestDataFactoryName: options.TestDataFactoryClassName,
             NameSpace: options.TestDataFactoryNamespace,
             TypeNames: options.CommaSepparatedClassNames.Split(',').ToImmutableHashSet(),
             OutputToConsole: true,
-            ExecutionDirectory: null);
+            WorkingDirectory: null);
 
         if (options.Verbose)
         {

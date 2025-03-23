@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\DotnetInfrastructure.Contracts\DotnetInfrastructure.Contracts.csproj" />
+        <ProjectReference Include="..\..\DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" />
         <ProjectReference Include="..\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" />
     </ItemGroup>
 
