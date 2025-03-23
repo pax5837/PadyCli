@@ -10,14 +10,17 @@ internal class ProjectMoverService : IProjectMoverService
     private readonly IOptionsValidationService optionsValidationService;
     private readonly IProjectFileUpdateService projectFileUpdateService;
     private readonly ISolutionFileUpdateService solutionFileUpdateService;
+    private readonly ISlnxFileUpdateService slnxFileUpdateService;
 
     public ProjectMoverService(
         ISolutionFileUpdateService solutionFileUpdateService,
+        ISlnxFileUpdateService slnxFileUpdateService,
         IProjectFileUpdateService projectFileUpdateService,
         IOptionsValidationService optionsValidationService,
         IDebugService debugService)
     {
         this.solutionFileUpdateService = solutionFileUpdateService;
+        this.slnxFileUpdateService = slnxFileUpdateService;
         this.projectFileUpdateService = projectFileUpdateService;
         this.optionsValidationService = optionsValidationService;
         this.debugService = debugService;
@@ -34,6 +37,7 @@ internal class ProjectMoverService : IProjectMoverService
             .Pipe(UpdateProjectFile)
             .Pipe(UpdateDependentProjects)
             .Pipe(UpdateAllSolutions)
+            .Pipe(UpdateAllSlnxFiles)
             .Pipe(WriteErrorToConsole);
     }
 
@@ -57,10 +61,18 @@ internal class ProjectMoverService : IProjectMoverService
             parameters.Options.RelativePathToTargetFolder);
     }
 
-
     private void UpdateAllSolutions(Parameters parameters)
     {
         solutionFileUpdateService.UpdateAllSolutions(
+            parameters.CurrentDirectory,
+            parameters.Options.RelativePathToSourceFolder,
+            parameters.Options.RelativePathToTargetFolder,
+            parameters.ProjectFileName);
+    }
+
+    private void UpdateAllSlnxFiles(Parameters parameters)
+    {
+        slnxFileUpdateService.UpdateAllSlnx(
             parameters.CurrentDirectory,
             parameters.Options.RelativePathToSourceFolder,
             parameters.Options.RelativePathToTargetFolder,

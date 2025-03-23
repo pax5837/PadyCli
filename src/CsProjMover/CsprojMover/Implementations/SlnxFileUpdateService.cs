@@ -1,28 +1,28 @@
-﻿using Infrastructure.DebugServices;
+using Infrastructure.DebugServices;
 
 namespace CsProjMover.Implementations;
 
-internal class SolutionFileUpdateService : ISolutionFileUpdateService
+public class SlnxFileUpdateService : ISlnxFileUpdateService
 {
     private readonly IDebugService debugService;
 
-    public SolutionFileUpdateService(IDebugService debugService)
+    public SlnxFileUpdateService(IDebugService debugService)
     {
         this.debugService = debugService;
     }
 
-    public void UpdateAllSolutions(
+    public void UpdateAllSlnx(
         string fullPathToStartDirectory,
         string oldFullPathToProjectFolder,
         string newFullPathToProjectFolder,
         string projectName)
     {
-        var solutionFiles = Directory.GetFiles(
+        var slnxFiles = Directory.GetFiles(
             fullPathToStartDirectory,
-            "*.sln",
+            "*.slnx",
             SearchOption.AllDirectories);
 
-        foreach (var solutionFile in solutionFiles)
+        foreach (var solutionFile in slnxFiles)
         {
             UpdateSolution(
                 solutionFile,
@@ -32,14 +32,15 @@ internal class SolutionFileUpdateService : ISolutionFileUpdateService
         }
     }
 
-    private void UpdateSolution(string fullPathToSolutionFile, string oldFullPathToProject, string newFullPathToProject,
+    private void UpdateSolution(
+        string fullPathToSolutionFile,
+        string oldFullPathToProject,
+        string newFullPathToProject,
         string projectName)
     {
         var solutionDirectory = Directory.GetParent(fullPathToSolutionFile).FullName;
-        var oldProjectRelativePath =
-            Path.Combine(Path.GetRelativePath(solutionDirectory, oldFullPathToProject), projectName);
-        var newProjectRelativePath =
-            Path.Combine(Path.GetRelativePath(solutionDirectory, newFullPathToProject), projectName);
+        var oldProjectRelativePath = Path.Combine(Path.GetRelativePath(solutionDirectory, oldFullPathToProject), projectName);
+        var newProjectRelativePath = Path.Combine(Path.GetRelativePath(solutionDirectory, newFullPathToProject), projectName);
         var originalSolutionContent = File.ReadAllText(fullPathToSolutionFile);
 
         if (!originalSolutionContent.Contains(oldProjectRelativePath)) return;
