@@ -1,4 +1,6 @@
-﻿namespace ProtoToUmlConverter.Services.UmlGeneration;
+﻿using System;
+
+namespace ProtoToUmlConverter.Services.UmlGeneration;
 
 internal class UmlGeneratorFactory : IUmlGeneratorFactory
 {

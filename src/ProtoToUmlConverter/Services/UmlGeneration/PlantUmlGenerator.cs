@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace ProtoToUmlConverter.Services.UmlGeneration;
 

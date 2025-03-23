@@ -54,6 +54,14 @@
 			"environmentVariables": {
 			},
 			"commandLineArgs": "genprotouml -e BlaRequest -t mermaid"
+		},
+		"PadyCli (movecsproj)": {
+			"commandName": "Project",
+			"workingDirectory": "E:\\SwProjects\\PadyCli",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "movecsproj -s ./src/ProtoToUmlConverter  -t ./src/ProtoToUmlConverter/ProtoToUmlConverter"
 		}
 	}
 }

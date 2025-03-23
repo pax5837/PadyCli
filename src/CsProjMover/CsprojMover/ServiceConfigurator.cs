@@ -10,6 +10,7 @@ public static class ServiceConfigurator
         services
             .AddScoped<IProjectMoverService, ProjectMoverService>()
             .AddScoped<ISolutionFileUpdateService, SolutionFileUpdateService>()
+            .AddScoped<ISlnxFileUpdateService, SlnxFileUpdateService>()
             .AddScoped<IProjectFileUpdateService, ProjectFileUpdateService>()
             .AddScoped<IOptionsValidationService, OptionsValidationService>();
 
