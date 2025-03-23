@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" />
+	  <ProjectReference Include="..\..\DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" />
 	</ItemGroup>
 
 </Project>

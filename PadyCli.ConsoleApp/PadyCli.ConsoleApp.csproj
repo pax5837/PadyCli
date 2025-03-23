@@ -25,9 +25,9 @@
     <ItemGroup>
         <ProjectReference Include="..\CsProjMover\CsprojMover\CsProjMover.csproj" />
         <ProjectReference Include="..\DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" />
-        <ProjectReference Include="..\ProtoToUmlConverter\ProtoToUmlConverter.csproj" />
+        <ProjectReference Include="..\ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" />
         <ProjectReference Include="..\TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" />
-        <ProjectReference Include="..\TestingHelpers\TestingHelpers.csproj" />
+        <ProjectReference Include="..\TestingHelpers\TestingHelpers\TestingHelpers.csproj" />
     </ItemGroup>
 
     <ItemGroup>
