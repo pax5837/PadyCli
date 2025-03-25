@@ -1,0 +1,67 @@
+﻿{
+	"$schema": "http://json.schemastore.org/launchsettings.json",
+	"profiles": {
+		"PadyCli no args": {
+			"commandName": "Project",
+			"environmentVariables": {
+			}
+		},
+		"PadyCli (gentestclass --help)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --help"
+		},
+		"PadyCli (gentestclass --class Class1)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\TestData\\TestSetupGeneratorManualTestProject\\Implementations\\Feature1",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --class Class1"
+		},
+		"PadyCli (gentestclass --class Class1 webApi)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\TestData\\TestSetupGeneratorManualTestWebApi\\Implementations\\Feature1",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gentestclass --class Class1"
+		},
+		"PadyCli (gen-tdf)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\TestData\\TestDataForTestDataFactoryGenerator",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "gen-tdf --classes Order --namespace TdfNamespace --tdf-name MyTdf"
+		},
+		"PadyCli (guids)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "guids"
+		},
+		"PadyCli (genprotouml)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\TestData\\TestDataForProtoConverter",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "genprotouml -e BlaRequest"
+		},
+		"PadyCli (genprotouml with mermaid)": {
+			"commandName": "Project",
+			"workingDirectory": "..\\TestData\\TestDataForProtoConverter",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "genprotouml -e BlaRequest -t mermaid"
+		},
+		"PadyCli (movecsproj)": {
+			"commandName": "Project",
+			"workingDirectory": "E:\\SwProjects\\PadyCli",
+
+			"environmentVariables": {
+			},
+			"commandLineArgs": "movecsproj -s ./src/ProtoToUmlConverter  -t ./src/ProtoToUmlConverter/ProtoToUmlConverter"
+		}
+	}
+}

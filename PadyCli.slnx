@@ -1,0 +1,35 @@
+﻿<Solution>
+  <Folder Name="/Features/" />
+  <Folder Name="/Features/AssemblyInfrastructure/">
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" Type="Classic C#" />
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/CsProjectMover/">
+    <Project Path="CsProjMover\CsprojMover\CsProjMover.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/Infrastructure/">
+    <Project Path="Infrastructure\Infrastructure\Infrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/ProtoToUmlConverter/">
+    <Project Path="ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/TestDataFactoryGeneration/">
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" Type="Classic C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" Type="Classic C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/TestingHelpers/">
+    <Project Path="TestingHelpers\TestingHelpers\TestingHelpers.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/TestData/">
+    <Project Path="TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="Classic C#" />
+    <Project Path="TestData\TestDataForTestDataFactoryGenerator\TestDataForTestDataFactoryGenerator.csproj" Type="Classic C#" />
+    <Project Path="TestData\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" Type="Classic C#" />
+    <Project Path="TestData\TestSetupGeneratorManualTestWebApi\TestSetupGeneratorManualTestWebApi.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/_SolutionItems/">
+    <File Path="..\.gitignore" />
+    <File Path="..\.editorconfig" />
+  </Folder>
+  <Project Path="PadyCli.ConsoleApp\PadyCli.ConsoleApp.csproj" Type="Classic C#" />
+</Solution>
