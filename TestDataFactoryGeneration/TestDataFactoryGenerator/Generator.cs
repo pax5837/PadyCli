@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
-using TestDataFactoryGenerator.Generation;
 
 namespace TestDataFactoryGenerator;
 
@@ -12,18 +11,18 @@ public static class Generator
         var fileContent = File.ReadAllText(pathToConfig);
 
         var config = pathToConfig is not null
-            ? JsonSerializer.Deserialize<Configuration>(fileContent)
-            : new Configuration([], null, []);
+            ? JsonSerializer.Deserialize<TdfGeneratorConfiguration>(fileContent)
+            : new TdfGeneratorConfiguration([], null, [], new SimpleTypeConfiguration(string.Empty, []));
 
         return GetTestDataFactoryGenerator(config!);
     }
 
-    public static ITestDataFactoryGenerator GetNewGenerator(IConfiguration configuration)
+    public static ITestDataFactoryGenerator GetNewGenerator(TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
-        return GetTestDataFactoryGenerator(configuration);
+        return GetTestDataFactoryGenerator(tdfGeneratorConfiguration);
     }
 
-    private static ITestDataFactoryGenerator GetTestDataFactoryGenerator(IConfiguration config)
+    private static ITestDataFactoryGenerator GetTestDataFactoryGenerator(TdfGeneratorConfiguration config)
     {
         var serviceProvides = new ServiceCollection()
             .AddTestDataFactoryGeneration(config)

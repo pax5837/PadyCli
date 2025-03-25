@@ -6,16 +6,16 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
 {
     private readonly ITypeNameGenerator _typeNameGenerator;
     private readonly IProtoInformationService _protoInformationService;
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
 
     public ProtoCodeGenerator(
         ITypeNameGenerator typeNameGenerator,
         IProtoInformationService protoInformationService,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
         _typeNameGenerator = typeNameGenerator;
         _protoInformationService = protoInformationService;
-        _configuration = configuration;
+        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
     }
 
     public IImmutableList<Type> GetNestedTypes(
@@ -35,9 +35,9 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         Type type,
         HashSet<string> dependencies)
     {
-        dependencies.Add(_configuration.CustomInstantiationInfoByFullName[type.FullName!].NamespaceToAdd);
+        dependencies.Add(_tdfGeneratorConfiguration.CustomInstantiationForWellKnownProtobufTypesByFullName[type.FullName!].NamespaceToAdd);
 
-        return _configuration.CustomInstantiationInfoByFullName[type.FullName!].InstantiationCode;
+        return _tdfGeneratorConfiguration.CustomInstantiationForWellKnownProtobufTypesByFullName[type.FullName!].InstantiationCode;
     }
 
     public IImmutableList<string> GenerateInstantiationCodeForProtobufType(

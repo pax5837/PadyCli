@@ -2,11 +2,11 @@ namespace TestDataFactoryGenerator.Generation.Either;
 
 internal class EitherInformationService : IEitherInformationService
 {
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
 
-    public EitherInformationService(IConfiguration configuration)
+    public EitherInformationService(TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
-        _configuration = configuration;
+        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
     }
 
     public string GetEitherTypeAsString(Type type, Func<Type, string> genericTypeNameGenerator)
@@ -22,7 +22,7 @@ internal class EitherInformationService : IEitherInformationService
     {
 
         return type.Namespace is not null
-               && type.Namespace.StartsWith(_configuration.EitherNamespace ?? string.Empty, StringComparison.OrdinalIgnoreCase)
+               && type.Namespace.StartsWith(_tdfGeneratorConfiguration.EitherNamespace ?? string.Empty, StringComparison.OrdinalIgnoreCase)
                && type.Name.StartsWith("Either", StringComparison.OrdinalIgnoreCase);
     }
 }

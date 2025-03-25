@@ -6,16 +6,16 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
 {
     private readonly IEitherInformationService _eitherInformationService;
     private readonly ITypeNameGenerator _typeNameGenerator;
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
 
     public EitherCodeGenerator(
         IEitherInformationService eitherInformationService,
         ITypeNameGenerator typeNameGenerator,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
         _eitherInformationService = eitherInformationService;
         _typeNameGenerator = typeNameGenerator;
-        _configuration = configuration;
+        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
     }
 
     public string GetEitherGeneratorName(Type type)
@@ -37,9 +37,9 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
     {
-        if (!string.IsNullOrWhiteSpace(_configuration.EitherNamespace))
+        if (!string.IsNullOrWhiteSpace(_tdfGeneratorConfiguration.EitherNamespace))
         {
-            dependencies.Add(_configuration.EitherNamespace);
+            dependencies.Add(_tdfGeneratorConfiguration.EitherNamespace);
         }
 
         var lines = new List<string>();

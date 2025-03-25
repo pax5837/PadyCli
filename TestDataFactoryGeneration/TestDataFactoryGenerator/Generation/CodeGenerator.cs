@@ -8,20 +8,20 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherCodeGenerator _eitherCodeGenerator;
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
 
     public CodeGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
         IEitherCodeGenerator eitherCodeGenerator,
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _eitherCodeGenerator = eitherCodeGenerator;
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
-        _configuration = configuration;
+        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
     }
 
     public IImmutableList<string> CreateTestDataFactoryCode(
@@ -81,7 +81,7 @@ internal class CodeGenerator : ICodeGenerator
     {
         var dependencies = new HashSet<string>();
 
-        foreach (var namespaceToAdd in _configuration.NamespacesToAdd)
+        foreach (var namespaceToAdd in _tdfGeneratorConfiguration.NamespacesToAdd)
         {
             dependencies.Add(namespaceToAdd);
         }

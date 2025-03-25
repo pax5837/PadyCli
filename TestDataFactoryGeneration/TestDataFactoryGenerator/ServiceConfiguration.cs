@@ -14,10 +14,10 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddTestDataFactoryGeneration(
         this IServiceCollection services,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
         services
-            .AddScoped<IConfiguration>(x => configuration)
+            .AddSingleton<TdfGeneratorConfiguration>(tdfGeneratorConfiguration)
             .AddScoped<IUserDefinedGenericsCodeGenerator, UserDefinedGenericsCodeGenerator>()
             .AddScoped<IEitherInformationService, EitherInformationService>()
             .AddScoped<IEitherCodeGenerator, EitherCodeGenerator>()
@@ -29,7 +29,8 @@ public static class ServiceConfiguration
             .AddScoped<ITypeWithConstructorsGenerator, TypeWithConstructorsGenerator>()
             .AddScoped<ICodeGenerator, CodeGenerator>()
             .AddScoped<ITypeLister, TypeLister>()
-            .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>();
+            .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
+            .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>();
 
         return services;
     }

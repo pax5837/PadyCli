@@ -15,7 +15,7 @@ using ProtoToUmlConverter;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using TestDataFactoryGenerator.Generation;
+using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TestingHelpers;
 
@@ -40,7 +40,7 @@ var serviceProvider = new ServiceCollection()
     .AddTestHelpers()
     .AddProtoToUmlServices()
     .AddProjectMoverServices()
-    .AddExternalAssemblyTestDataFactoryGeneration(new Configuration([], null, []))
+    .AddExternalAssemblyTestDataFactoryGeneration(new TdfGeneratorConfiguration([], null, [], new SimpleTypeConfiguration(null, [])))
     .BuildServiceProvider();
 
 var fileSystemOpsForbiddenEnvVariable = Environment.GetEnvironmentVariable("FILESYSTEMOPSFORBIDDEN");

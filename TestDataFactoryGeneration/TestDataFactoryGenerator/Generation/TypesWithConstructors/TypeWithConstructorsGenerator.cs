@@ -11,19 +11,22 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
     private readonly ITypeNameGenerator _typeNameGenerator;
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
+    private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
 
     public TypeWithConstructorsGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
         IProtoCodeGenerator protoCodeGenerator,
         ITypeNameGenerator typeNameGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
-        IProtoInformationService protoInformationService)
+        IProtoInformationService protoInformationService,
+        IRandomizerCallerGenerator randomizerCallerGenerator)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _protoCodeGenerator = protoCodeGenerator;
         _typeNameGenerator = typeNameGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
+        _randomizerCallerGenerator = randomizerCallerGenerator;
     }
 
 
@@ -31,7 +34,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         Type t,
         HashSet<string> dependencies)
     {
-        if (RandomizerCallerGenerator.CanGenerate(t))
+        if (_randomizerCallerGenerator.CanGenerate(t))
         {
             return ImmutableList<string>.Empty;
         }

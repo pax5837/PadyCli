@@ -1,7 +1,6 @@
 ﻿using DotnetInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator;
-using TestDataFactoryGenerator.Generation;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TestDataForTestDataFactoryGenerator.BusinessLogic;
 
@@ -27,7 +26,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
     var services = new ServiceCollection()
         .AddLogging()
         .AddDotnetInfrastructure()
-        .AddExternalAssemblyTestDataFactoryGeneration(new Configuration([],null, []))
+        .AddExternalAssemblyTestDataFactoryGeneration(new TdfGeneratorConfiguration([],null, [], new SimpleTypeConfiguration(string.Empty, [])))
         .BuildServiceProvider();
 
     var generator = services.GetRequiredService<IExternalAssemblyTestDataFactoryGenerator>();

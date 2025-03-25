@@ -10,6 +10,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
     private readonly ICollectionsCodeGenerator _collectionsCodeGenerator;
+    private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
 
     public ParameterInstantiationCodeGenerator(
         IEitherCodeGenerator eitherCodeGenerator,
@@ -17,7 +18,8 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         IProtoCodeGenerator protoCodeGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
-        ICollectionsCodeGenerator collectionsCodeGenerator)
+        ICollectionsCodeGenerator collectionsCodeGenerator,
+        IRandomizerCallerGenerator randomizerCallerGenerator)
     {
         _eitherCodeGenerator = eitherCodeGenerator;
         _eitherInformationService = eitherInformationService;
@@ -25,6 +27,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
         _collectionsCodeGenerator = collectionsCodeGenerator;
+        _randomizerCallerGenerator = randomizerCallerGenerator;
     }
 
     public string GenerateParameterInstantiation(
@@ -47,9 +50,9 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
             return _eitherCodeGenerator.GenerateEitherParameterInstantiation(type);
         }
 
-        if (RandomizerCallerGenerator.CanGenerate(type))
+        if (_randomizerCallerGenerator.CanGenerate(type))
         {
-            return $"{RandomizerCallerGenerator.Generate(type, parameterName)}";
+            return $"{_randomizerCallerGenerator.Generate(type, parameterName)}";
         }
 
         if (_protoInformationService.IsWellKnownProtobufType(type))

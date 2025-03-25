@@ -2,11 +2,11 @@
 
 namespace TestDataFactoryGenerator.Generation;
 
-internal static class RandomizerCallerGenerator
+internal class RandomizerCallerGenerator : IRandomizerCallerGenerator
 {
     private const string ParameterNamePlaceholder = "###########################";
 
-    private static readonly IImmutableDictionary<Type, string> GenerationCode = new[]
+    private readonly IImmutableDictionary<Type, string> GenerationCode = new[]
     {
         (typeof(string), $"_random.NextString({ParameterNamePlaceholder})"),
         (typeof(int), "_random.Next()"),
@@ -20,12 +20,12 @@ internal static class RandomizerCallerGenerator
         (typeof(decimal), "_random.NextDecimal()"),
     }.ToImmutableDictionary(x => x.Item1, x => x.Item2);
 
-    public static bool CanGenerate(Type type)
+    public bool CanGenerate(Type type)
     {
         return GenerationCode.ContainsKey(type);
     }
 
-    public static string Generate(
+    public string Generate(
         Type type,
         string? parameterName)
     {

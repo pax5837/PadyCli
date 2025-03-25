@@ -2,17 +2,17 @@ namespace TestDataFactoryGenerator.Generation.Protobuf;
 
 internal class ProtoInformationService : IProtoInformationService
 {
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
 
-    public ProtoInformationService(IConfiguration configuration)
+    public ProtoInformationService(TdfGeneratorConfiguration tdfGeneratorConfiguration)
     {
-        _configuration = configuration;
+        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
     }
 
     public bool IsWellKnownProtobufType(Type type)
     {
         return type.FullName is not null &&
-               _configuration.CustomInstantiationInfoByFullName.ContainsKey(type.FullName);
+               _tdfGeneratorConfiguration.CustomInstantiationForWellKnownProtobufTypesByFullName.ContainsKey(type.FullName);
     }
 
     public bool IsProto(Type type)
