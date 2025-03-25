@@ -5,8 +5,15 @@ namespace TestingHelpers.Services.TestClassGeneration;
 
 internal class TestClassCodeGenerator : ITestClassCodeGenerator
 {
+    private readonly TestClassGeneratorConfig _config;
+
     private static readonly IImmutableSet<string> SutMethodNamesToIgnore =
         ["GetType", "ToString", "Equals", "GetHashCode"];
+
+    public TestClassCodeGenerator(TestClassGeneratorConfig config)
+    {
+        _config = config;
+    }
 
     public IImmutableList<string> GenerateTestClass(Type type)
     {
@@ -28,7 +35,7 @@ internal class TestClassCodeGenerator : ITestClassCodeGenerator
         return lines.ToImmutableList();
     }
 
-    private static IImmutableList<string> GenerateTestMethods(Type type)
+    private IImmutableList<string> GenerateTestMethods(Type type)
     {
         var lines = new List<string>();
 
@@ -43,7 +50,7 @@ internal class TestClassCodeGenerator : ITestClassCodeGenerator
         return lines.ToImmutableList();
     }
 
-    private static IImmutableList<string> GenerateTestMethod(MethodInfo methodInfo)
+    private IImmutableList<string> GenerateTestMethod(MethodInfo methodInfo)
     {
         var lines = new List<string>();
 
@@ -53,25 +60,25 @@ internal class TestClassCodeGenerator : ITestClassCodeGenerator
             ? "public async Task"
             : "public void";
 
-        lines.Add("\t[TestMethod]");
-        lines.Add($"\t{methodQualifyer} {methodInfo.Name}()");
-        lines.Add("\t{");
-        lines.Add("\t\t// Arrange");
-        lines.Add("\t\tvar setup = new TestSetup();");
+        lines.Add($"{_config.Indent}[TestMethod]");
+        lines.Add($"{_config.Indent}{methodQualifyer} {methodInfo.Name}()");
+        lines.Add($"{_config.Indent}{{");
+        lines.Add($"{_config.Indent}{_config.Indent}// Arrange");
+        lines.Add($"{_config.Indent}{_config.Indent}var setup = new TestSetup();");
         lines.Add(string.Empty);
-        lines.Add("\t\t// Act");
+        lines.Add($"{_config.Indent}{_config.Indent}// Act");
 
         var awaitText = isAsync ? "await " : string.Empty;
-        lines.Add($"\t\tvar result = {awaitText}setup.Sut." + methodInfo.Name + "();");
+        lines.Add($"{_config.Indent}{_config.Indent}var result = {awaitText}setup.Sut." + methodInfo.Name + "();");
         lines.Add(string.Empty);
-        lines.Add("\t\t// Assert");
-        lines.Add("\t}");
+        lines.Add($"{_config.Indent}{_config.Indent}// Assert");
+        lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 
         return lines.ToImmutableList();
     }
 
-    private static IImmutableList<string> GenerateTestSetup(Type type)
+    private IImmutableList<string> GenerateTestSetup(Type type)
     {
         var constructor = type.GetConstructors().Single();
         var constructorParameters = constructor.GetParameters();
@@ -80,42 +87,42 @@ internal class TestClassCodeGenerator : ITestClassCodeGenerator
 
         lines.Add("private sealed class TestSetup");
         lines.Add("{");
-        lines.Add($"\tpublic {type.Name} Sut {{ get; }}");
+        lines.Add($"{_config.Indent}public {type.Name} Sut {{ get; }}");
         lines.Add(string.Empty);
         lines.AddRange(getMockFieldLines(constructorParameters));
         lines.Add(string.Empty);
-        lines.Add($"\tpublic TestSetup()");
-        lines.Add("\t{");
+        lines.Add($"{_config.Indent}public TestSetup()");
+        lines.Add($"{_config.Indent}{{");
         lines.AddRange(getClassInstantiation(type, constructorParameters));
-        lines.Add("\t}");
+        lines.Add($"{_config.Indent}}}");
         lines.Add("}");
 
         return lines
-            .Select(line => string.IsNullOrEmpty(line) ? line : $"\t{line}")
+            .Select(line => string.IsNullOrEmpty(line) ? line : $"{_config.Indent}{line}")
             .ToImmutableList();
     }
 
-    private static IImmutableList<string> getMockFieldLines(ParameterInfo[] constructorParameters)
+    private IImmutableList<string> getMockFieldLines(ParameterInfo[] constructorParameters)
     {
         return constructorParameters
-            .Select(p => $"\tprivate readonly Mock<{p.ParameterType.Name}> _{p.Name}Mock = new();")
+            .Select(p => $"{_config.Indent}private readonly Mock<{p.ParameterType.Name}> _{p.Name}Mock = new();")
             .ToImmutableList();
     }
 
-    private static IImmutableList<string> getClassInstantiation(Type type, ParameterInfo[] constructorParameters)
+    private IImmutableList<string> getClassInstantiation(Type type, ParameterInfo[] constructorParameters)
     {
         var lines = new List<string>();
         if (constructorParameters.Length == 0)
         {
-            lines.Add($"\t\tSut = new {type.Name}();");
+            lines.Add($"{_config.Indent}{_config.Indent}Sut = new {type.Name}();");
             return lines.ToImmutableList();
         }
 
-        lines.Add($"\t\tSut = new {type.Name}(");
+        lines.Add($"{_config.Indent}{_config.Indent}Sut = new {type.Name}(");
         for (int i = 0; i < constructorParameters.Length; i++)
         {
             var eol = i == constructorParameters.Length - 1 ? ");" : ",";
-            lines.Add($"\t\t\t_{constructorParameters[i].Name}Mock.Object{eol}");
+            lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}_{constructorParameters[i].Name}Mock.Object{eol}");
         }
 
         return lines.ToImmutableList();

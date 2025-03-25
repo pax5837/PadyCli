@@ -8,20 +8,20 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherCodeGenerator _eitherCodeGenerator;
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
-    private readonly TdfGeneratorConfiguration _tdfGeneratorConfiguration;
+    private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
         IEitherCodeGenerator eitherCodeGenerator,
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
-        TdfGeneratorConfiguration tdfGeneratorConfiguration)
+        TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _eitherCodeGenerator = eitherCodeGenerator;
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
-        _tdfGeneratorConfiguration = tdfGeneratorConfiguration;
+        _config = config;
     }
 
     public IImmutableList<string> CreateTestDataFactoryCode(
@@ -35,6 +35,10 @@ internal class CodeGenerator : ICodeGenerator
         var dependencies = GenerateInitialDependencies();
 
         var methods = types.OrderBy(x => x.Name).SelectMany(x => CreateGenerationCode(x, dependencies))
+            .ToImmutableList();
+
+        var userDefinedMethods = _config.SimpleTypeConfiguration.InstantiationConfigurations
+            .SelectMany(CreateMethodsForUserDefinedMethods)
             .ToImmutableList();
 
         var systemUsings = dependencies
@@ -60,9 +64,20 @@ internal class CodeGenerator : ICodeGenerator
                 .Concat(codeDoc)
                 .Concat(starOfClass)
                 .Concat(methods)
+                .Concat(userDefinedMethods)
                 .RemoveLastWhiteLine()
                 .Concat(endOfClass)
                 .ToImmutableList();
+    }
+
+    private ImmutableList<string> CreateMethodsForUserDefinedMethods(InstantiationConfigurationForType instantiationConfigurationForType)
+    {
+        if (instantiationConfigurationForType.MethodCodeToAdd.Count == 0)
+        {
+            return [];
+        }
+
+        return instantiationConfigurationForType.MethodCodeToAdd.Select(line => $"{_config.Indent}{line}").Append(string.Empty).ToImmutableList();
     }
 
     private static bool IsSubsetOfNamespace(string subsetCandidate, string nameSpace)
@@ -81,7 +96,7 @@ internal class CodeGenerator : ICodeGenerator
     {
         var dependencies = new HashSet<string>();
 
-        foreach (var namespaceToAdd in _tdfGeneratorConfiguration.NamespacesToAdd)
+        foreach (var namespaceToAdd in _config.NamespacesToAdd)
         {
             dependencies.Add(namespaceToAdd);
         }
@@ -103,28 +118,28 @@ internal class CodeGenerator : ICodeGenerator
             .ToImmutableList();
     }
 
-    private static ImmutableList<string> GenerateStartOfClass(string tdfName)
+    private ImmutableList<string> GenerateStartOfClass(string tdfName)
     {
         return new[]
         {
             $"internal partial class {tdfName}",
             "{",
-            "\tprivate readonly Random _random;",
+            $"{_config.Indent}private readonly Random _random;",
             string.Empty,
-            $"\tpublic {tdfName}()",
-            "\t{",
-            "\t\t_random = new Random();",
-            "\t}",
+            $"{_config.Indent}public {tdfName}()",
+            $"{_config.Indent}{{",
+            $"{_config.Indent}{_config.Indent}_random = new Random();",
+            $"{_config.Indent}}}",
             string.Empty,
-            $"\tpublic {tdfName}(int seed)",
-            "\t{",
-            "\t\t_random = new Random(seed);",
-            "\t}",
+            $"{_config.Indent}public {tdfName}(int seed)",
+            $"{_config.Indent}{{",
+            $"{_config.Indent}{_config.Indent}_random = new Random(seed);",
+            $"{_config.Indent}}}",
             string.Empty,
-            $"\tpublic {tdfName}(Random random)",
-            "\t{",
-            "\t\t_random = random;",
-            "\t}",
+            $"{_config.Indent}public {tdfName}(Random random)",
+            $"{_config.Indent}{{",
+            $"{_config.Indent}{_config.Indent}_random = random;",
+            $"{_config.Indent}}}",
             string.Empty,
         }.ToImmutableList();
     }

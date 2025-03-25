@@ -12,7 +12,7 @@ public static class Generator
 
         var config = pathToConfig is not null
             ? JsonSerializer.Deserialize<TdfGeneratorConfiguration>(fileContent)
-            : new TdfGeneratorConfiguration([], null, [], new SimpleTypeConfiguration(string.Empty, []));
+            : new TdfGeneratorConfiguration([], "    ", null, [], new SimpleTypeConfiguration(string.Empty, []));
 
         return GetTestDataFactoryGenerator(config!);
     }

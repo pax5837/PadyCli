@@ -12,6 +12,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
     private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
+    private readonly TdfGeneratorConfiguration _config;
 
     public TypeWithConstructorsGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
@@ -19,7 +20,8 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         ITypeNameGenerator typeNameGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
-        IRandomizerCallerGenerator randomizerCallerGenerator)
+        IRandomizerCallerGenerator randomizerCallerGenerator,
+        TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _protoCodeGenerator = protoCodeGenerator;
@@ -27,6 +29,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
         _randomizerCallerGenerator = randomizerCallerGenerator;
+        _config = config;
     }
 
 
@@ -65,29 +68,29 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
     {
         var lines = new List<string>();
 
-        lines.Add($"\tpublic {t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()");
-        lines.Add("\t{");
-        lines.Add($"\t\tvar constructorNumber = _random.Next(0, {constructors.Count()});");
-        lines.Add($"\t\treturn constructorNumber switch {{");
+        lines.Add($"{_config.Indent}public {t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()");
+        lines.Add($"{_config.Indent}{{");
+        lines.Add($"{_config.Indent}{_config.Indent}var constructorNumber = _random.Next(0, {constructors.Count()});");
+        lines.Add($"{_config.Indent}{_config.Indent}return constructorNumber switch {{");
 
         for (var j = 0; j < constructors.Count; j++)
         {
             var constructor = constructors[j];
 
-            lines.Add($"\t\t\t{j} => new {t.Name}(");
+            lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}{j} => new {t.Name}(");
 
             var parameters = constructor.GetParameters();
             for (int i = 0; i < parameters.Length; i++)
             {
                 var endOfLine = i == parameters.Length - 1 ? ")," : ",";
                 lines.Add(
-                    $"\t\t\t\t{parameters[i].Name}: {_parameterInstantiationCodeGenerator.GenerateParameterInstantiation(parameters[i].ParameterType, dependencies)}{endOfLine}");
+                    $"{_config.Indent}{_config.Indent}{_config.Indent}{_config.Indent}{parameters[i].Name}: {_parameterInstantiationCodeGenerator.GenerateParameterInstantiation(parameters[i].ParameterType, dependencies)}{endOfLine}");
             }
         }
 
-        lines.Add("\t\t\t_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
-        lines.Add("\t\t};");
-        lines.Add("\t}");
+        lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
+        lines.Add($"{_config.Indent}{_config.Indent}}};");
+        lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 
         return lines.ToImmutableList();
@@ -119,7 +122,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
             ? _userDefinedGenericsCodeGenerator.MethodName(type)
             : $"{Definitions.GenerationMethodPrefix}{type.Name}";
 
-        lines.Add($"\tpublic {returnTypeName} {methodName}({endOfMethodLine}");
+        lines.Add($"{_config.Indent}public {returnTypeName} {methodName}({endOfMethodLine}");
 
         for (int i = 0; i < parameters.Length; i++)
         {
@@ -134,19 +137,19 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
                     ? "OptionalValue"
                     : "OptionalRef";
                 lines.Add(
-                    $"\t\t{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase()} = default{endOfLine}");
+                    $"{_config.Indent}{_config.Indent}{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase()} = default{endOfLine}");
             }
             else
             {
                 lines.Add(
-                    $"\t\t{typeNameForParameter}? {parameter.Name!.ToCamelCase()} = null{endOfLine}");
+                    $"{_config.Indent}{_config.Indent}{typeNameForParameter}? {parameter.Name!.ToCamelCase()} = null{endOfLine}");
             }
         }
 
-        lines.Add("\t{");
+        lines.Add($"{_config.Indent}{{");
 
         var endOfConstructorLine = parameters.Length == 0 ? ");" : string.Empty;
-        lines.Add($"\t\treturn new {returnTypeName}({endOfConstructorLine}");
+        lines.Add($"{_config.Indent}{_config.Indent}return new {returnTypeName}({endOfConstructorLine}");
 
 
         for (int i = 0; i < parameters.Length; i++)
@@ -161,16 +164,16 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
             if (kind.IsNullable)
             {
                 lines.Add(
-                    $"\t\t\t{parameter.Name}: {methodParameterName}.Unwrap(whenAutoGenerated: () => {generateParameterInstantiation}){endOfLine}");
+                    $"{_config.Indent}{_config.Indent}{_config.Indent}{parameter.Name}: {methodParameterName}.Unwrap(whenAutoGenerated: () => {generateParameterInstantiation}){endOfLine}");
             }
             else
             {
                 lines.Add(
-                    $"\t\t\t{parameter.Name}: {methodParameterName} ?? {generateParameterInstantiation}{endOfLine}");
+                    $"{_config.Indent}{_config.Indent}{_config.Indent}{parameter.Name}: {methodParameterName} ?? {generateParameterInstantiation}{endOfLine}");
             }
         }
 
-        lines.Add("\t}");
+        lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 
         return lines.ToImmutableList();
