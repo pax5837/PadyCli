@@ -11,7 +11,7 @@ Task.Delay(500).Wait();
 
 void GenerateAndPrintTestDataTdfGeneratorVariant1()
 {
-    var gen = Generator.GetNewGenerator();
+    var gen = TdfGeneratorFactory.GetNew();
 
     var lines = gen.GenerateTestDataFactory("myTdf", "spacey", false, [typeof(Order), typeof(Delivery)]);
 
@@ -24,11 +24,12 @@ void GenerateAndPrintTestDataTdfGeneratorVariant1()
 async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken cancellationToken)
 {
     var tdfGeneratorConfiguration = BuildTdfGeneratorConfig();
-
+    var tdfGeneratorConfigurationOrPathToJson = new TdfGeneratorConfigurationOrPathToJson(tdfGeneratorConfiguration);
+    
     var services = new ServiceCollection()
         .AddLogging()
         .AddDotnetInfrastructure()
-        .AddExternalAssemblyTestDataFactoryGeneration(tdfGeneratorConfiguration)
+        .AddExternalAssemblyTestDataFactoryGeneration(tdfGeneratorConfigurationOrPathToJson)
         .BuildServiceProvider();
 
     var generator = services.GetRequiredService<IExternalAssemblyTestDataFactoryGenerator>();

@@ -14,10 +14,12 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddTestDataFactoryGeneration(
         this IServiceCollection services,
-        TdfGeneratorConfiguration tdfGeneratorConfiguration)
+        TdfGeneratorConfigurationOrPathToJson? tdfGeneratorConfigurationOrPathToJson)
     {
+        var config = ConfigProvider.GetConfiguration(tdfGeneratorConfigurationOrPathToJson);
+        
         services
-            .AddSingleton<TdfGeneratorConfiguration>(tdfGeneratorConfiguration)
+            .AddSingleton<TdfGeneratorConfiguration>(config)
             .AddScoped<IUserDefinedGenericsCodeGenerator, UserDefinedGenericsCodeGenerator>()
             .AddScoped<IEitherInformationService, EitherInformationService>()
             .AddScoped<IEitherCodeGenerator, EitherCodeGenerator>()
@@ -33,5 +35,11 @@ public static class ServiceConfiguration
             .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>();
 
         return services;
+    }
+
+    private static TdfGeneratorConfiguration GetConfig(TdfGeneratorConfiguration? tdfGeneratorConfiguration)
+    {
+        
+        return tdfGeneratorConfiguration ?? throw new InvalidOperationException();
     }
 }
