@@ -4,6 +4,7 @@ using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TestDataForTestDataFactoryGenerator.BusinessLogic;
 
+var config = BuildTdfGeneratorConfig();
 // GenerateAndPrintTestDataTdfGeneratorVariant1();
 await GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken.None);
 
@@ -13,7 +14,7 @@ void GenerateAndPrintTestDataTdfGeneratorVariant1()
 {
     var gen = TdfGeneratorFactory.GetNew();
 
-    var lines = gen.GenerateTestDataFactory("myTdf", "spacey", false, [typeof(Order), typeof(Delivery)]);
+    var lines = gen.GenerateTestDataFactory("myTdf", "spacey", false, [typeof(Order), typeof(Delivery)], false);
 
     foreach (var line in lines)
     {
@@ -24,12 +25,11 @@ void GenerateAndPrintTestDataTdfGeneratorVariant1()
 async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken cancellationToken)
 {
     var tdfGeneratorConfiguration = BuildTdfGeneratorConfig();
-    var tdfGeneratorConfigurationOrPathToJson = new TdfGeneratorConfigurationOrPathToJson(tdfGeneratorConfiguration);
-    
+
     var services = new ServiceCollection()
         .AddLogging()
         .AddDotnetInfrastructure()
-        .AddExternalAssemblyTestDataFactoryGeneration(tdfGeneratorConfigurationOrPathToJson)
+        .AddExternalAssemblyTestDataFactoryGeneration(TdfConfigDefinition.FromConfig(tdfGeneratorConfiguration))
         .BuildServiceProvider();
 
     var generator = services.GetRequiredService<IExternalAssemblyTestDataFactoryGenerator>();
@@ -44,7 +44,8 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
         NameSpace: "sapcey",
         TypeNames: ["Order", "Delivery"],
         OutputToConsole: false,
-        WorkingDirectory: executionDirectory);
+        WorkingDirectory: executionDirectory,
+        IncludeOptionalsCode: true);
     var lines = await generator.GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
 
     foreach (var line in lines)
@@ -68,11 +69,10 @@ TdfGeneratorConfiguration BuildTdfGeneratorConfig()
             new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
         ]);
 
-    var tdfGeneratorConfiguration1 = new TdfGeneratorConfiguration(
+    return new TdfGeneratorConfiguration(
         NamespacesToAdd: [],
         Indent: "    ",
         EitherNamespace: null,
         CustomInstantiationForWellKnownProtobufTypes: [],
         SimpleTypeConfiguration: simpleTypeConfiguration);
-    return tdfGeneratorConfiguration1;
 }

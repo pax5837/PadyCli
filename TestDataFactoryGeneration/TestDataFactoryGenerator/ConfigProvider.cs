@@ -4,11 +4,11 @@ namespace TestDataFactoryGenerator;
 
 internal static class ConfigProvider
 {
-    public static TdfGeneratorConfiguration GetConfiguration(TdfGeneratorConfigurationOrPathToJson? externalConfiguration)
+    public static TdfGeneratorConfiguration GetConfiguration(TdfConfigDefinition? externalConfiguration)
     {
         if (externalConfiguration is not null)
         {
-            return externalConfiguration.Switch(whenPath: GetConfigFromJsonFile);
+            return externalConfiguration.Get(whenPath: GetConfigFromJsonFile);
         }
 
         var pathToConfig = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PadyCli\\TdfGeneratorConfig.json");

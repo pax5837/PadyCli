@@ -4,7 +4,7 @@ namespace TestDataFactoryGenerator;
 
 public static class TdfGeneratorFactory
 {
-    public static ITestDataFactoryGenerator GetNew(TdfGeneratorConfigurationOrPathToJson? config = null)
+    public static ITestDataFactoryGenerator GetNew(TdfConfigDefinition? config = null)
     {
         var serviceProvides = new ServiceCollection()
             .AddTestDataFactoryGeneration(config)

@@ -40,10 +40,11 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
             .ToImmutableHashSet();
 
         return _testDataFactoryGenerator.GenerateTestDataFactory(
-            generationParameters.TestDataFactoryName,
-            generationParameters.NameSpace,
-            generationParameters.OutputToConsole,
-            actualTypes);
+            testDataFactoryName: generationParameters.TestDataFactoryName,
+            nameSpace: generationParameters.NameSpace,
+            outputToConsole: generationParameters.OutputToConsole,
+            types: actualTypes,
+            includeOptionalsCode: generationParameters.IncludeOptionalsCode);
     }
 
     private Type? HandleNoTypeSelected(string typeName)

@@ -23,7 +23,8 @@ internal class TestDataFactoryGenerator
             NameSpace: options.TestDataFactoryNamespace,
             TypeNames: options.CommaSepparatedClassNames.Split(',').ToImmutableHashSet(),
             OutputToConsole: true,
-            WorkingDirectory: null);
+            WorkingDirectory: null,
+            IncludeOptionalsCode: options.IncludeOptionals);
 
         if (options.Verbose)
         {

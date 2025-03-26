@@ -6,10 +6,10 @@ public static  class ServiceConfigurator
 {
     public static IServiceCollection AddExternalAssemblyTestDataFactoryGeneration(
         this IServiceCollection services,
-        TdfGeneratorConfigurationOrPathToJson configurationOrPathToJson)
+        TdfConfigDefinition configDefinition)
     {
         services
-            .AddTestDataFactoryGeneration(configurationOrPathToJson)
+            .AddTestDataFactoryGeneration(configDefinition)
             .AddScoped<IExternalAssemblyTestDataFactoryGenerator, ExternalAssemblyTestDataFactoryGenerator>();
 
         return services;

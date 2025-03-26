@@ -14,6 +14,9 @@ public class TestDataFactoryGenerationOptions
     [Option('t', "tdf-name", Required = true, HelpText = "Class name of the test data factory")]
     public string TestDataFactoryClassName { get; set; }
 
+    [Option('o', "include-optionals", Required = true, Default = false, HelpText = "Include code for optional parameters")]
+    public bool IncludeOptionals { get; set; }
+
     [Option('v', "verbose", Required = false, Default = false, HelpText = "Verbose output")]
     public bool Verbose { get; set; }
 }

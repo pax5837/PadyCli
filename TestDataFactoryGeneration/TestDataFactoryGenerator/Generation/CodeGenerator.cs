@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using TestDataFactoryGenerator.Generation.Optionals;
 
 namespace TestDataFactoryGenerator.Generation;
 
@@ -8,6 +9,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherCodeGenerator _eitherCodeGenerator;
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
+    private readonly IOptionalsGenerator _optionalsGenerator;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -15,12 +17,14 @@ internal class CodeGenerator : ICodeGenerator
         IEitherCodeGenerator eitherCodeGenerator,
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
+        IOptionalsGenerator optionalsGenerator,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _eitherCodeGenerator = eitherCodeGenerator;
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
+        _optionalsGenerator = optionalsGenerator;
         _config = config;
     }
 
@@ -28,7 +32,8 @@ internal class CodeGenerator : ICodeGenerator
         string tdfName,
         string nameSpace,
         IImmutableSet<Type> types,
-        IImmutableList<string> inputTypeFullNames)
+        IImmutableList<string> inputTypeFullNames,
+        bool includeOptionalsCode)
     {
         var codeDoc = GenerateCodeDoc(inputTypeFullNames);
         var starOfClass = GenerateStartOfClass(tdfName);
@@ -67,6 +72,7 @@ internal class CodeGenerator : ICodeGenerator
                 .Concat(userDefinedMethods)
                 .RemoveLastWhiteLine()
                 .Concat(endOfClass)
+                .Concat(_optionalsGenerator.GenerateOptionalsCode(includeOptionalsCode))
                 .ToImmutableList();
     }
 
