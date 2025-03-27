@@ -44,7 +44,7 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
             nameSpace: generationParameters.NameSpace,
             outputToConsole: generationParameters.OutputToConsole,
             types: actualTypes,
-            includeOptionalsCode: generationParameters.IncludeOptionalsCode);
+            includeHelperClasses: generationParameters.IncludeOptionalsCode);
     }
 
     private Type? HandleNoTypeSelected(string typeName)

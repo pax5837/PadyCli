@@ -82,17 +82,23 @@ await parserResult.WithParsedAsync((AboutOptions opts)
 
 TdfConfigDefinition BuildTdfGeneratorConfig()
 {
+    var useLeadingUnderscoreForPrivateFields = true;
+
+    var randomField = useLeadingUnderscoreForPrivateFields ? "_random" : "random";
+
+
     var simpleTypeConfiguration = new SimpleTypeConfiguration(
         "#########",
         [
-            new(typeof(string), "GenerateRandomString(\"#########\")", "System.String", ["private string GenerateRandomString(string? parameterName) => $\"{parameterName ?? \"SomeString\"}_{_random.Next(1, int.MaxValue)}\";"]),
-            new(typeof(int), "GenerateRandomInt()", null, ["private int GenerateRandomInt() => _random.Next();"]),
-            new(typeof(Guid), "GenerateRandomGuid()", null, ["private Guid GenerateRandomGuid() => Guid.NewGuid();"]),
-            new(typeof(DateTimeOffset), "GenerateRandomDateTimeOffset()", null, ["private DateTimeOffset GenerateRandomDateTimeOffset() => new DateTimeOffset(_random.NextInt64(), TimeSpan.FromHours(_random.Next(-23, 23)));"]),
-            new(typeof(TimeSpan), "GenerateRandomTimeSpan()", null, ["private TimeSpan GenerateRandomTimeSpan() => new TimeSpan(_random.NextInt64());"]),
-            new(typeof(bool), "GenerateRandomBool()", null, ["private bool GenerateRandomBool() => _random.Next() % 2 == 0;"]),
-            new(typeof(long), "GenerateRandomLong()", null, ["private long GenerateRandomLong() => _random.NextInt64();"]),
-            new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
+            new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+            new(typeof(int), $"{randomField}.Next()", null, []),
+            new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
+            new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),
+            new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
+            new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
+            new(typeof(bool), $"{randomField}.NextBool()", null, []),
+            new(typeof(long), $"{randomField}.NextLong()", null, []),
+            new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
         ]);
 
     var tdfGeneratorConfiguration = new TdfGeneratorConfiguration(
@@ -100,6 +106,7 @@ TdfConfigDefinition BuildTdfGeneratorConfig()
         Indent: "    ",
         EitherNamespace: null,
         CustomInstantiationForWellKnownProtobufTypes: [],
-        SimpleTypeConfiguration: simpleTypeConfiguration);
+        SimpleTypeConfiguration: simpleTypeConfiguration,
+        UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields);
     return TdfConfigDefinition.FromConfig(tdfGeneratorConfiguration);
 }

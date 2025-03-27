@@ -1,6 +1,4 @@
-﻿using TestDataFactoryGenerator.Generation.Protobuf;
-
-namespace TestDataFactoryGenerator.Generation.ParameterInstantiation;
+﻿namespace TestDataFactoryGenerator.Generation.ParameterInstantiation;
 
 internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCodeGenerator
 {
@@ -68,7 +66,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
 
         if (_protoInformationService.IsProtoRepeatedField(type))
         {
-            return ProtoCodeGenerator.GenerateInstantiationCodeForProtobufRepeatedType(type, dependencies, this);
+            return _protoCodeGenerator.GenerateInstantiationCodeForProtobufRepeatedType(type, dependencies, this);
         }
 
         if (_userDefinedGenericsCodeGenerator.IsAUserDefinedGenericType(type))

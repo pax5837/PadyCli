@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-using TestDataFactoryGenerator.Definitions;
 
 namespace TestDataFactoryGenerator.Generation.TypesWithConstructors;
 
@@ -14,6 +13,8 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
     private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
     private readonly TdfGeneratorConfiguration _config;
 
+    private readonly string _leadingUnderscore;
+
     public TypeWithConstructorsGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
         IProtoCodeGenerator protoCodeGenerator,
@@ -23,13 +24,14 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         IRandomizerCallerGenerator randomizerCallerGenerator,
         TdfGeneratorConfiguration config)
     {
-        _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
+        this._parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _protoCodeGenerator = protoCodeGenerator;
         _typeNameGenerator = typeNameGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
         _randomizerCallerGenerator = randomizerCallerGenerator;
         _config = config;
+        _leadingUnderscore = config.LeadingUnderscore();
     }
 
 
@@ -70,7 +72,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
 
         lines.Add($"{_config.Indent}public {t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()");
         lines.Add($"{_config.Indent}{{");
-        lines.Add($"{_config.Indent}{_config.Indent}var constructorNumber = _random.Next(0, {constructors.Count()});");
+        lines.Add($"{_config.Indent}{_config.Indent}var constructorNumber = {_leadingUnderscore}random.Next(0, {constructors.Count()});");
         lines.Add($"{_config.Indent}{_config.Indent}return constructorNumber switch {{");
 
         for (var j = 0; j < constructors.Count; j++)
@@ -132,7 +134,6 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
             var parameterKind = parameter.GetKind(nullabilityKind);
             if (parameterKind.IsNullable)
             {
-                dependencies.Add(typeof(InternalOption).Namespace);
                 var optionalType = parameterKind.IsValueType
                     ? "OptionalValue"
                     : "OptionalRef";

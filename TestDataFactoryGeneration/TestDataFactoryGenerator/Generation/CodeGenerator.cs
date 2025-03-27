@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using TestDataFactoryGenerator.Generation.Optionals;
+using TestDataFactoryGenerator.Generation.Helpers;
 
 namespace TestDataFactoryGenerator.Generation;
 
@@ -9,7 +9,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherCodeGenerator _eitherCodeGenerator;
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
-    private readonly IOptionalsGenerator _optionalsGenerator;
+    private readonly IHelpersGenerator _helpersGenerator;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -17,14 +17,14 @@ internal class CodeGenerator : ICodeGenerator
         IEitherCodeGenerator eitherCodeGenerator,
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
-        IOptionalsGenerator optionalsGenerator,
+        IHelpersGenerator helpersGenerator,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _eitherCodeGenerator = eitherCodeGenerator;
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
-        _optionalsGenerator = optionalsGenerator;
+        _helpersGenerator = helpersGenerator;
         _config = config;
     }
 
@@ -33,7 +33,7 @@ internal class CodeGenerator : ICodeGenerator
         string nameSpace,
         IImmutableSet<Type> types,
         IImmutableList<string> inputTypeFullNames,
-        bool includeOptionalsCode)
+        bool includeHelperClasses)
     {
         var codeDoc = GenerateCodeDoc(inputTypeFullNames);
         var starOfClass = GenerateStartOfClass(tdfName);
@@ -72,7 +72,7 @@ internal class CodeGenerator : ICodeGenerator
                 .Concat(userDefinedMethods)
                 .RemoveLastWhiteLine()
                 .Concat(endOfClass)
-                .Concat(_optionalsGenerator.GenerateOptionalsCode(includeOptionalsCode))
+                .Concat(_helpersGenerator.GenerateHelpersCode(includeHelperClasses))
                 .ToImmutableList();
     }
 
@@ -130,21 +130,25 @@ internal class CodeGenerator : ICodeGenerator
         {
             $"internal partial class {tdfName}",
             "{",
-            $"{_config.Indent}private readonly Random _random;",
+            $"{_config.Indent}private static readonly IImmutableList<int> {_config.LeadingUnderscore()}zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];",
+            string.Empty,
+            $"{_config.Indent}private int GetZeroBiasedCount() => {_config.LeadingUnderscore()}zeroBiasedCounts.OrderBy(_ => {_config.LeadingUnderscore()}random.Next()).First();",
+            string.Empty,
+            $"{_config.Indent}private readonly Random {_config.LeadingUnderscore()}random;",
             string.Empty,
             $"{_config.Indent}public {tdfName}()",
             $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}_random = new Random();",
+            $"{_config.Indent}{_config.Indent}{_config.This()}random = new Random();",
             $"{_config.Indent}}}",
             string.Empty,
             $"{_config.Indent}public {tdfName}(int seed)",
             $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}_random = new Random(seed);",
+            $"{_config.Indent}{_config.Indent}{_config.This()}random = new Random(seed);",
             $"{_config.Indent}}}",
             string.Empty,
             $"{_config.Indent}public {tdfName}(Random random)",
             $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}_random = random;",
+            $"{_config.Indent}{_config.Indent}{_config.This()}random = random;",
             $"{_config.Indent}}}",
             string.Empty,
         }.ToImmutableList();

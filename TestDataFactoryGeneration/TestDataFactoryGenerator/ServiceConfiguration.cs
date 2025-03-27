@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator.Generation;
 using TestDataFactoryGenerator.Generation.Collections;
 using TestDataFactoryGenerator.Generation.Either;
-using TestDataFactoryGenerator.Generation.Optionals;
+using TestDataFactoryGenerator.Generation.Helpers;
 using TestDataFactoryGenerator.Generation.ParameterInstantiation;
 using TestDataFactoryGenerator.Generation.Protobuf;
 using TestDataFactoryGenerator.Generation.TypeNames;
@@ -34,7 +34,7 @@ public static class ServiceConfiguration
             .AddScoped<ITypeLister, TypeLister>()
             .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
             .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>()
-            .AddScoped<IOptionalsGenerator, OptionalsGenerator>();
+            .AddScoped<IHelpersGenerator, HelpersGenerator>();
 
         return services;
     }

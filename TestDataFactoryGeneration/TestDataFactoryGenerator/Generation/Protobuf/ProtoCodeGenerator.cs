@@ -8,6 +8,8 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
     private readonly IProtoInformationService _protoInformationService;
     private readonly TdfGeneratorConfiguration _config;
 
+    private readonly string _leadingUnderscore;
+
     public ProtoCodeGenerator(
         ITypeNameGenerator typeNameGenerator,
         IProtoInformationService protoInformationService,
@@ -16,6 +18,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         _typeNameGenerator = typeNameGenerator;
         _protoInformationService = protoInformationService;
         _config = config;
+        _leadingUnderscore = config.LeadingUnderscore();
     }
 
     public IImmutableList<Type> GetNestedTypes(
@@ -103,7 +106,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         return lines.ToImmutableList();
     }
 
-    public static string GenerateInstantiationCodeForProtobufRepeatedType(
+    public string GenerateInstantiationCodeForProtobufRepeatedType(
         Type type,
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
@@ -112,6 +115,6 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         dependencies.Add("System.Linq");
         dependencies.Add("System.Collections.Generic");
         return
-            $"Enumerable.Range(1, _random.Next(0, 4)).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}";
+            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}";
     }
 }

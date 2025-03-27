@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text.Json;
 
 namespace TestDataFactoryGenerator;
@@ -35,25 +36,37 @@ internal static class ConfigProvider
 
     private static TdfGeneratorConfiguration GetDefaultTdfGeneratorConfig()
     {
+        var useLeadingUnderscoreForPrivateFields = false;
+
+        var randomField =  useLeadingUnderscoreForPrivateFields ? "_random" : "random";
+
+        ImmutableList<InstantiationConfigurationForType> instantiationConfigurationForTypes =
+        [
+            new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+            new(typeof(int), $"{randomField}.Next()", null, []),
+            new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
+            new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),
+            new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
+            new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
+            new(typeof(bool), $"{randomField}.NextBool()", null, []),
+            new(typeof(long), $"{randomField}.NextLong()", null, []),
+            new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
+        ];
+
         var simpleTypeConfiguration = new SimpleTypeConfiguration(
-            "#########",
-            [
-                new(typeof(string), "GenerateRandomString(\"#########\")", "System.String", ["private string GenerateRandomString(string? parameterName) => $\"{parameterName ?? \"SomeString\"}_{_random.Next(1, int.MaxValue)}\";"]),
-                new(typeof(int), "GenerateRandomInt()", null, ["private int GenerateRandomInt() => _random.Next();"]),
-                new(typeof(Guid), "GenerateRandomGuid()", null, ["private Guid GenerateRandomGuid() => Guid.NewGuid();"]),
-                new(typeof(DateTimeOffset), "GenerateRandomDateTimeOffset()", null, ["private DateTimeOffset GenerateRandomDateTimeOffset() => new DateTimeOffset(_random.NextInt64(), TimeSpan.FromHours(_random.Next(-23, 23)));"]),
-                new(typeof(TimeSpan), "GenerateRandomTimeSpan()", null, ["private TimeSpan GenerateRandomTimeSpan() => new TimeSpan(_random.NextInt64());"]),
-                new(typeof(bool), "GenerateRandomBool()", null, ["private bool GenerateRandomBool() => _random.Next() % 2 == 0;"]),
-                new(typeof(long), "GenerateRandomLong()", null, ["private long GenerateRandomLong() => _random.NextInt64();"]),
-                new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
-            ]);
+            ParameterNamePlaceholder: "#########",
+            InstantiationConfigurations: instantiationConfigurationForTypes
+                .Select(selector: x => x with { MethodCodeToAdd = x.MethodCodeToAdd.Select(selector: c => useLeadingUnderscoreForPrivateFields ? c : c.Replace(oldValue: "_random", newValue: "random"))
+                    .ToImmutableList() } )
+                .ToImmutableList());
 
         var tdfGeneratorConfiguration1 = new TdfGeneratorConfiguration(
             NamespacesToAdd: [],
             Indent: "    ",
             EitherNamespace: null,
             CustomInstantiationForWellKnownProtobufTypes: [],
-            SimpleTypeConfiguration: simpleTypeConfiguration);
+            SimpleTypeConfiguration: simpleTypeConfiguration,
+            UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields);
         return tdfGeneratorConfiguration1;
     }
 }

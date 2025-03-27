@@ -20,6 +20,13 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
             ("ImmutableArray", "ToImmutableArray()"),
         }.ToImmutableDictionary(x => x.CollectionTypeName, x => x.ToMethod);
 
+    private readonly string _leadingUnderscore;
+
+    public CollectionsCodeGenerator(TdfGeneratorConfiguration config)
+    {
+        _leadingUnderscore = config.LeadingUnderscore();
+    }
+
     public bool IsACollection(Type type)
     {
         return CollectionMap.Keys.Any(type.Name.StartsWith);
@@ -36,6 +43,6 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
         dependencies.Add("System.Linq");
 
         return
-            $"Enumerable.Range(1, _random.Next(0, 4)).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{CollectionMap[typeName]}";
+            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{CollectionMap[typeName]}";
     }
 }

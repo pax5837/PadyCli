@@ -20,7 +20,7 @@ internal class FactoryGenerator : ITestDataFactoryGenerator
         string nameSpace,
         bool outputToConsole,
         IImmutableSet<Type> types,
-        bool includeOptionalsCode)
+        bool includeHelperClasses)
     {
         var allTypes = _typeLister.GetAllTypes(types.ToImmutableHashSet());
         var inputTypeFullNames = types.Select(t => t.FullName).OfType<string>().ToImmutableList();
@@ -30,7 +30,7 @@ internal class FactoryGenerator : ITestDataFactoryGenerator
             nameSpace,
             allTypes,
             inputTypeFullNames,
-            includeOptionalsCode: includeOptionalsCode);
+            includeHelperClasses: includeHelperClasses);
 
         if (outputToConsole)
         {

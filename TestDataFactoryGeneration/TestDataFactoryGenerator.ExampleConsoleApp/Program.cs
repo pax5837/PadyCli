@@ -1,4 +1,5 @@
-﻿using DotnetInfrastructure;
+﻿using System.Collections.Immutable;
+using DotnetInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
@@ -56,23 +57,36 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
 
 TdfGeneratorConfiguration BuildTdfGeneratorConfig()
 {
+    var useLeadingUnderscoreForPrivateFields = false;
+
+    ImmutableList<InstantiationConfigurationForType> instantiationConfigurationForTypes = [
+        new(typeof(string), "GenerateRandomString(\"#########\")", "System.String", ["private string GenerateRandomString(string? parameterName) => $\"{parameterName ?? \"SomeString\"}_{_random.Next(1, int.MaxValue)}\";"]),
+        new(typeof(int), "GenerateRandomInt()", null, ["private int GenerateRandomInt() => _random.Next();"]),
+        new(typeof(Guid), "GenerateRandomGuid()", null, ["private Guid GenerateRandomGuid() => Guid.NewGuid();"]),
+        new(typeof(DateTimeOffset), "GenerateRandomDateTimeOffset()", null, ["private DateTimeOffset GenerateRandomDateTimeOffset() => new DateTimeOffset(_random.NextInt64(), TimeSpan.FromHours(_random.Next(-23, 23)));"]),
+        new(typeof(TimeSpan), "GenerateRandomTimeSpan()", null, ["private TimeSpan GenerateRandomTimeSpan() => new TimeSpan(_random.NextInt64());"]),
+        new(typeof(bool), "GenerateRandomBool()", null, ["private bool GenerateRandomBool() => _random.Next() % 2 == 0;"]),
+        new(typeof(long), "GenerateRandomLong()", null, ["private long GenerateRandomLong() => _random.NextInt64();"]),
+        new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
+    ];
+
     var simpleTypeConfiguration = new SimpleTypeConfiguration(
         "#########",
-        [
-            new(typeof(string), "GenerateRandomString(\"#########\")", "System.String", ["private string GenerateRandomString(string? parameterName) => $\"{parameterName ?? \"SomeString\"}_{_random.Next(1, int.MaxValue)}\";"]),
-            new(typeof(int), "GenerateRandomInt()", null, ["private int GenerateRandomInt() => _random.Next();"]),
-            new(typeof(Guid), "GenerateRandomGuid()", null, ["private Guid GenerateRandomGuid() => Guid.NewGuid();"]),
-            new(typeof(DateTimeOffset), "GenerateRandomDateTimeOffset()", null, ["private DateTimeOffset GenerateRandomDateTimeOffset() => new DateTimeOffset(_random.NextInt64(), TimeSpan.FromHours(_random.Next(-23, 23)));"]),
-            new(typeof(TimeSpan), "GenerateRandomTimeSpan()", null, ["private TimeSpan GenerateRandomTimeSpan() => new TimeSpan(_random.NextInt64());"]),
-            new(typeof(bool), "GenerateRandomBool()", null, ["private bool GenerateRandomBool() => _random.Next() % 2 == 0;"]),
-            new(typeof(long), "GenerateRandomLong()", null, ["private long GenerateRandomLong() => _random.NextInt64();"]),
-            new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
-        ]);
+        instantiationConfigurationForTypes
+            .Select(selector:
+                x => x with
+                {
+                    MethodCodeToAdd = x.MethodCodeToAdd
+                        .Select(selector: c => useLeadingUnderscoreForPrivateFields ? c : c.Replace(oldValue: "_random", newValue: "random"))
+                        .ToImmutableList()
+                })
+            .ToImmutableList());
 
     return new TdfGeneratorConfiguration(
         NamespacesToAdd: [],
         Indent: "    ",
         EitherNamespace: null,
         CustomInstantiationForWellKnownProtobufTypes: [],
-        SimpleTypeConfiguration: simpleTypeConfiguration);
+        SimpleTypeConfiguration: simpleTypeConfiguration,
+        UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields);
 }

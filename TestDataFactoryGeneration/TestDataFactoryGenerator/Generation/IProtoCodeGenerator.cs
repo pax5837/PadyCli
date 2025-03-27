@@ -15,4 +15,8 @@ internal interface IProtoCodeGenerator
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator);
 
+    string GenerateInstantiationCodeForProtobufRepeatedType(
+        Type type,
+        HashSet<string> dependencies,
+        IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator);
 }

@@ -8,7 +8,8 @@ public record TdfGeneratorConfiguration(
     string Indent,
     string? EitherNamespace,
     IImmutableList<InstantiationConfigurationForName> CustomInstantiationForWellKnownProtobufTypes,
-    SimpleTypeConfiguration SimpleTypeConfiguration)
+    SimpleTypeConfiguration SimpleTypeConfiguration,
+    bool UseLeadingUnderscoreForPrivateFields)
 {
     [JsonIgnore]
     public IImmutableDictionary<string, InstantiationConfigurationForName>
