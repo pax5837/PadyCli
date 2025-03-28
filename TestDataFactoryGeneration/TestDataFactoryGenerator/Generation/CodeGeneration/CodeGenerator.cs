@@ -1,8 +1,7 @@
 ﻿using System.Collections.Immutable;
-using TestDataFactoryGenerator.Generation.AbstractClasses;
 using TestDataFactoryGenerator.Generation.Helpers;
 
-namespace TestDataFactoryGenerator.Generation;
+namespace TestDataFactoryGenerator.Generation.CodeGeneration;
 
 internal class CodeGenerator : ICodeGenerator
 {
@@ -11,7 +10,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
     private readonly IHelpersGenerator _helpersGenerator;
-    private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
+    private readonly ISimpleTypeGenerator _simpleTypeGenerator;
     private readonly IAbstractClassInformationService _abstractClassInformationService;
     private readonly IAbstractOneOfClassGenerationCreationService _abstractOneOfClassGenerationCreationService;
     private readonly TdfGeneratorConfiguration _config;
@@ -22,7 +21,7 @@ internal class CodeGenerator : ICodeGenerator
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
         IHelpersGenerator helpersGenerator,
-        IRandomizerCallerGenerator randomizerCallerGenerator,
+        ISimpleTypeGenerator simpleTypeGenerator,
         IAbstractClassInformationService abstractClassInformationService,
         IAbstractOneOfClassGenerationCreationService abstractOneOfClassGenerationCreationService,
         TdfGeneratorConfiguration config)
@@ -32,7 +31,7 @@ internal class CodeGenerator : ICodeGenerator
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
         _helpersGenerator = helpersGenerator;
-        _randomizerCallerGenerator = randomizerCallerGenerator;
+        _simpleTypeGenerator = simpleTypeGenerator;
         _abstractClassInformationService = abstractClassInformationService;
         _abstractOneOfClassGenerationCreationService = abstractOneOfClassGenerationCreationService;
         _config = config;
@@ -177,7 +176,7 @@ internal class CodeGenerator : ICodeGenerator
             return ImmutableList<string>.Empty;
         }
 
-        if (_randomizerCallerGenerator.CanGenerate(type))
+        if (_simpleTypeGenerator.CanGenerate(type))
         {
             return ImmutableList<string>.Empty;
         }

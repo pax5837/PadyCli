@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-using TestDataFactoryGenerator.Generation.AbstractClasses;
+using Microsoft.Extensions.Logging;
 
-namespace TestDataFactoryGenerator.Generation;
+namespace TestDataFactoryGenerator.Generation.FactoryGeneration;
 
 internal class TypeLister : ITypeLister
 {
@@ -11,18 +11,21 @@ internal class TypeLister : ITypeLister
     private readonly IProtoInformationService _protoInformationService;
     private readonly IEitherInformationService _eitherInformationService;
     private readonly IAbstractClassInformationService _abstractClassInformationService;
+    private readonly ILogger<TypeLister> _logger;
 
     public TypeLister(IProtoCodeGenerator protoCodeGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
         IEitherInformationService eitherInformationService,
-        IAbstractClassInformationService abstractClassInformationService)
+        IAbstractClassInformationService abstractClassInformationService,
+        ILogger<TypeLister> logger)
     {
         _protoCodeGenerator = protoCodeGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
         _eitherInformationService = eitherInformationService;
         _abstractClassInformationService = abstractClassInformationService;
+        _logger = logger;
     }
 
 
@@ -34,9 +37,19 @@ internal class TypeLister : ITypeLister
             PopulateType(inputType, types);
         }
 
-        return types
+        var allTypes = types
             .Where(IsNotInSystemNamespace)
             .ToImmutableHashSet();
+
+        if (_logger.IsEnabled(LogLevel.Trace))
+        {
+            foreach (var type in allTypes.OrderBy(t => t.FullName))
+            {
+                _logger.LogTrace($"Type: {type.FullName}");
+            }
+        }
+
+        return allTypes;
     }
 
     private static bool IsNotInSystemNamespace(Type type)

@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace TestDataFactoryGenerator.Generation.AbstractClasses;
+namespace TestDataFactoryGenerator.Generation;
 
 internal interface IAbstractClassInformationService
 {

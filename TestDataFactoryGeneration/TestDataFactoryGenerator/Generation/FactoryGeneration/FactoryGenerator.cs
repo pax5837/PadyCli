@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace TestDataFactoryGenerator.Generation;
+namespace TestDataFactoryGenerator.Generation.FactoryGeneration;
 
 internal class FactoryGenerator : ITestDataFactoryGenerator
 {
@@ -26,10 +26,10 @@ internal class FactoryGenerator : ITestDataFactoryGenerator
         var inputTypeFullNames = types.Select(t => t.FullName).OfType<string>().ToImmutableList();
 
         var lines = _codeGenerator.CreateTestDataFactoryCode(
-            testDataFactoryName,
-            nameSpace,
-            allTypes,
-            inputTypeFullNames,
+            tdfName: testDataFactoryName,
+            nameSpace: nameSpace,
+            types: allTypes,
+            inputTypeFullNames: inputTypeFullNames,
             includeHelperClasses: includeHelperClasses);
 
         if (outputToConsole)

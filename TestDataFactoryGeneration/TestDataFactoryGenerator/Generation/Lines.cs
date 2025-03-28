@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace TestDataFactoryGenerator;
+namespace TestDataFactoryGenerator.Generation;
 
 internal class Lines
 {

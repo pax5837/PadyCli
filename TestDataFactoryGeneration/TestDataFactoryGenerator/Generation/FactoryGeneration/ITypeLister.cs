@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace TestDataFactoryGenerator.Generation;
+namespace TestDataFactoryGenerator.Generation.FactoryGeneration;
 
 internal interface ITypeLister
 {

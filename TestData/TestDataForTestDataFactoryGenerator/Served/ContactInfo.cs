@@ -1,4 +1,4 @@
-namespace TestDataForTestDataFactoryGenerator.Boundaries.Served;
+namespace TestDataForTestDataFactoryGenerator.Served;
 
 internal abstract record ContactInfo(Person Person);
 

@@ -3,35 +3,22 @@ using DotnetInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
-using TestDataForTestDataFactoryGenerator.BusinessLogic;
 using TextCopy;
 
-var config = BuildTdfGeneratorConfig();
-// GenerateAndPrintTestDataTdfGeneratorVariant1();
-await GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken.None);
+Console.WriteLine("Use custom config? [y/n]");
+var useCustomConfig = Console.ReadLine()?.ToLowerInvariant() == "y";
+var config = useCustomConfig ? BuildTdfGeneratorConfig() : null;
+await GenerateAndPrintTestDataTdfGeneratorVariant2Async(config, CancellationToken.None);
 
 Task.Delay(500).Wait();
 
-void GenerateAndPrintTestDataTdfGeneratorVariant1()
+
+async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition? config, CancellationToken cancellationToken)
 {
-    var gen = TdfGeneratorFactory.GetNew();
-
-    var lines = gen.GenerateTestDataFactory("myTdf", "spacey", false, [typeof(Order), typeof(Delivery)], false);
-
-    foreach (var line in lines)
-    {
-        Console.WriteLine(line);
-    }
-}
-
-async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken cancellationToken)
-{
-    var tdfGeneratorConfiguration = BuildTdfGeneratorConfig();
-
     var services = new ServiceCollection()
         .AddLogging()
         .AddDotnetInfrastructure()
-        .AddExternalAssemblyTestDataFactoryGeneration(TdfConfigDefinition.FromConfig(tdfGeneratorConfiguration))
+        .AddExternalAssemblyTestDataFactoryGeneration(config)
         .BuildServiceProvider();
 
     var generator = services.GetRequiredService<IExternalAssemblyTestDataFactoryGenerator>();
@@ -43,7 +30,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
 
     var generationParameters = new GenerationParameters(
         TestDataFactoryName: "MyTdf",
-        NameSpace: "sapcey",
+        NameSpace: "TestDataForTestDataFactoryGenerator",
         TypeNames: ["Order", "Delivery"],
         OutputToConsole: false,
         WorkingDirectory: executionDirectory,
@@ -58,19 +45,23 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
     ClipboardService.SetText(string.Join(Environment.NewLine, lines));
 }
 
-TdfGeneratorConfiguration BuildTdfGeneratorConfig()
+TdfConfigDefinition BuildTdfGeneratorConfig()
 {
     var useLeadingUnderscoreForPrivateFields = false;
 
-    ImmutableList<InstantiationConfigurationForType> instantiationConfigurationForTypes = [
-        new(typeof(string), "GenerateRandomString(\"#########\")", "System.String", ["private string GenerateRandomString(string? parameterName) => $\"{parameterName ?? \"SomeString\"}_{_random.Next(1, int.MaxValue)}\";"]),
-        new(typeof(int), "GenerateRandomInt()", null, ["private int GenerateRandomInt() => _random.Next();"]),
-        new(typeof(Guid), "GenerateRandomGuid()", null, ["private Guid GenerateRandomGuid() => Guid.NewGuid();"]),
-        new(typeof(DateTimeOffset), "GenerateRandomDateTimeOffset()", null, ["private DateTimeOffset GenerateRandomDateTimeOffset() => new DateTimeOffset(_random.NextInt64(), TimeSpan.FromHours(_random.Next(-23, 23)));"]),
-        new(typeof(TimeSpan), "GenerateRandomTimeSpan()", null, ["private TimeSpan GenerateRandomTimeSpan() => new TimeSpan(_random.NextInt64());"]),
-        new(typeof(bool), "GenerateRandomBool()", null, ["private bool GenerateRandomBool() => _random.Next() % 2 == 0;"]),
-        new(typeof(long), "GenerateRandomLong()", null, ["private long GenerateRandomLong() => _random.NextInt64();"]),
-        new(typeof(decimal), "GenerateRandomDecimal()", null, ["private decimal GenerateRandomDecimal() => (decimal)_random.NextDouble();"]),
+    var randomField = useLeadingUnderscoreForPrivateFields ? "_random" : "random";
+
+    ImmutableList<InstantiationConfigurationForType> instantiationConfigurationForTypes =
+    [
+        new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+        new(typeof(int), $"{randomField}.Next()", null, []),
+        new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
+        new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),
+        new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
+        new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
+        new(typeof(bool), $"{randomField}.NextBool()", null, []),
+        new(typeof(long), $"{randomField}.NextLong()", null, []),
+        new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
     ];
 
     var simpleTypeConfiguration = new SimpleTypeConfiguration(
@@ -85,11 +76,12 @@ TdfGeneratorConfiguration BuildTdfGeneratorConfig()
                 })
             .ToImmutableList());
 
-    return new TdfGeneratorConfiguration(
-        NamespacesToAdd: [],
-        Indent: "    ",
-        EitherNamespace: null,
-        CustomInstantiationForWellKnownProtobufTypes: [],
-        SimpleTypeConfiguration: simpleTypeConfiguration,
-        UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields);
+    return TdfConfigDefinition.FromConfig(
+        new TdfGeneratorConfiguration(
+            NamespacesToAdd: [],
+            Indent: "    ",
+            EitherNamespace: null,
+            CustomInstantiationForWellKnownProtobufTypes: [],
+            SimpleTypeConfiguration: simpleTypeConfiguration,
+            UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields));
 }

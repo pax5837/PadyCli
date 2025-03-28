@@ -1,6 +1,6 @@
 namespace TestDataFactoryGenerator.Generation;
 
-internal interface IRandomizerCallerGenerator
+internal interface ISimpleTypeGenerator
 {
     bool CanGenerate(Type type);
 

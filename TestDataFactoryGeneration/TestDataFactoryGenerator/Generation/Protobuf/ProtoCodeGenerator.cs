@@ -21,8 +21,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         _leadingUnderscore = config.LeadingUnderscore();
     }
 
-    public IImmutableList<Type> GetNestedTypes(
-        Type type)
+    public IImmutableList<Type> GetNestedTypes(Type type)
     {
         return GetNestedProperties(type).Select(x => x.PropertyType).ToImmutableList();
     }
@@ -53,45 +52,47 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
             dependencies.Add(type.Namespace);
         }
 
-        var lines = new List<string>();
+        var lines = new Lines(_config);
 
         var nestedProperties = GetNestedProperties(type);
 
         var endOfMethodLine = nestedProperties.Count == 0 ? "()" : "(";
-        lines.Add($"{_config.Indent}public {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}{endOfMethodLine}");
+        lines.Add(1, $"public {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}{endOfMethodLine}");
 
         for (int i = 0; i < nestedProperties.Count; i++)
         {
             var endOfLine = i == nestedProperties.Count - 1 ? ")" : ",";
-            lines.Add(
-                $"{_config.Indents(2)}{_typeNameGenerator.GetTypeNameForParameter(nestedProperties[i].PropertyType)}? {nestedProperties[i].Name.ToCamelCase()} = null{endOfLine}");
+            var nestedProperty = nestedProperties[i];
+            lines.Add(2, $"{_typeNameGenerator.GetTypeNameForParameter(nestedProperty.PropertyType)}? {nestedProperty.Name.ToCamelCase()} = null{endOfLine}");
         }
 
-        lines.Add($"{_config.Indent}{{");
+        lines.Add(1, "{");
 
-        var nestedSingleProperties = GetNestedProperties(type).Where(p => !_protoInformationService.IsProtoRepeatedField(p.PropertyType))
+        var nestedSingleProperties = GetNestedProperties(type)
+            .Where(p => !_protoInformationService.IsProtoRepeatedField(p.PropertyType))
             .ToImmutableList();
         var endOfConstructorLine = nestedSingleProperties.Count == 0 ? "();" : string.Empty;
-        lines.Add($"{_config.Indents(2)}var generated = new {type.Name}{endOfConstructorLine}");
+        lines.Add(2, $"var generated = new {type.Name}{endOfConstructorLine}");
 
         if (nestedSingleProperties.Count > 0)
         {
-            lines.Add($"{_config.Indent}{_config.Indent}{{");
+            lines.Add(2, "{");
             for (int i = 0; i < nestedSingleProperties.Count; i++)
             {
                 var propertyName = nestedSingleProperties[i].Name;
                 var propertyType = nestedSingleProperties[i].PropertyType;
                 var methodParameterName = propertyName.ToCamelCase();
 
-                lines.Add(
-                    $"{_config.Indents(3)}{propertyName} = {methodParameterName} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)},");
+                lines.Add(3, $"{propertyName} = {methodParameterName} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)},");
             }
 
-            lines.Add($"{_config.Indents(2)}}};");
+            lines.Add(2, "};");
         }
 
-        var nestedRepeatedProperties =
-            GetNestedProperties(type).Where(p => _protoInformationService.IsProtoRepeatedField(p.PropertyType)).ToImmutableList();
+        var nestedRepeatedProperties = GetNestedProperties(type)
+            .Where(p => _protoInformationService.IsProtoRepeatedField(p.PropertyType))
+            .ToImmutableList();
+
         if (nestedRepeatedProperties.Any())
         {
             lines.Add(string.Empty);
@@ -100,15 +101,16 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
                 var propertyName = nestedRepeatedProperties[i].Name;
                 var propertyType = nestedRepeatedProperties[i].PropertyType;
 
-                lines.Add(
-                    $"{_config.Indents(2)}generated.{propertyName}.AddRange({propertyName.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)}));");
+                var defaultInstantiation = parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies);
+
+                lines.Add(2, $"generated.{propertyName}.AddRange({propertyName.ToCamelCase()} ?? {defaultInstantiation}));");
             }
         }
 
-        lines.Add(string.Empty);
-        lines.Add($"{_config.Indents(2)}return generated;");
-        lines.Add($"{_config.Indent}}}");
-        lines.Add(string.Empty);
+        lines.AddEmptyLine();
+        lines.Add(2, "return generated;");
+        lines.Add(1, "}");
+        lines.AddEmptyLine();
 
         return lines.ToImmutableList();
     }
@@ -121,7 +123,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         var genericType = type.GenericTypeArguments.Single();
         dependencies.Add("System.Linq");
         dependencies.Add("System.Collections.Generic");
-        return
-            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}";
+        var generateParameterInstantiation = parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies);
+        return $"Enumerable.Range(0, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {generateParameterInstantiation}";
     }
 }
