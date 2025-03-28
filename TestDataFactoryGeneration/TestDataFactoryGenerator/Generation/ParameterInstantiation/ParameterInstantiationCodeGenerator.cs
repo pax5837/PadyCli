@@ -9,6 +9,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
     private readonly IProtoInformationService _protoInformationService;
     private readonly ICollectionsCodeGenerator _collectionsCodeGenerator;
     private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
+    private readonly TdfGeneratorConfiguration _config;
 
     public ParameterInstantiationCodeGenerator(
         IEitherCodeGenerator eitherCodeGenerator,
@@ -17,7 +18,8 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
         ICollectionsCodeGenerator collectionsCodeGenerator,
-        IRandomizerCallerGenerator randomizerCallerGenerator)
+        IRandomizerCallerGenerator randomizerCallerGenerator,
+        TdfGeneratorConfiguration config)
     {
         _eitherCodeGenerator = eitherCodeGenerator;
         _eitherInformationService = eitherInformationService;
@@ -26,6 +28,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         _protoInformationService = protoInformationService;
         _collectionsCodeGenerator = collectionsCodeGenerator;
         _randomizerCallerGenerator = randomizerCallerGenerator;
+        _config = config;
     }
 
     public string GenerateParameterInstantiation(
@@ -40,7 +43,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
 
         if (type.IsEnum)
         {
-            return $"_random.NextEnum<{type.Name}>()";
+            return $"{_config.LeadingUnderscore()}random.NextEnum<{type.Name}>()";
         }
 
         if (_eitherInformationService.IsEither(type))

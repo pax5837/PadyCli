@@ -64,7 +64,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         {
             var endOfLine = i == nestedProperties.Count - 1 ? ")" : ",";
             lines.Add(
-                $"{_config.Indent}{_config.Indent}{_typeNameGenerator.GetTypeNameForParameter(nestedProperties[i].PropertyType)}? {nestedProperties[i].Name.ToCamelCase()} = null{endOfLine}");
+                $"{_config.Indents(2)}{_typeNameGenerator.GetTypeNameForParameter(nestedProperties[i].PropertyType)}? {nestedProperties[i].Name.ToCamelCase()} = null{endOfLine}");
         }
 
         lines.Add($"{_config.Indent}{{");
@@ -72,18 +72,22 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         var nestedSingleProperties = GetNestedProperties(type).Where(p => !_protoInformationService.IsProtoRepeatedField(p.PropertyType))
             .ToImmutableList();
         var endOfConstructorLine = nestedSingleProperties.Count == 0 ? "();" : string.Empty;
-        lines.Add($"{_config.Indent}{_config.Indent}var generated = new {type.Name}{endOfConstructorLine}");
+        lines.Add($"{_config.Indents(2)}var generated = new {type.Name}{endOfConstructorLine}");
 
         if (nestedSingleProperties.Count > 0)
         {
             lines.Add($"{_config.Indent}{_config.Indent}{{");
             for (int i = 0; i < nestedSingleProperties.Count; i++)
             {
+                var propertyName = nestedSingleProperties[i].Name;
+                var propertyType = nestedSingleProperties[i].PropertyType;
+                var methodParameterName = propertyName.ToCamelCase();
+
                 lines.Add(
-                    $"{_config.Indent}{_config.Indent}{_config.Indent}{nestedSingleProperties[i].Name} = {nestedSingleProperties[i].Name.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(nestedSingleProperties[i].PropertyType, dependencies)},");
+                    $"{_config.Indents(3)}{propertyName} = {methodParameterName} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)},");
             }
 
-            lines.Add($"{_config.Indent}{_config.Indent}}};");
+            lines.Add($"{_config.Indents(2)}}};");
         }
 
         var nestedRepeatedProperties =
@@ -93,13 +97,16 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
             lines.Add(string.Empty);
             for (int i = 0; i < nestedRepeatedProperties.Count; i++)
             {
+                var propertyName = nestedRepeatedProperties[i].Name;
+                var propertyType = nestedRepeatedProperties[i].PropertyType;
+
                 lines.Add(
-                    $"{_config.Indent}{_config.Indent}generated.{nestedRepeatedProperties[i].Name}.AddRange({nestedRepeatedProperties[i].Name.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(nestedRepeatedProperties[i].PropertyType, dependencies)}));");
+                    $"{_config.Indents(2)}generated.{propertyName}.AddRange({propertyName.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)}));");
             }
         }
 
         lines.Add(string.Empty);
-        lines.Add($"{_config.Indent}{_config.Indent}return generated;");
+        lines.Add($"{_config.Indents(2)}return generated;");
         lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 

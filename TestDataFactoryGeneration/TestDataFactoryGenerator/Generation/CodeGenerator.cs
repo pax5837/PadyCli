@@ -10,6 +10,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
     private readonly IHelpersGenerator _helpersGenerator;
+    private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -18,6 +19,7 @@ internal class CodeGenerator : ICodeGenerator
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
         IHelpersGenerator helpersGenerator,
+        IRandomizerCallerGenerator randomizerCallerGenerator,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
@@ -25,6 +27,7 @@ internal class CodeGenerator : ICodeGenerator
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
         _helpersGenerator = helpersGenerator;
+        _randomizerCallerGenerator = randomizerCallerGenerator;
         _config = config;
     }
 
@@ -39,7 +42,9 @@ internal class CodeGenerator : ICodeGenerator
         var starOfClass = GenerateStartOfClass(tdfName);
         var dependencies = GenerateInitialDependencies();
 
-        var methods = types.OrderBy(x => x.Name).SelectMany(x => CreateGenerationCode(x, dependencies))
+        var methods = types
+            .OrderBy(x => x.Name)
+            .SelectMany(x => CreateGenerationMethod(x, dependencies))
             .ToImmutableList();
 
         var userDefinedMethods = _config.SimpleTypeConfiguration.InstantiationConfigurations
@@ -115,48 +120,57 @@ internal class CodeGenerator : ICodeGenerator
         var typeList = inputTypeFullNames.Select(t => $"/// - <see cref=\"{t}\"/><br/>").ToImmutableList();
 
         return typeList
-            .Prepend(
-                "/// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>")
+            .Prepend("/// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>")
             .Prepend("/// <summary>")
-            .Append(
-                "/// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.")
+            .Append("/// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.")
             .Append("/// </summary>")
             .ToImmutableList();
     }
 
-    private ImmutableList<string> GenerateStartOfClass(string tdfName)
+    private IImmutableList<string> GenerateStartOfClass(string tdfName)
     {
-        return new[]
-        {
-            $"internal partial class {tdfName}",
-            "{",
-            $"{_config.Indent}private static readonly IImmutableList<int> {_config.LeadingUnderscore()}zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];",
-            string.Empty,
-            $"{_config.Indent}private int GetZeroBiasedCount() => {_config.LeadingUnderscore()}zeroBiasedCounts.OrderBy(_ => {_config.LeadingUnderscore()}random.Next()).First();",
-            string.Empty,
-            $"{_config.Indent}private readonly Random {_config.LeadingUnderscore()}random;",
-            string.Empty,
-            $"{_config.Indent}public {tdfName}()",
-            $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}{_config.This()}random = new Random();",
-            $"{_config.Indent}}}",
-            string.Empty,
-            $"{_config.Indent}public {tdfName}(int seed)",
-            $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}{_config.This()}random = new Random(seed);",
-            $"{_config.Indent}}}",
-            string.Empty,
-            $"{_config.Indent}public {tdfName}(Random random)",
-            $"{_config.Indent}{{",
-            $"{_config.Indent}{_config.Indent}{_config.This()}random = random;",
-            $"{_config.Indent}}}",
-            string.Empty,
-        }.ToImmutableList();
+        var lines = new Lines(_config);
+
+        List<(ushort Indents, string Line)> content =
+        [
+            (0, $"internal partial class {tdfName}"),
+            (0, "{"),
+            (1, $"private static readonly IImmutableList<int> {_config.LeadingUnderscore()}zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];"),
+            (0, string.Empty),
+            (1, $"private int GetZeroBiasedCount() => {_config.LeadingUnderscore()}zeroBiasedCounts.OrderBy(_ => {_config.LeadingUnderscore()}random.Next()).First();"),
+            (0, string.Empty),
+            (1, $"private readonly Random {_config.LeadingUnderscore()}random;"),
+            (0, string.Empty),
+            (1, $"public {tdfName}()"),
+            (1, $"{{"),
+            (2, $"{_config.This()}random = new Random();"),
+            (1, "}"),
+            (0, string.Empty),
+            (1, $"public {tdfName}(int seed)"),
+            (1, $"{{"),
+            (2, $"{_config.This()}random = new Random(seed);"),
+            (1, "}"),
+            (0, string.Empty),
+            (1, $"public {tdfName}(Random random)"),
+            (1, "{"),
+            (2, $"{_config.This()}random = random;"),
+            (1, "}"),
+            (0, string.Empty),
+        ];
+
+        lines.AddRange(content.ToImmutableList());
+
+        return lines.ToImmutableList();
     }
 
-    public IImmutableList<string> CreateGenerationCode(Type t, HashSet<string> dependencies)
+    public IImmutableList<string> CreateGenerationMethod(Type t, HashSet<string> dependencies)
     {
         if (t.IsEnum)
+        {
+            return ImmutableList<string>.Empty;
+        }
+
+        if (_randomizerCallerGenerator.CanGenerate(t))
         {
             return ImmutableList<string>.Empty;
         }
@@ -169,7 +183,7 @@ internal class CodeGenerator : ICodeGenerator
                 _parameterInstantiationCodeGenerator);
         }
 
-        return _typeWithConstructorsGenerator.CreateGenerationCode(
+        return _typeWithConstructorsGenerator.CreateGenerationMethod(
             t,
             dependencies);
     }
