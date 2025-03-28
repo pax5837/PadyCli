@@ -36,6 +36,7 @@ public static class ServiceConfiguration
             .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
             .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>()
             .AddScoped<IAbstractClassInformationService, AbstractClassInformationService>()
+            .AddScoped<IAbstractOneOfClassGenerationCreationService, AbstractOneOfClassGenerationCreationService>()
             .AddScoped<IHelpersGenerator, HelpersGenerator>();
 
         return services;

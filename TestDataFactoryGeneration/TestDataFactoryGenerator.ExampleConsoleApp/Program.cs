@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TestDataForTestDataFactoryGenerator.BusinessLogic;
+using TextCopy;
 
 var config = BuildTdfGeneratorConfig();
 // GenerateAndPrintTestDataTdfGeneratorVariant1();
@@ -53,6 +54,8 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(CancellationToken c
     {
         Console.WriteLine(line);
     }
+
+    ClipboardService.SetText(string.Join(Environment.NewLine, lines));
 }
 
 TdfGeneratorConfiguration BuildTdfGeneratorConfig()

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using TestDataFactoryGenerator.Generation.AbstractClasses;
 
 namespace TestDataFactoryGenerator.Generation;
 
@@ -9,16 +10,19 @@ internal class TypeLister : ITypeLister
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
     private readonly IEitherInformationService _eitherInformationService;
+    private readonly IAbstractClassInformationService _abstractClassInformationService;
 
     public TypeLister(IProtoCodeGenerator protoCodeGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
-        IEitherInformationService eitherInformationService)
+        IEitherInformationService eitherInformationService,
+        IAbstractClassInformationService abstractClassInformationService)
     {
         _protoCodeGenerator = protoCodeGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
         _eitherInformationService = eitherInformationService;
+        _abstractClassInformationService = abstractClassInformationService;
     }
 
 
@@ -59,9 +63,23 @@ internal class TypeLister : ITypeLister
         {
             PopulateNestedTypesForProtobufRepeatedType(type, allTypes);
         }
+
+        else if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type, IsNotInSystemNamespace))
+        {
+            PopulateDerivedTypes(type, allTypes);
+        }
         else
         {
             PopulateNestedTypesForStandardTypes(type, allTypes);
+        }
+    }
+
+    private void PopulateDerivedTypes(Type type, HashSet<Type> allTypes)
+    {
+        var derivedTypes = _abstractClassInformationService.GetDerivedTypes(type, IsNotInSystemNamespace);
+        foreach (var derivedType in derivedTypes)
+        {
+            PopulateType(derivedType, allTypes);
         }
     }
 

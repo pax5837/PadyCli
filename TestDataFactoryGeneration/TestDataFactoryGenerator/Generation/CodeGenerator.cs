@@ -13,6 +13,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IHelpersGenerator _helpersGenerator;
     private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
     private readonly IAbstractClassInformationService _abstractClassInformationService;
+    private readonly IAbstractOneOfClassGenerationCreationService _abstractOneOfClassGenerationCreationService;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -23,6 +24,7 @@ internal class CodeGenerator : ICodeGenerator
         IHelpersGenerator helpersGenerator,
         IRandomizerCallerGenerator randomizerCallerGenerator,
         IAbstractClassInformationService abstractClassInformationService,
+        IAbstractOneOfClassGenerationCreationService abstractOneOfClassGenerationCreationService,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
@@ -32,6 +34,7 @@ internal class CodeGenerator : ICodeGenerator
         _helpersGenerator = helpersGenerator;
         _randomizerCallerGenerator = randomizerCallerGenerator;
         _abstractClassInformationService = abstractClassInformationService;
+        _abstractOneOfClassGenerationCreationService = abstractOneOfClassGenerationCreationService;
         _config = config;
     }
 
@@ -179,9 +182,9 @@ internal class CodeGenerator : ICodeGenerator
             return ImmutableList<string>.Empty;
         }
 
-        if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type))
+        if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type, _ => true)) // At this point all non relevant abstract classes should have been removed
         {
-            Console.WriteLine("is abstract");
+            return _abstractOneOfClassGenerationCreationService.CreateGenerationCode(type);
         }
 
         if (_eitherInformationService.IsEither(type))
