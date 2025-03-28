@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator.Generation;
+using TestDataFactoryGenerator.Generation.AbstractClasses;
 using TestDataFactoryGenerator.Generation.Collections;
 using TestDataFactoryGenerator.Generation.Either;
 using TestDataFactoryGenerator.Generation.Helpers;
@@ -34,6 +35,7 @@ public static class ServiceConfiguration
             .AddScoped<ITypeLister, TypeLister>()
             .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
             .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>()
+            .AddScoped<IAbstractClassInformationService, AbstractClassInformationService>()
             .AddScoped<IHelpersGenerator, HelpersGenerator>();
 
         return services;

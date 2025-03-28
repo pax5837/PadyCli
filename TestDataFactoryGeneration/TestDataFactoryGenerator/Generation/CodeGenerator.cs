@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using TestDataFactoryGenerator.Generation.AbstractClasses;
 using TestDataFactoryGenerator.Generation.Helpers;
 
 namespace TestDataFactoryGenerator.Generation;
@@ -11,6 +12,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherInformationService _eitherInformationService;
     private readonly IHelpersGenerator _helpersGenerator;
     private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
+    private readonly IAbstractClassInformationService _abstractClassInformationService;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -20,6 +22,7 @@ internal class CodeGenerator : ICodeGenerator
         IEitherInformationService eitherInformationService,
         IHelpersGenerator helpersGenerator,
         IRandomizerCallerGenerator randomizerCallerGenerator,
+        IAbstractClassInformationService abstractClassInformationService,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
@@ -28,6 +31,7 @@ internal class CodeGenerator : ICodeGenerator
         _eitherInformationService = eitherInformationService;
         _helpersGenerator = helpersGenerator;
         _randomizerCallerGenerator = randomizerCallerGenerator;
+        _abstractClassInformationService = abstractClassInformationService;
         _config = config;
     }
 
@@ -163,28 +167,33 @@ internal class CodeGenerator : ICodeGenerator
         return lines.ToImmutableList();
     }
 
-    public IImmutableList<string> CreateGenerationMethod(Type t, HashSet<string> dependencies)
+    public IImmutableList<string> CreateGenerationMethod(Type type, HashSet<string> dependencies)
     {
-        if (t.IsEnum)
+        if (type.IsEnum)
         {
             return ImmutableList<string>.Empty;
         }
 
-        if (_randomizerCallerGenerator.CanGenerate(t))
+        if (_randomizerCallerGenerator.CanGenerate(type))
         {
             return ImmutableList<string>.Empty;
         }
 
-        if (_eitherInformationService.IsEither(t))
+        if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type))
+        {
+            Console.WriteLine("is abstract");
+        }
+
+        if (_eitherInformationService.IsEither(type))
         {
             return _eitherCodeGenerator.CreateGenerationCodeForEither(
-                t,
+                type,
                 dependencies,
                 _parameterInstantiationCodeGenerator);
         }
 
         return _typeWithConstructorsGenerator.CreateGenerationMethod(
-            t,
+            type,
             dependencies);
     }
 }

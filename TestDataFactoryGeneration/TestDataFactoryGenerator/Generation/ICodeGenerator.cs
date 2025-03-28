@@ -9,5 +9,5 @@ internal interface ICodeGenerator
         IImmutableSet<Type> types,
         IImmutableList<string> inputTypeFullNames, bool includeHelperClasses);
 
-    IImmutableList<string> CreateGenerationMethod(Type t, HashSet<string> dependencies);
+    IImmutableList<string> CreateGenerationMethod(Type type, HashSet<string> dependencies);
 }
