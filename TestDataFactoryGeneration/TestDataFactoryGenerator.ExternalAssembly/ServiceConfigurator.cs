@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using TestDataFactoryGenerator.Generation;
 
 namespace TestDataFactoryGenerator.TypeSelectionWrapper;
 
@@ -7,10 +6,10 @@ public static  class ServiceConfigurator
 {
     public static IServiceCollection AddExternalAssemblyTestDataFactoryGeneration(
         this IServiceCollection services,
-        IConfiguration configuration)
+        TdfConfigDefinition configDefinition)
     {
         services
-            .AddTestDataFactoryGeneration(configuration)
+            .AddTestDataFactoryGeneration(configDefinition)
             .AddScoped<IExternalAssemblyTestDataFactoryGenerator, ExternalAssemblyTestDataFactoryGenerator>();
 
         return services;

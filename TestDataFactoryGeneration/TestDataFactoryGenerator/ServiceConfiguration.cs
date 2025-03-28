@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator.Generation;
 using TestDataFactoryGenerator.Generation.Collections;
 using TestDataFactoryGenerator.Generation.Either;
+using TestDataFactoryGenerator.Generation.Helpers;
 using TestDataFactoryGenerator.Generation.ParameterInstantiation;
 using TestDataFactoryGenerator.Generation.Protobuf;
 using TestDataFactoryGenerator.Generation.TypeNames;
@@ -14,10 +15,12 @@ public static class ServiceConfiguration
 {
     public static IServiceCollection AddTestDataFactoryGeneration(
         this IServiceCollection services,
-        IConfiguration configuration)
+        TdfConfigDefinition? tdfGeneratorConfigurationOrPathToJson)
     {
+        var config = ConfigProvider.GetConfiguration(tdfGeneratorConfigurationOrPathToJson);
+
         services
-            .AddScoped<IConfiguration>(x => configuration)
+            .AddSingleton<TdfGeneratorConfiguration>(config)
             .AddScoped<IUserDefinedGenericsCodeGenerator, UserDefinedGenericsCodeGenerator>()
             .AddScoped<IEitherInformationService, EitherInformationService>()
             .AddScoped<IEitherCodeGenerator, EitherCodeGenerator>()
@@ -29,8 +32,16 @@ public static class ServiceConfiguration
             .AddScoped<ITypeWithConstructorsGenerator, TypeWithConstructorsGenerator>()
             .AddScoped<ICodeGenerator, CodeGenerator>()
             .AddScoped<ITypeLister, TypeLister>()
-            .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>();
+            .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
+            .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>()
+            .AddScoped<IHelpersGenerator, HelpersGenerator>();
 
         return services;
+    }
+
+    private static TdfGeneratorConfiguration GetConfig(TdfGeneratorConfiguration? tdfGeneratorConfiguration)
+    {
+
+        return tdfGeneratorConfiguration ?? throw new InvalidOperationException();
     }
 }

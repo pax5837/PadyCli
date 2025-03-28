@@ -6,16 +6,19 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
 {
     private readonly ITypeNameGenerator _typeNameGenerator;
     private readonly IProtoInformationService _protoInformationService;
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _config;
+
+    private readonly string _leadingUnderscore;
 
     public ProtoCodeGenerator(
         ITypeNameGenerator typeNameGenerator,
         IProtoInformationService protoInformationService,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration config)
     {
         _typeNameGenerator = typeNameGenerator;
         _protoInformationService = protoInformationService;
-        _configuration = configuration;
+        _config = config;
+        _leadingUnderscore = config.LeadingUnderscore();
     }
 
     public IImmutableList<Type> GetNestedTypes(
@@ -35,9 +38,9 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         Type type,
         HashSet<string> dependencies)
     {
-        dependencies.Add(_configuration.CustomInstantiationInfoByFullName[type.FullName!].NamespaceToAdd);
+        dependencies.Add(_config.CustomInstantiationForWellKnownProtobufTypesByFullName[type.FullName!].NamespaceToAdd);
 
-        return _configuration.CustomInstantiationInfoByFullName[type.FullName!].InstantiationCode;
+        return _config.CustomInstantiationForWellKnownProtobufTypesByFullName[type.FullName!].InstantiationCode;
     }
 
     public IImmutableList<string> GenerateInstantiationCodeForProtobufType(
@@ -55,32 +58,36 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         var nestedProperties = GetNestedProperties(type);
 
         var endOfMethodLine = nestedProperties.Count == 0 ? "()" : "(";
-        lines.Add($"\tpublic {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}{endOfMethodLine}");
+        lines.Add($"{_config.Indent}public {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}{endOfMethodLine}");
 
         for (int i = 0; i < nestedProperties.Count; i++)
         {
             var endOfLine = i == nestedProperties.Count - 1 ? ")" : ",";
             lines.Add(
-                $"\t\t{_typeNameGenerator.GetTypeNameForParameter(nestedProperties[i].PropertyType)}? {nestedProperties[i].Name.ToCamelCase()} = null{endOfLine}");
+                $"{_config.Indents(2)}{_typeNameGenerator.GetTypeNameForParameter(nestedProperties[i].PropertyType)}? {nestedProperties[i].Name.ToCamelCase()} = null{endOfLine}");
         }
 
-        lines.Add("\t{");
+        lines.Add($"{_config.Indent}{{");
 
         var nestedSingleProperties = GetNestedProperties(type).Where(p => !_protoInformationService.IsProtoRepeatedField(p.PropertyType))
             .ToImmutableList();
         var endOfConstructorLine = nestedSingleProperties.Count == 0 ? "();" : string.Empty;
-        lines.Add($"\t\tvar generated = new {type.Name}{endOfConstructorLine}");
+        lines.Add($"{_config.Indents(2)}var generated = new {type.Name}{endOfConstructorLine}");
 
         if (nestedSingleProperties.Count > 0)
         {
-            lines.Add("\t\t{");
+            lines.Add($"{_config.Indent}{_config.Indent}{{");
             for (int i = 0; i < nestedSingleProperties.Count; i++)
             {
+                var propertyName = nestedSingleProperties[i].Name;
+                var propertyType = nestedSingleProperties[i].PropertyType;
+                var methodParameterName = propertyName.ToCamelCase();
+
                 lines.Add(
-                    $"\t\t\t{nestedSingleProperties[i].Name} = {nestedSingleProperties[i].Name.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(nestedSingleProperties[i].PropertyType, dependencies)},");
+                    $"{_config.Indents(3)}{propertyName} = {methodParameterName} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)},");
             }
 
-            lines.Add("\t\t};");
+            lines.Add($"{_config.Indents(2)}}};");
         }
 
         var nestedRepeatedProperties =
@@ -90,20 +97,23 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
             lines.Add(string.Empty);
             for (int i = 0; i < nestedRepeatedProperties.Count; i++)
             {
+                var propertyName = nestedRepeatedProperties[i].Name;
+                var propertyType = nestedRepeatedProperties[i].PropertyType;
+
                 lines.Add(
-                    $"\t\tgenerated.{nestedRepeatedProperties[i].Name}.AddRange({nestedRepeatedProperties[i].Name.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(nestedRepeatedProperties[i].PropertyType, dependencies)}));");
+                    $"{_config.Indents(2)}generated.{propertyName}.AddRange({propertyName.ToCamelCase()} ?? {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(propertyType, dependencies)}));");
             }
         }
 
         lines.Add(string.Empty);
-        lines.Add("\t\treturn generated;");
-        lines.Add("\t}");
+        lines.Add($"{_config.Indents(2)}return generated;");
+        lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 
         return lines.ToImmutableList();
     }
 
-    public static string GenerateInstantiationCodeForProtobufRepeatedType(
+    public string GenerateInstantiationCodeForProtobufRepeatedType(
         Type type,
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
@@ -112,6 +122,6 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         dependencies.Add("System.Linq");
         dependencies.Add("System.Collections.Generic");
         return
-            $"Enumerable.Range(1, _random.Next(0, 4)).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}";
+            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}";
     }
 }

@@ -14,6 +14,9 @@ public class TestDataFactoryGenerationOptions
     [Option('t', "tdf-name", Required = true, HelpText = "Class name of the test data factory")]
     public string TestDataFactoryClassName { get; set; }
 
+    [Option('h', "include-helpers", Required = true, Default = false, HelpText = "Include helper classes used by the generated test data factory")]
+    public bool IncludeOptionals { get; set; }
+
     [Option('v', "verbose", Required = false, Default = false, HelpText = "Verbose output")]
     public bool Verbose { get; set; }
 }

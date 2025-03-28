@@ -7,4 +7,5 @@ public record GenerationParameters(
     string NameSpace,
     IImmutableSet<string> TypeNames,
     bool OutputToConsole,
-    string? WorkingDirectory = null);
+    string? WorkingDirectory = null,
+    bool IncludeOptionalsCode = false);

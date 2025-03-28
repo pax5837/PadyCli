@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using TestDataFactoryGenerator.Generation.Helpers;
 
 namespace TestDataFactoryGenerator.Generation;
 
@@ -8,33 +9,46 @@ internal class CodeGenerator : ICodeGenerator
     private readonly IEitherCodeGenerator _eitherCodeGenerator;
     private readonly ITypeWithConstructorsGenerator _typeWithConstructorsGenerator;
     private readonly IEitherInformationService _eitherInformationService;
-    private readonly IConfiguration _configuration;
+    private readonly IHelpersGenerator _helpersGenerator;
+    private readonly IRandomizerCallerGenerator _randomizerCallerGenerator;
+    private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator,
         IEitherCodeGenerator eitherCodeGenerator,
         ITypeWithConstructorsGenerator typeWithConstructorsGenerator,
         IEitherInformationService eitherInformationService,
-        IConfiguration configuration)
+        IHelpersGenerator helpersGenerator,
+        IRandomizerCallerGenerator randomizerCallerGenerator,
+        TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
         _eitherCodeGenerator = eitherCodeGenerator;
         _typeWithConstructorsGenerator = typeWithConstructorsGenerator;
         _eitherInformationService = eitherInformationService;
-        _configuration = configuration;
+        _helpersGenerator = helpersGenerator;
+        _randomizerCallerGenerator = randomizerCallerGenerator;
+        _config = config;
     }
 
     public IImmutableList<string> CreateTestDataFactoryCode(
         string tdfName,
         string nameSpace,
         IImmutableSet<Type> types,
-        IImmutableList<string> inputTypeFullNames)
+        IImmutableList<string> inputTypeFullNames,
+        bool includeHelperClasses)
     {
         var codeDoc = GenerateCodeDoc(inputTypeFullNames);
         var starOfClass = GenerateStartOfClass(tdfName);
         var dependencies = GenerateInitialDependencies();
 
-        var methods = types.OrderBy(x => x.Name).SelectMany(x => CreateGenerationCode(x, dependencies))
+        var methods = types
+            .OrderBy(x => x.Name)
+            .SelectMany(x => CreateGenerationMethod(x, dependencies))
+            .ToImmutableList();
+
+        var userDefinedMethods = _config.SimpleTypeConfiguration.InstantiationConfigurations
+            .SelectMany(CreateMethodsForUserDefinedMethods)
             .ToImmutableList();
 
         var systemUsings = dependencies
@@ -60,9 +74,21 @@ internal class CodeGenerator : ICodeGenerator
                 .Concat(codeDoc)
                 .Concat(starOfClass)
                 .Concat(methods)
+                .Concat(userDefinedMethods)
                 .RemoveLastWhiteLine()
                 .Concat(endOfClass)
+                .Concat(_helpersGenerator.GenerateHelpersCode(includeHelperClasses))
                 .ToImmutableList();
+    }
+
+    private ImmutableList<string> CreateMethodsForUserDefinedMethods(InstantiationConfigurationForType instantiationConfigurationForType)
+    {
+        if (instantiationConfigurationForType.MethodCodeToAdd.Count == 0)
+        {
+            return [];
+        }
+
+        return instantiationConfigurationForType.MethodCodeToAdd.Select(line => $"{_config.Indent}{line}").Append(string.Empty).ToImmutableList();
     }
 
     private static bool IsSubsetOfNamespace(string subsetCandidate, string nameSpace)
@@ -81,7 +107,7 @@ internal class CodeGenerator : ICodeGenerator
     {
         var dependencies = new HashSet<string>();
 
-        foreach (var namespaceToAdd in _configuration.NamespacesToAdd)
+        foreach (var namespaceToAdd in _config.NamespacesToAdd)
         {
             dependencies.Add(namespaceToAdd);
         }
@@ -94,44 +120,57 @@ internal class CodeGenerator : ICodeGenerator
         var typeList = inputTypeFullNames.Select(t => $"/// - <see cref=\"{t}\"/><br/>").ToImmutableList();
 
         return typeList
-            .Prepend(
-                "/// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>")
+            .Prepend("/// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>")
             .Prepend("/// <summary>")
-            .Append(
-                "/// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.")
+            .Append("/// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.")
             .Append("/// </summary>")
             .ToImmutableList();
     }
 
-    private static ImmutableList<string> GenerateStartOfClass(string tdfName)
+    private IImmutableList<string> GenerateStartOfClass(string tdfName)
     {
-        return new[]
-        {
-            $"internal partial class {tdfName}",
-            "{",
-            "\tprivate readonly Random _random;",
-            string.Empty,
-            $"\tpublic {tdfName}()",
-            "\t{",
-            "\t\t_random = new Random();",
-            "\t}",
-            string.Empty,
-            $"\tpublic {tdfName}(int seed)",
-            "\t{",
-            "\t\t_random = new Random(seed);",
-            "\t}",
-            string.Empty,
-            $"\tpublic {tdfName}(Random random)",
-            "\t{",
-            "\t\t_random = random;",
-            "\t}",
-            string.Empty,
-        }.ToImmutableList();
+        var lines = new Lines(_config);
+
+        List<(ushort Indents, string Line)> content =
+        [
+            (0, $"internal partial class {tdfName}"),
+            (0, "{"),
+            (1, $"private static readonly IImmutableList<int> {_config.LeadingUnderscore()}zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];"),
+            (0, string.Empty),
+            (1, $"private int GetZeroBiasedCount() => {_config.LeadingUnderscore()}zeroBiasedCounts.OrderBy(_ => {_config.LeadingUnderscore()}random.Next()).First();"),
+            (0, string.Empty),
+            (1, $"private readonly Random {_config.LeadingUnderscore()}random;"),
+            (0, string.Empty),
+            (1, $"public {tdfName}()"),
+            (1, $"{{"),
+            (2, $"{_config.This()}random = new Random();"),
+            (1, "}"),
+            (0, string.Empty),
+            (1, $"public {tdfName}(int seed)"),
+            (1, $"{{"),
+            (2, $"{_config.This()}random = new Random(seed);"),
+            (1, "}"),
+            (0, string.Empty),
+            (1, $"public {tdfName}(Random random)"),
+            (1, "{"),
+            (2, $"{_config.This()}random = random;"),
+            (1, "}"),
+            (0, string.Empty),
+        ];
+
+        lines.AddRange(content.ToImmutableList());
+
+        return lines.ToImmutableList();
     }
 
-    public IImmutableList<string> CreateGenerationCode(Type t, HashSet<string> dependencies)
+    public IImmutableList<string> CreateGenerationMethod(Type t, HashSet<string> dependencies)
     {
         if (t.IsEnum)
+        {
+            return ImmutableList<string>.Empty;
+        }
+
+        if (_randomizerCallerGenerator.CanGenerate(t))
         {
             return ImmutableList<string>.Empty;
         }
@@ -144,7 +183,7 @@ internal class CodeGenerator : ICodeGenerator
                 _parameterInstantiationCodeGenerator);
         }
 
-        return _typeWithConstructorsGenerator.CreateGenerationCode(
+        return _typeWithConstructorsGenerator.CreateGenerationMethod(
             t,
             dependencies);
     }

@@ -6,16 +6,16 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
 {
     private readonly IEitherInformationService _eitherInformationService;
     private readonly ITypeNameGenerator _typeNameGenerator;
-    private readonly IConfiguration _configuration;
+    private readonly TdfGeneratorConfiguration _config;
 
     public EitherCodeGenerator(
         IEitherInformationService eitherInformationService,
         ITypeNameGenerator typeNameGenerator,
-        IConfiguration configuration)
+        TdfGeneratorConfiguration config)
     {
         _eitherInformationService = eitherInformationService;
         _typeNameGenerator = typeNameGenerator;
-        _configuration = configuration;
+        _config = config;
     }
 
     public string GetEitherGeneratorName(Type type)
@@ -37,9 +37,9 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
     {
-        if (!string.IsNullOrWhiteSpace(_configuration.EitherNamespace))
+        if (!string.IsNullOrWhiteSpace(_config.EitherNamespace))
         {
-            dependencies.Add(_configuration.EitherNamespace);
+            dependencies.Add(_config.EitherNamespace);
         }
 
         var lines = new List<string>();
@@ -50,20 +50,20 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
         var eitherTypeAsString = _eitherInformationService.GetEitherTypeAsString(type, _typeNameGenerator.GetTypeNameForParameter);
 
         lines.Add(
-            $"\tpublic {eitherTypeAsString} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()");
-        lines.Add("\t{");
-        lines.Add($"\t\tvar genericTypeNumber = _random.Next(0, {genericArgumentsCount});");
-        lines.Add($"\t\treturn genericTypeNumber switch {{");
+            $"{_config.Indent}public {eitherTypeAsString} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()");
+        lines.Add($"{_config.Indent}{{");
+        lines.Add($"{_config.Indent}{_config.Indent}var genericTypeNumber = _random.Next(0, {genericArgumentsCount});");
+        lines.Add($"{_config.Indent}{_config.Indent}return genericTypeNumber switch {{");
         for (int i = 0; i < genericArgumentsCount; i++)
         {
             var parameterInstantiation = parameterInstantiationCodeGenerator
                 .GenerateParameterInstantiation(genericArguments[i], dependencies);
-            lines.Add($"\t\t\t{i} => {eitherTypeAsString}.From({parameterInstantiation}),");
+            lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}{i} => {eitherTypeAsString}.From({parameterInstantiation}),");
         }
 
-        lines.Add("\t\t\t_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
-        lines.Add("\t\t};");
-        lines.Add("\t}");
+        lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
+        lines.Add($"{_config.Indent}{_config.Indent}}};");
+        lines.Add($"{_config.Indent}}}");
         lines.Add(string.Empty);
 
         return lines.ToImmutableList();

@@ -1,34 +1,23 @@
-﻿using System.Collections.Immutable;
+﻿namespace TestDataFactoryGenerator.Generation;
 
-namespace TestDataFactoryGenerator.Generation;
-
-internal static class RandomizerCallerGenerator
+internal class RandomizerCallerGenerator : IRandomizerCallerGenerator
 {
-    private const string ParameterNamePlaceholder = "###########################";
+    private readonly TdfGeneratorConfiguration _config;
 
-    private static readonly IImmutableDictionary<Type, string> GenerationCode = new[]
+    public RandomizerCallerGenerator(TdfGeneratorConfiguration config)
     {
-        (typeof(string), $"_random.NextString({ParameterNamePlaceholder})"),
-        (typeof(int), "_random.Next()"),
-        (typeof(Guid), "_random.NextGuid()"),
-        (typeof(DateTimeOffset), "_random.NextDateTimeOffset()"),
-        (typeof(TimeSpan), "_random.NextTimeSpan()"),
-        (typeof(byte), "_random.NextByte()"),
-        (typeof(byte[]), "_random.NextByteArray()"),
-        (typeof(bool), "_random.NextBool()"),
-        (typeof(long), "_random.NextInt64()"),
-        (typeof(decimal), "_random.NextDecimal()"),
-    }.ToImmutableDictionary(x => x.Item1, x => x.Item2);
-
-    public static bool CanGenerate(Type type)
-    {
-        return GenerationCode.ContainsKey(type);
+        _config = config;
     }
 
-    public static string Generate(
+    public bool CanGenerate(Type type)
+    {
+        return _config.SimpleTypeConfiguration.InstantiationConfigurationForTypeByType.ContainsKey(type);
+    }
+
+    public string Generate(
         Type type,
         string? parameterName)
     {
-        return GenerationCode[type].Replace(ParameterNamePlaceholder, parameterName ?? string.Empty);
+        return _config.SimpleTypeConfiguration.InstantiationConfigurationForTypeByType[type].InstantiationCode.Replace(_config.SimpleTypeConfiguration.ParameterNamePlaceholder, parameterName ?? string.Empty);
     }
 }

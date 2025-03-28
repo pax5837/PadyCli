@@ -7,9 +7,11 @@ namespace TestingHelpers;
 public static class ServiceConfigurator
 {
     public static IServiceCollection AddTestHelpers(
-        this IServiceCollection services)
+        this IServiceCollection services,
+        TestClassGeneratorConfig config)
     {
         services
+            .AddSingleton(config)
             .AddSingleton<ITestClassGenerator, TestClassGenerator>()
             .AddSingleton<ITestClassCodeGenerator, TestClassCodeGenerator>();
 

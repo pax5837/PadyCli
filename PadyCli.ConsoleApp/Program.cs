@@ -15,7 +15,7 @@ using ProtoToUmlConverter;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using TestDataFactoryGenerator.Generation;
+using TestDataFactoryGenerator;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TestingHelpers;
 
@@ -37,10 +37,10 @@ var serviceProvider = new ServiceCollection()
     .AddFeatures()
     .AddDebugServices()
     .AddDotnetInfrastructure()
-    .AddTestHelpers()
+    .AddTestHelpers(new TestClassGeneratorConfig(Indent: "    "))
     .AddProtoToUmlServices()
     .AddProjectMoverServices()
-    .AddExternalAssemblyTestDataFactoryGeneration(new Configuration([], null, []))
+    .AddExternalAssemblyTestDataFactoryGeneration(BuildTdfGeneratorConfig())
     .BuildServiceProvider();
 
 var fileSystemOpsForbiddenEnvVariable = Environment.GetEnvironmentVariable("FILESYSTEMOPSFORBIDDEN");
@@ -79,3 +79,34 @@ parserResult.WithParsed((CsProjectMoverOptions opts)
 
 await parserResult.WithParsedAsync((AboutOptions opts)
     => serviceProvider.GetService<About>()!.RunAsync(opts));
+
+TdfConfigDefinition BuildTdfGeneratorConfig()
+{
+    var useLeadingUnderscoreForPrivateFields = true;
+
+    var randomField = useLeadingUnderscoreForPrivateFields ? "_random" : "random";
+
+
+    var simpleTypeConfiguration = new SimpleTypeConfiguration(
+        "#########",
+        [
+            new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+            new(typeof(int), $"{randomField}.Next()", null, []),
+            new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
+            new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),
+            new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
+            new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
+            new(typeof(bool), $"{randomField}.NextBool()", null, []),
+            new(typeof(long), $"{randomField}.NextLong()", null, []),
+            new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
+        ]);
+
+    var tdfGeneratorConfiguration = new TdfGeneratorConfiguration(
+        NamespacesToAdd: [],
+        Indent: "    ",
+        EitherNamespace: null,
+        CustomInstantiationForWellKnownProtobufTypes: [],
+        SimpleTypeConfiguration: simpleTypeConfiguration,
+        UseLeadingUnderscoreForPrivateFields: useLeadingUnderscoreForPrivateFields);
+    return TdfConfigDefinition.FromConfig(tdfGeneratorConfiguration);
+}

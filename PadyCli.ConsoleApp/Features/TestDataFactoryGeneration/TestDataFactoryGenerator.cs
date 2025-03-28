@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Serilog.Events;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
+using TextCopy;
 
 namespace PadyCli.ConsoleApp.Features.TestDataFactoryGeneration;
 
@@ -23,15 +24,18 @@ internal class TestDataFactoryGenerator
             NameSpace: options.TestDataFactoryNamespace,
             TypeNames: options.CommaSepparatedClassNames.Split(',').ToImmutableHashSet(),
             OutputToConsole: true,
-            WorkingDirectory: null);
+            WorkingDirectory: null,
+            IncludeOptionalsCode: options.IncludeOptionals);
 
         if (options.Verbose)
         {
             switchToVerboseAction();
         }
 
-        await _externalAssemblyTestDataFactoryGenerator
+        var lines = await _externalAssemblyTestDataFactoryGenerator
             .GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
+
+        ClipboardService.SetText(string.Join("\n", lines));
 
         return 1;
     }

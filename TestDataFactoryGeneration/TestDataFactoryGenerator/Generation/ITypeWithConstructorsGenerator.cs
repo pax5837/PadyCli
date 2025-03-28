@@ -5,8 +5,8 @@ namespace TestDataFactoryGenerator.Generation;
 
 internal interface ITypeWithConstructorsGenerator
 {
-    IImmutableList<string> CreateGenerationCode(
-        Type t,
+    IImmutableList<string> CreateGenerationMethod(
+        Type type,
         HashSet<string> dependencies);
 
     IImmutableList<string> CreateGenerationCodeForOneConstructor(
