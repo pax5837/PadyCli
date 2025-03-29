@@ -7,6 +7,7 @@ using PadyCli.ConsoleApp.Features;
 using PadyCli.ConsoleApp.Features.About;
 using PadyCli.ConsoleApp.Features.About.Implementations;
 using PadyCli.ConsoleApp.Features.CsProjectMover;
+using PadyCli.ConsoleApp.Features.Docker;
 using PadyCli.ConsoleApp.Features.GuidGeneration;
 using PadyCli.ConsoleApp.Features.ProtoToUmlConverter;
 using PadyCli.ConsoleApp.Features.TestClassGeneration;
@@ -54,6 +55,7 @@ var parserResult = Parser.Default
         ProtoConverterOptions,
         CsProjectMoverOptions,
         TestDataFactoryGenerationOptions,
+        DockerOptions,
         AboutOptions>(args);
 
 await parserResult.WithParsedAsync(async (TestClassGeneratorOptions opts)
@@ -76,6 +78,9 @@ parserResult.WithParsed((ProtoConverterOptions opts)
 
 parserResult.WithParsed((CsProjectMoverOptions opts)
     => serviceProvider.GetService<CsProjectMoverAdapter>()!.Run(opts));
+
+parserResult.WithParsed((DockerOptions opts)
+    => serviceProvider.GetService<DockerService>()!.Run(opts));
 
 await parserResult.WithParsedAsync((AboutOptions opts)
     => serviceProvider.GetService<About>()!.RunAsync(opts));

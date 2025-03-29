@@ -62,6 +62,12 @@
 			"environmentVariables": {
 			},
 			"commandLineArgs": "movecsproj -s ./src/ProtoToUmlConverter  -t ./src/ProtoToUmlConverter/ProtoToUmlConverter"
+		},
+		"PadyCli (docker run container)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "run-cont"
 		}
 	}
 }
