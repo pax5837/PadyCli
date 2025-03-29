@@ -42,29 +42,31 @@ internal class EitherCodeGenerator : IEitherCodeGenerator
             dependencies.Add(_config.EitherNamespace);
         }
 
-        var lines = new List<string>();
+        var lines = new Lines(_config);
 
         var genericArguments = type.GenericTypeArguments.ToImmutableList();
         var genericArgumentsCount = genericArguments.Count;
 
         var eitherTypeAsString = _eitherInformationService.GetEitherTypeAsString(type, _typeNameGenerator.GetTypeNameForParameter);
 
-        lines.Add(
-            $"{_config.Indent}public {eitherTypeAsString} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()");
-        lines.Add($"{_config.Indent}{{");
-        lines.Add($"{_config.Indent}{_config.Indent}var genericTypeNumber = _random.Next(0, {genericArgumentsCount});");
-        lines.Add($"{_config.Indent}{_config.Indent}return genericTypeNumber switch {{");
+        lines
+            .Add(1, $"public {eitherTypeAsString} {Definitions.GenerationMethodPrefix}{GetEitherGeneratorName(type)}()")
+            .Add(1, "{")
+            .Add(2, $"var genericTypeNumber = {_config.LeadingUnderscore()}random.Next(0, {genericArgumentsCount});")
+            .Add(2, "return genericTypeNumber switch {");
+
         for (int i = 0; i < genericArgumentsCount; i++)
         {
             var parameterInstantiation = parameterInstantiationCodeGenerator
                 .GenerateParameterInstantiation(genericArguments[i], dependencies);
-            lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}{i} => {eitherTypeAsString}.From({parameterInstantiation}),");
+            lines.Add(3, $"{i} => {eitherTypeAsString}.From({parameterInstantiation}),");
         }
 
-        lines.Add($"{_config.Indent}{_config.Indent}{_config.Indent}_ => throw new InvalidOperationException(\"Unexpected constructor number\"),");
-        lines.Add($"{_config.Indent}{_config.Indent}}};");
-        lines.Add($"{_config.Indent}}}");
-        lines.Add(string.Empty);
+        lines
+            .Add(3, $"_ => throw new InvalidOperationException(\"Unexpected constructor number\"),")
+            .Add(2, "};")
+            .Add(1, "}")
+            .AddEmptyLine();
 
         return lines.ToImmutableList();
     }

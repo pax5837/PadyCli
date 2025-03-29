@@ -1,10 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator.Generation;
+using TestDataFactoryGenerator.Generation.AbstractClasses;
+using TestDataFactoryGenerator.Generation.CodeGeneration;
 using TestDataFactoryGenerator.Generation.Collections;
 using TestDataFactoryGenerator.Generation.Either;
+using TestDataFactoryGenerator.Generation.FactoryGeneration;
 using TestDataFactoryGenerator.Generation.Helpers;
 using TestDataFactoryGenerator.Generation.ParameterInstantiation;
 using TestDataFactoryGenerator.Generation.Protobuf;
+using TestDataFactoryGenerator.Generation.SimpleTypeGenerator;
 using TestDataFactoryGenerator.Generation.TypeNames;
 using TestDataFactoryGenerator.Generation.TypesWithConstructors;
 using TestDataFactoryGenerator.Generation.UserDefinedGenerics;
@@ -33,7 +37,9 @@ public static class ServiceConfiguration
             .AddScoped<ICodeGenerator, CodeGenerator>()
             .AddScoped<ITypeLister, TypeLister>()
             .AddScoped<ITestDataFactoryGenerator, FactoryGenerator>()
-            .AddScoped<IRandomizerCallerGenerator, RandomizerCallerGenerator>()
+            .AddScoped<ISimpleTypeGenerator, SimpleTypeGenerator>()
+            .AddScoped<IAbstractClassInformationService, AbstractClassInformationService>()
+            .AddScoped<IAbstractOneOfClassGenerationCreationService, AbstractOneOfClassGenerationCreationService>()
             .AddScoped<IHelpersGenerator, HelpersGenerator>();
 
         return services;

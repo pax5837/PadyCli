@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 
-namespace TestDataFactoryGenerator;
+namespace TestDataFactoryGenerator.Generation;
 
 internal static class ConfigProvider
 {
