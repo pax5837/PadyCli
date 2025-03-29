@@ -26,8 +26,9 @@
     <Project Path="TestingHelpers\TestingHelpers\TestingHelpers.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/_SolutionItems/">
-    <File Path="..\.gitignore" />
-    <File Path="..\.editorconfig" />
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="README.md" />
   </Folder>
   <Project Path="PadyCli.ConsoleApp\PadyCli.ConsoleApp.csproj" Type="Classic C#" />
 </Solution>
