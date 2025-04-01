@@ -31,9 +31,11 @@ internal static class ProtobufDefinitions
 
     public static IImmutableSet<string> FieldModifiers = new HashSet<string>
     {
-        "optional",
+        FieldModifierOptional,
         FieldModifierRepeated,
     }.ToImmutableHashSet();
+
+    public const string FieldModifierOptional = "optional";
 
     public const string FieldModifierRepeated = "repeated";
 

@@ -15,7 +15,7 @@ public enum Kind
     Enumeration,
 }
 
-public record RawDependency(string Namespace, string TypeName, string FieldName, bool IsRepeated);
+public record RawDependency(string Namespace, string TypeName, string FieldName, bool IsRepeated, bool IsOptional);
 
 public interface IProtoParser
 {

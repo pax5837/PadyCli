@@ -32,11 +32,18 @@ internal class MermaidGenerator : IUmlGenerator
     private IImmutableList<string> GenerateClass(RawProtoBuffType rawProtoBuffType)
     {
         return rawProtoBuffType.DependenciesWithNameSpace
-            .Select(d => $"   {d.TypeName} {d.FieldName}")
+            .Select(d => GenerateField(d, rawProtoBuffType))
             .Union(GenerateEnumValues(rawProtoBuffType))
             .Prepend($"class {rawProtoBuffType.Name} {{")
             .Append("}")
             .ToImmutableList();
+    }
+
+    private static string GenerateField(RawDependency d, RawProtoBuffType rawProtoBuffType)
+    {
+        var repeatedChar = d.IsRepeated ? "[]" : string.Empty;
+        var optionalChar = d.IsOptional ? "?" : string.Empty;
+        return $"   {d.TypeName}{repeatedChar}{optionalChar} {d.FieldName}";
     }
 
     private static IEnumerable<string> GenerateEnumValues(RawProtoBuffType rawProtoBuffType)

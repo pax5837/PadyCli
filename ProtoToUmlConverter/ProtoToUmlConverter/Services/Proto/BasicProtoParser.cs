@@ -132,7 +132,7 @@ internal class BasicProtoParser : IProtoParser
                 var subTypeName = $"{typeName}_{fieldName}";
                 groupNames[currentGroup] = subTypeName;
                 groupDependencies.Add(currentGroup, new List<RawDependency>());
-                groupDependencies[0].Add(new RawDependency(currentNamespace, subTypeName, fieldName, false));
+                groupDependencies[0].Add(new RawDependency(currentNamespace, subTypeName, fieldName, false, false));
             }
 
             if (!string.IsNullOrWhiteSpace(line)
@@ -181,6 +181,7 @@ internal class BasicProtoParser : IProtoParser
         var typeElement = GetFirstNonWhiteSpaceElement(line);
         var fieldName = GetFieldName(line, typeElement);
         var isRepeated = line.Contains($"{ProtobufDefinitions.FieldModifierRepeated} ");
+        var isOptional = line.Contains($"{ProtobufDefinitions.FieldModifierOptional} ");
 
         if (typeElement.Contains("."))
         {
@@ -188,15 +189,16 @@ internal class BasicProtoParser : IProtoParser
             return new RawDependency(typeElement.Substring(0, indexLastSeparator),
                 typeElement.Substring(indexLastSeparator + 1),
                 fieldName,
-                isRepeated);
+                isRepeated,
+                isOptional);
         }
         else if (ProtobufDefinitions.BaseTypes.Contains(typeElement))
         {
-            return new RawDependency(string.Empty, typeElement, fieldName, isRepeated);
+            return new RawDependency(string.Empty, typeElement, fieldName, isRepeated, isOptional);
         }
         else
         {
-            return new RawDependency(currentNamespace, typeElement, fieldName, isRepeated);
+            return new RawDependency(currentNamespace, typeElement, fieldName, isRepeated, isOptional);
         }
     }
 

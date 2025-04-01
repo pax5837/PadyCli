@@ -60,8 +60,9 @@ public class PlantUmlGenerator : IUmlGenerator
 
     private static string GenerateField(RawDependency d)
     {
-        var isRepeated = d.IsRepeated ? "[]" : "";
-        return $"   {{field}}{d.FieldName} : {d.TypeName}{isRepeated}";
+        var repeatedChar = d.IsRepeated ? "[]" : string.Empty;
+        var optionalChar = d.IsOptional ? "?" : string.Empty;
+        return $"   {{field}}{d.FieldName} : {d.TypeName}{repeatedChar}{optionalChar}";
     }
 
     private static string GenerateEnumValue(string enumValue)
