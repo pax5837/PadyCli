@@ -8,10 +8,14 @@ namespace PadyCli.ConsoleApp.Features.TestDataFactoryGeneration;
 internal class TestDataFactoryGenerator
 {
     private readonly IExternalAssemblyTestDataFactoryGenerator _externalAssemblyTestDataFactoryGenerator;
+    private readonly PowershellCliRunner _cliRunner;
 
-    public TestDataFactoryGenerator(IExternalAssemblyTestDataFactoryGenerator externalAssemblyTestDataFactoryGenerator)
+    public TestDataFactoryGenerator(
+        IExternalAssemblyTestDataFactoryGenerator externalAssemblyTestDataFactoryGenerator,
+        PowershellCliRunner cliRunner)
     {
         _externalAssemblyTestDataFactoryGenerator = externalAssemblyTestDataFactoryGenerator;
+        _cliRunner = cliRunner;
     }
 
     public async Task<int> RunAsync(
@@ -33,9 +37,15 @@ internal class TestDataFactoryGenerator
         }
 
         var lines = await _externalAssemblyTestDataFactoryGenerator
-            .GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
+            .GenerateTestDataFactoryAsync(
+                generationParameters: generationParameters,
+                cliRunner: _cliRunner.Run,
+                cancellationToken: cancellationToken);
 
-        ClipboardService.SetText(string.Join("\n", lines));
+        if (lines.Any())
+        {
+            await ClipboardService.SetTextAsync(string.Join("\n", lines), cancellationToken);
+        }
 
         return 1;
     }

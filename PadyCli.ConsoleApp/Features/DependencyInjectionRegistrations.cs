@@ -16,7 +16,7 @@ internal static class DependencyInjectionRegistrations
             .AddSingleton<TestClassGeneratorAdapter>()
             .AddSingleton<GuidGenerator>()
             .AddSingleton<CsProjectMoverAdapter>()
-            .AddSingleton<ProcessRunner>()
+            .AddSingleton<PowershellCliRunner>()
             .AddSingleton<DockerService>()
             .AddSingleton<TestDataFactoryGeneration.TestDataFactoryGenerator>();
 

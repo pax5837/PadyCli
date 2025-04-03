@@ -6,5 +6,6 @@ public interface IExternalAssemblyTestDataFactoryGenerator
 {
     Task<IImmutableList<string>> GenerateTestDataFactoryAsync(
         GenerationParameters generationParameters,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken,
+        Action<string>? cliRunner = null);
 }

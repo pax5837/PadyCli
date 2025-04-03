@@ -2,6 +2,7 @@
 using DotnetInfrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using TestDataFactoryGenerator;
+using TestDataFactoryGenerator.ManualTestConsoleApp;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TextCopy;
 
@@ -28,6 +29,8 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
         currentDirectory.Parent.Parent.Parent.Parent.Parent.FullName,
         "TestData\\TestDataForTestDataFactoryGenerator");
 
+    var cliRunner = new PowershellCliRunner();
+
     var generationParameters = new GenerationParameters(
         TestDataFactoryName: "MyTdf",
         NameSpace: "TestDataForTestDataFactoryGenerator",
@@ -35,7 +38,10 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
         OutputToConsole: false,
         WorkingDirectory: executionDirectory,
         IncludeOptionalsCode: true);
-    var lines = await generator.GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
+    var lines = await generator.GenerateTestDataFactoryAsync(
+        generationParameters: generationParameters,
+        cliRunner: cliRunner.Run,
+        cancellationToken: cancellationToken);
 
     foreach (var line in lines)
     {

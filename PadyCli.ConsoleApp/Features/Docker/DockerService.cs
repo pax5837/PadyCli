@@ -51,11 +51,11 @@ internal class DockerService
             DockerRunCommands: [$"docker run -d -p {PORT_PLACEHOLDER}:80 --name {NAME_PLACEHOLDER} -it {IMAGE_PLACEHOLDER}"]),
     ];
 
-    private readonly ProcessRunner _processRunner;
+    private readonly PowershellCliRunner _powershellCliRunner;
 
-    public DockerService(ProcessRunner processRunner)
+    public DockerService(PowershellCliRunner powershellCliRunner)
     {
-        _processRunner = processRunner;
+        _powershellCliRunner = powershellCliRunner;
     }
 
     public void Run(DockerOptions opts)
@@ -73,9 +73,9 @@ internal class DockerService
 
     private bool RunOneDockerContainer(IImmutableDictionary<int, (DockerStartContainerConfig Config, int Index)> numberedConfigs)
     {
-        _processRunner.Run("cls");
+        _powershellCliRunner.Run("cls");
         Console.WriteLine("Listing current docker containers");
-        _processRunner.Run("docker ps");
+        _powershellCliRunner.Run("docker ps");
         Console.WriteLine();
 
         var input = ReadDockerConfig(numberedConfigs);
@@ -113,7 +113,7 @@ internal class DockerService
                 port++;
             }
             Console.WriteLine($"\nRunning Docker command:\n{mappedCommand}\n\n");
-            _processRunner.Run(mappedCommand);
+            _powershellCliRunner.Run(mappedCommand);
         }
 
         return true;

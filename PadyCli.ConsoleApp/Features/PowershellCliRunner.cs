@@ -2,11 +2,11 @@ using System.Diagnostics;
 
 namespace PadyCli.ConsoleApp.Features;
 
-internal class ProcessRunner
+internal class PowershellCliRunner
 {
     public void Run(string command)
     {
-        ProcessStartInfo startInfo = new ProcessStartInfo
+        var startInfo = new ProcessStartInfo
         {
             FileName = "powershell.exe", // Use "cmd.exe" or other CLI if preferred
             Arguments = $"-Command \"{command}\"",

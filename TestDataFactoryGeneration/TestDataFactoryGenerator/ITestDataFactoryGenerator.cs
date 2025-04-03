@@ -7,5 +7,6 @@ public interface ITestDataFactoryGenerator
     public IImmutableList<string> GenerateTestDataFactory(string testDataFactoryName,
         string nameSpace,
         bool outputToConsole,
-        IImmutableSet<Type> types, bool includeHelperClasses);
+        IImmutableSet<Type> types,
+        bool includeHelperClasses);
 }

@@ -25,9 +25,25 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
 
     public async Task<IImmutableList<string>> GenerateTestDataFactoryAsync(
         GenerationParameters generationParameters,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Action<string>? cliRunner = null)
     {
         var currentDirectory = generationParameters.WorkingDirectory ?? Directory.GetCurrentDirectory();
+
+        if (cliRunner is not null)
+        {
+            Console.WriteLine("Do you want to run dotnet publish [y]/n? (x to exit)");
+            var input = Console.ReadLine();
+            if (input.ToLower() == "x")
+            {
+                return [];
+            }
+
+            if (string.IsNullOrEmpty(input) || input.ToLower() == "y")
+            {
+                cliRunner("dotnet publish --self-contained true");
+            }
+        }
 
         var assembly = await _assemblyLoader.GetAssemblyAsync(
             startDirectory: currentDirectory,
