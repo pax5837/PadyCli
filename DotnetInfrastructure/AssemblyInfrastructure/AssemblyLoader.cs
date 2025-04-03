@@ -123,9 +123,11 @@ internal class AssemblyLoader : IAssemblyLoader
         while (true)
         {
             Console.WriteLine("\n\nPick a dll");
+            var widthForDll = dllsFound.Max(x => x.Length) + 1;
             for (int i = 1; i <= dllsFound.Count(); i++)
             {
-                Console.WriteLine($"  [{i}] - {dllsFound[i - 1]}");
+                var lastWriteTime = new FileInfo(dllsFound[i - 1]).LastWriteTime;
+                Console.WriteLine($"  [{i}] - {dllsFound[i - 1].PadRight(widthForDll, ' ')} - last written: {lastWriteTime.ToLocalTime():yyyy-MM-dd HH:mm:ss}");
             }
 
             Console.WriteLine($"  [x] - to exit");

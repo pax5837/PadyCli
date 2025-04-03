@@ -36,8 +36,8 @@ internal class TypeSelector : ITypeSelector
             throw new InvalidOperationException(
                 $"\n\nNo type found matching '{typeIdentifier}'."
                 + "\nThis error could be cause by a type located in a dll from a nuget package, you could:"
-                + "\n- You could use <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> in your csproj"
-                + "\n- Or run a dotnet publish, and pick the dll in the publish directory."
+                + "\n- use <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> in your csproj"
+                + "\n- run a `dotnet publish` or `dotnet publish --self-contained true`, and pick the dll in the publish directory."
                 + "\n\n\n");
         }
 
