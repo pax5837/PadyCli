@@ -32,14 +32,14 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
 
         if (cliRunner is not null)
         {
-            Console.WriteLine("Do you want to run dotnet publish [y]/n? (x to exit)");
+            Console.WriteLine("Do you want to run dotnet publish y/[n]? (x to exit)");
             var input = Console.ReadLine();
-            if (input.ToLower() == "x")
+            if (input.Equals("x", StringComparison.OrdinalIgnoreCase))
             {
                 return [];
             }
 
-            if (string.IsNullOrEmpty(input) || input.ToLower() == "y")
+            if (input.Equals("y", StringComparison.OrdinalIgnoreCase))
             {
                 cliRunner("dotnet publish --self-contained true");
             }
