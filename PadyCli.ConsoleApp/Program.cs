@@ -93,16 +93,17 @@ TdfConfigDefinition BuildTdfGeneratorConfig()
 
 
     var simpleTypeConfiguration = new SimpleTypeConfiguration(
-        "#########",
+        ParameterNamePlaceholder: "#########",
+        InstantiationConfigurations:
         [
-            new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+            new(typeof(string), $"{randomField}.NextString()", "System.String", []),
             new(typeof(int), $"{randomField}.Next()", null, []),
             new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
             new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),
             new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
             new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
             new(typeof(bool), $"{randomField}.NextBool()", null, []),
-            new(typeof(long), $"{randomField}.NextLong()", null, []),
+            new(typeof(long), $"{randomField}.NextInt64()", null, []),
             new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
         ]);
 
