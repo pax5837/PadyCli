@@ -3,6 +3,7 @@ using TestDataFactoryGenerator.Generation;
 using TestDataFactoryGenerator.Generation.AbstractClasses;
 using TestDataFactoryGenerator.Generation.CodeGeneration;
 using TestDataFactoryGenerator.Generation.Collections;
+using TestDataFactoryGenerator.Generation.Dictionnaries;
 using TestDataFactoryGenerator.Generation.Either;
 using TestDataFactoryGenerator.Generation.FactoryGeneration;
 using TestDataFactoryGenerator.Generation.Helpers;
@@ -32,6 +33,7 @@ public static class ServiceConfiguration
             .AddScoped<IProtoInformationService, ProtoInformationService>()
             .AddScoped<IProtoCodeGenerator, ProtoCodeGenerator>()
             .AddScoped<ICollectionsCodeGenerator, CollectionsCodeGenerator>()
+            .AddScoped<IDictionnariesCodeGenerator, DictionnariesCodeGenerator>()
             .AddScoped<IParameterInstantiationCodeGenerator, ParameterInstantiationCodeGenerator>()
             .AddScoped<ITypeWithConstructorsGenerator, TypeWithConstructorsGenerator>()
             .AddScoped<ICodeGenerator, CodeGenerator>()

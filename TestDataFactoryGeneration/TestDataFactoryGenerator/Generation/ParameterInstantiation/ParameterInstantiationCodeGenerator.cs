@@ -7,6 +7,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
     private readonly IProtoCodeGenerator _protoCodeGenerator;
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
+    private readonly IDictionnariesCodeGenerator _dictionnariesCodeGenerator;
     private readonly ICollectionsCodeGenerator _collectionsCodeGenerator;
     private readonly ISimpleTypeGenerator _simpleTypeGenerator;
     private readonly TdfGeneratorConfiguration _config;
@@ -17,6 +18,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         IProtoCodeGenerator protoCodeGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
+        IDictionnariesCodeGenerator  dictionnariesCodeGenerator,
         ICollectionsCodeGenerator collectionsCodeGenerator,
         ISimpleTypeGenerator simpleTypeGenerator,
         TdfGeneratorConfiguration config)
@@ -26,6 +28,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         _protoCodeGenerator = protoCodeGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
+        _dictionnariesCodeGenerator = dictionnariesCodeGenerator;
         _collectionsCodeGenerator = collectionsCodeGenerator;
         _simpleTypeGenerator = simpleTypeGenerator;
         _config = config;
@@ -75,6 +78,11 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         if (_userDefinedGenericsCodeGenerator.IsAUserDefinedGenericType(type))
         {
             return _userDefinedGenericsCodeGenerator.GenerateInstantiationCode(type);
+        }
+
+        if (_dictionnariesCodeGenerator.IsADictionary(type))
+        {
+            return _dictionnariesCodeGenerator.GenerateInstantiationCode(type, dependencies, this);
         }
 
         if (_collectionsCodeGenerator.IsACollection(type))

@@ -39,6 +39,7 @@ internal class TypeLister : ITypeLister
 
         var allTypes = types
             .Where(IsNotInSystemNamespace)
+            .Where(t => !t.IsArray)
             .ToImmutableHashSet();
 
         if (_logger.IsEnabled(LogLevel.Trace))
@@ -76,7 +77,6 @@ internal class TypeLister : ITypeLister
         {
             PopulateNestedTypesForProtobufRepeatedType(type, allTypes);
         }
-
         else if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type, IsNotInSystemNamespace))
         {
             PopulateDerivedTypes(type, allTypes);

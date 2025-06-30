@@ -16,8 +16,11 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
             ("ImmutableHashSet", "ToImmutableHashSet()"),
             ("ImmutableSortedSet", "ToImmutableSortedSet()"),
             ("IReadOnlySet", "ToHashSet()"),
+            ("FrozenSet", "ToFrozenSet()"),
+
 
             ("ImmutableArray", "ToImmutableArray()"),
+            ("Array", "ToArray()"),
         }.ToImmutableDictionary(x => x.CollectionTypeName, x => x.ToMethod);
 
     private readonly string _leadingUnderscore;
@@ -29,7 +32,7 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
 
     public bool IsACollection(Type type)
     {
-        return CollectionMap.Keys.Any(type.Name.StartsWith);
+        return CollectionMap.Keys.Any(type.Name.StartsWith) || type.Name.EndsWith("[]");
     }
 
     public string GenerateInstantiationCode(
@@ -37,12 +40,19 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
     {
-        var genericType = type.GenericTypeArguments[0];
+        var isArray = type.Name.EndsWith("[]");
 
-        var typeName = CollectionMap.Keys.First(type.Name.StartsWith);
+        var genericType = isArray
+            ? type.GetElementType()
+            : type.GenericTypeArguments[0];
+
         dependencies.Add("System.Linq");
 
+        var toMethod = isArray
+            ? "ToArray()"
+            : CollectionMap[CollectionMap.Keys.First(type.Name.StartsWith)];
+
         return
-            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{CollectionMap[typeName]}";
+            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{toMethod}";
     }
 }

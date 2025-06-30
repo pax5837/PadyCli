@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using TestDataForTestDataFactoryGenerator.Served;
@@ -6,36 +7,73 @@ namespace TestDataForTestDataFactoryGenerator;
 
 /// <summary>
 /// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>
-/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Delivery"/><br/>
 /// - <see cref="TestDataForTestDataFactoryGenerator.Served.Order"/><br/>
+/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Delivery"/><br/>
 /// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.
 /// </summary>
-internal partial class OrderTestDataFactory
+internal partial class MyTdf
 {
-    private static readonly IImmutableList<int> _zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];
+    private static readonly IImmutableList<int> zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];
 
-    private int GetZeroBiasedCount() => _zeroBiasedCounts.OrderBy(_ => _random.Next()).First();
+    private int GetZeroBiasedCount() => zeroBiasedCounts.OrderBy(_ => random.Next()).First();
 
-    private readonly Random _random;
+    private readonly Random random;
 
-    public OrderTestDataFactory()
+    public MyTdf()
     {
-        _random = new Random();
+        this.random = new Random();
     }
 
-    public OrderTestDataFactory(int seed)
+    public MyTdf(int seed)
     {
-        _random = new Random(seed);
+        this.random = new Random(seed);
     }
 
-    public OrderTestDataFactory(Random random)
+    public MyTdf(Random random)
     {
-        _random = random;
+        this.random = random;
+    }
+
+    public AllCollections GenerateAllCollections(
+        ImmutableArray<PositionNote>? positionNoteImmutableArray = null,
+        PositionNote[]? positionNoteArray = null,
+        List<PositionNote>? positionNoteList = null,
+        ImmutableList<PositionNote>? positionNoteImmutableList = null,
+        IImmutableList<PositionNote>? positionNoteIImmutableList = null,
+        IReadOnlyList<PositionNote>? positionNoteIReadOnlyList = null,
+        IImmutableSet<PositionNote>? positionNoteIImmutableSet = null,
+        ImmutableHashSet<PositionNote>? positionNoteImmutableHAshSet = null,
+        ImmutableSortedSet<PositionNote>? positionNoteImmutableSortedSet = null,
+        IReadOnlySet<PositionNote>? positionNoteIReadOnlySet = null,
+        FrozenSet<PositionNote>? positionNoteFrozenSet = null,
+        IImmutableDictionary<Guid, PositionNote>? positionNoteIImmutableDictionary = null,
+        ImmutableDictionary<Guid, PositionNote>? positionNoteImmutableDictionary = null,
+        ImmutableSortedDictionary<Guid, PositionNote>? positionNoteImmutableSortedDictionary = null,
+        FrozenDictionary<Guid, PositionNote>? positionNoteFrozenDictionary = null,
+        Dictionary<Guid, PositionNote>? positionNoteDictionary = null)
+    {
+        return new AllCollections(
+            PositionNoteImmutableArray: positionNoteImmutableArray ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableArray(),
+            PositionNoteArray: positionNoteArray ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToArray(),
+            PositionNoteList: positionNoteList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToList(),
+            PositionNoteImmutableList: positionNoteImmutableList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableList(),
+            PositionNoteIImmutableList: positionNoteIImmutableList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableList(),
+            PositionNoteIReadOnlyList: positionNoteIReadOnlyList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToList(),
+            PositionNoteIImmutableSet: positionNoteIImmutableSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableHashSet(),
+            PositionNoteImmutableHAshSet: positionNoteImmutableHAshSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableHashSet(),
+            PositionNoteImmutableSortedSet: positionNoteImmutableSortedSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableSortedSet(),
+            PositionNoteIReadOnlySet: positionNoteIReadOnlySet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToHashSet(),
+            PositionNoteFrozenSet: positionNoteFrozenSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToFrozenSet(),
+            PositionNoteIImmutableDictionary: positionNoteIImmutableDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            PositionNoteImmutableDictionary: positionNoteImmutableDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            PositionNoteImmutableSortedDictionary: positionNoteImmutableSortedDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableSortedDictionary(x => x.Key, x => x.Value),
+            PositionNoteFrozenDictionary: positionNoteFrozenDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToFrozenDictionary(x => x.Key, x => x.Value),
+            PositionNoteDictionary: positionNoteDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToDictionary(x => x.Key, x => x.Value));
     }
 
     public ContactInfo GenerateContactInfo()
     {
-        return _random.Next(0, 2) switch {
+        return random.Next(0, 2) switch {
             0 => GeneratePhoneContactInfo(),
             1 => GenerateEmailContactInfo(),
             _ => throw new InvalidOperationException("Unexpected constructor number"),
@@ -47,8 +85,8 @@ internal partial class OrderTestDataFactory
         DateTimeOffset? deliveryDate = null)
     {
         return new Delivery(
-            Items: items ?? Enumerable.Range(1, _random.Next(0, GetZeroBiasedCount())).Select(_ => GenerateItemPosition()).ToImmutableList(),
-            DeliveryDate: deliveryDate ?? _random.NextDateTimeOffset());
+            Items: items ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GenerateItemPosition()).ToImmutableList(),
+            DeliveryDate: deliveryDate ?? random.NextDateTimeOffset());
     }
 
     public EmailContactInfo GenerateEmailContactInfo(
@@ -57,7 +95,7 @@ internal partial class OrderTestDataFactory
     {
         return new EmailContactInfo(
             Person: person ?? GeneratePerson(),
-            Email: email ?? _random.NextString(""));
+            Email: email ?? random.NextString(""));
     }
 
     public ItemPosition GenerateItemPosition(
@@ -68,11 +106,11 @@ internal partial class OrderTestDataFactory
         decimal? positionPrice = null)
     {
         return new ItemPosition(
-            ItemPositionId: itemPositionId ?? _random.NextGuid(),
-            ProductId: productId ?? _random.NextGuid(),
-            ProductShortName: productShortName ?? _random.NextString(""),
-            ItemCount: itemCount ?? _random.Next(),
-            PositionPrice: positionPrice ?? _random.NextDecimal());
+            ItemPositionId: itemPositionId ?? random.NextGuid(),
+            ProductId: productId ?? random.NextGuid(),
+            ProductShortName: productShortName ?? random.NextString(""),
+            ItemCount: itemCount ?? random.Next(),
+            PositionPrice: positionPrice ?? random.NextDecimal());
     }
 
     public Order GenerateOrder(
@@ -80,14 +118,18 @@ internal partial class OrderTestDataFactory
         DateTimeOffset? orderDate = null,
         IImmutableSet<Position>? position = null,
         ContactInfo? contactInfo = null,
-        Delivery? delivery = null)
+        Delivery? delivery = null,
+        IImmutableDictionary<Guid, PriceInformation>? priceByProductId = null,
+        AllCollections? allCollections = null)
     {
         return new Order(
-            OrderId: orderId ?? _random.NextGuid(),
-            OrderDate: orderDate ?? _random.NextDateTimeOffset(),
-            Position: position ?? Enumerable.Range(1, _random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePosition()).ToImmutableHashSet(),
+            OrderId: orderId ?? random.NextGuid(),
+            OrderDate: orderDate ?? random.NextDateTimeOffset(),
+            Position: position ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePosition()).ToImmutableHashSet(),
             ContactInfo: contactInfo ?? GenerateContactInfo(),
-            Delivery: delivery ?? GenerateDelivery());
+            Delivery: delivery ?? GenerateDelivery(),
+            PriceByProductId: priceByProductId ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePriceInformation())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            AllCollections: allCollections ?? GenerateAllCollections());
     }
 
     public Person GeneratePerson(
@@ -96,9 +138,9 @@ internal partial class OrderTestDataFactory
         string? lastName = null)
     {
         return new Person(
-            Id: id ?? _random.NextGuid(),
-            FirstName: firstName ?? _random.NextString(""),
-            LastName: lastName ?? _random.NextString(""));
+            Id: id ?? random.NextGuid(),
+            FirstName: firstName ?? random.NextString(""),
+            LastName: lastName ?? random.NextString(""));
     }
 
     public PhoneContactInfo GeneratePhoneContactInfo(
@@ -107,7 +149,7 @@ internal partial class OrderTestDataFactory
     {
         return new PhoneContactInfo(
             Person: person ?? GeneratePerson(),
-            PhoneNumber: phoneNumber ?? _random.NextString(""));
+            PhoneNumber: phoneNumber ?? random.NextString(""));
     }
 
     public Position GeneratePosition(
@@ -118,18 +160,27 @@ internal partial class OrderTestDataFactory
         OptionalValue<int> batchSize = default)
     {
         return new Position(
-            PositionId: positionId ?? _random.NextGuid(),
-            ProductId: productId ?? _random.NextGuid(),
-            Count: count ?? _random.Next(),
+            PositionId: positionId ?? random.NextGuid(),
+            ProductId: productId ?? random.NextGuid(),
+            Count: count ?? random.Next(),
             PositionNote: positionNote.Unwrap(whenAutoGenerated: () => GeneratePositionNote()),
-            BatchSize: batchSize.Unwrap(whenAutoGenerated: () => _random.Next()));
+            BatchSize: batchSize.Unwrap(whenAutoGenerated: () => random.Next()));
     }
 
     public PositionNote GeneratePositionNote(
         string? note = null)
     {
         return new PositionNote(
-            Note: note ?? _random.NextString(""));
+            Note: note ?? random.NextString(""));
+    }
+
+    public PriceInformation GeneratePriceInformation(
+        decimal? basePrice = null,
+        IImmutableDictionary<int, decimal>? discountPercentByCount = null)
+    {
+        return new PriceInformation(
+            BasePrice: basePrice ?? random.NextDecimal(),
+            DiscountPercentByCount: discountPercentByCount ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.Next(), Value: random.NextDecimal())).ToImmutableDictionary(x => x.Key, x => x.Value));
     }
 }
 
@@ -150,20 +201,20 @@ internal enum Option
 
 internal struct OptionalRef<T> where T : class
 {
-    private readonly T? _value;
+    private readonly T? value;
 
-    private readonly InternalOption _type = InternalOption.AutoGenerated;
+    private readonly InternalOption type = InternalOption.AutoGenerated;
 
     public OptionalRef(T value)
     {
-        _value = value;
-        _type = InternalOption.SpecifiedValue;
+        this.value = value;
+        this.type = InternalOption.SpecifiedValue;
     }
 
     public OptionalRef(Option opt)
     {
-        _value = default;
-        _type = opt switch
+        this.value = default;
+        this.type = opt switch
         {
             Option.Null => InternalOption.Null,
             Option.AutoGenerated => InternalOption.AutoGenerated,
@@ -183,9 +234,9 @@ internal struct OptionalRef<T> where T : class
 
     public T? Unwrap(Func<T> whenAutoGenerated)
     {
-        return _type switch
+        return type switch
         {
-            InternalOption.SpecifiedValue => _value,
+            InternalOption.SpecifiedValue => value,
             InternalOption.Null => null,
             InternalOption.AutoGenerated => whenAutoGenerated(),
             _ => throw new InvalidOperationException(),
@@ -202,20 +253,20 @@ internal struct OptionalRef<T> where T : class
 
 internal struct OptionalValue<T> where T : struct
 {
-    private readonly T? _value;
+    private readonly T? value;
 
-    private readonly InternalOption _type = InternalOption.AutoGenerated;
+    private readonly InternalOption type = InternalOption.AutoGenerated;
 
     public OptionalValue(T value)
     {
-        _value = value;
-        _type = InternalOption.SpecifiedValue;
+        this.value = value;
+        this.type = InternalOption.SpecifiedValue;
     }
 
     public OptionalValue(Option opt)
     {
-        _value = default;
-        _type = opt switch
+        this.value = default;
+        this.type = opt switch
         {
             Option.Null => InternalOption.Null,
             Option.AutoGenerated => InternalOption.AutoGenerated,
@@ -235,9 +286,9 @@ internal struct OptionalValue<T> where T : struct
 
     public T? Unwrap(Func<T> whenAutoGenerated)
     {
-        return _type switch
+        return type switch
         {
-            InternalOption.SpecifiedValue => _value,
+            InternalOption.SpecifiedValue => value,
             InternalOption.Null => null,
             InternalOption.AutoGenerated => whenAutoGenerated(),
             _ => throw new InvalidOperationException(),

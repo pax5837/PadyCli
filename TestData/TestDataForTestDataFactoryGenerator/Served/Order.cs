@@ -2,4 +2,11 @@ using System.Collections.Immutable;
 
 namespace TestDataForTestDataFactoryGenerator.Served;
 
-internal record Order(Guid OrderId, DateTimeOffset OrderDate, IImmutableSet<Position> Position, ContactInfo ContactInfo, Delivery Delivery);
+internal record Order(
+    Guid OrderId,
+    DateTimeOffset OrderDate,
+    IImmutableSet<Position> Position,
+    ContactInfo ContactInfo,
+    Delivery Delivery,
+    IImmutableDictionary<Guid, PriceInformation> PriceByProductId,
+    AllCollections AllCollections);
