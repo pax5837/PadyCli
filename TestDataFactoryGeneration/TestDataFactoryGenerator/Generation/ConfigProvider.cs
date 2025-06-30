@@ -49,7 +49,7 @@ internal static class ConfigProvider
             new(typeof(DateTime), $"{randomField}.NextDateTime()", null, []),
             new(typeof(TimeSpan), $"{randomField}.NextTimeSpan()", null, []),
             new(typeof(bool), $"{randomField}.NextBool()", null, []),
-            new(typeof(long), $"{randomField}.NextLong()", null, []),
+            new(typeof(long), $"{randomField}.NextInt64()", null, []),
             new(typeof(decimal), $"{randomField}.NextDecimal()", null, []),
         ];
 
