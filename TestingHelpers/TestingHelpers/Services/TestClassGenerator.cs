@@ -31,7 +31,7 @@ internal class TestClassGenerator : ITestClassGenerator
     {
         var currentDirectory = Directory.GetCurrentDirectory();
 
-        var assembly = await _assemblyLoader.GetAssemblyAsync(
+        var assembly = await _assemblyLoader.GetAssembly(
             startDirectory: currentDirectory,
             useOnTheFlyCompilation: compileOnTheFly,
             cancellationToken: cancellationToken);

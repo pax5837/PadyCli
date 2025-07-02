@@ -7,8 +7,8 @@ namespace TestDataForTestDataFactoryGenerator;
 
 /// <summary>
 /// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>
-/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Order"/><br/>
 /// - <see cref="TestDataForTestDataFactoryGenerator.Served.Delivery"/><br/>
+/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Order"/><br/>
 /// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.
 /// </summary>
 internal partial class MyTdf
@@ -53,22 +53,22 @@ internal partial class MyTdf
         Dictionary<Guid, PositionNote>? positionNoteDictionary = null)
     {
         return new AllCollections(
-            PositionNoteImmutableArray: positionNoteImmutableArray ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableArray(),
-            PositionNoteArray: positionNoteArray ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToArray(),
-            PositionNoteList: positionNoteList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToList(),
-            PositionNoteImmutableList: positionNoteImmutableList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableList(),
-            PositionNoteIImmutableList: positionNoteIImmutableList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableList(),
-            PositionNoteIReadOnlyList: positionNoteIReadOnlyList ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToList(),
-            PositionNoteIImmutableSet: positionNoteIImmutableSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableHashSet(),
-            PositionNoteImmutableHAshSet: positionNoteImmutableHAshSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableHashSet(),
-            PositionNoteImmutableSortedSet: positionNoteImmutableSortedSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToImmutableSortedSet(),
-            PositionNoteIReadOnlySet: positionNoteIReadOnlySet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToHashSet(),
-            PositionNoteFrozenSet: positionNoteFrozenSet ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePositionNote()).ToFrozenSet(),
-            PositionNoteIImmutableDictionary: positionNoteIImmutableDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
-            PositionNoteImmutableDictionary: positionNoteImmutableDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
-            PositionNoteImmutableSortedDictionary: positionNoteImmutableSortedDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableSortedDictionary(x => x.Key, x => x.Value),
-            PositionNoteFrozenDictionary: positionNoteFrozenDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToFrozenDictionary(x => x.Key, x => x.Value),
-            PositionNoteDictionary: positionNoteDictionary ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToDictionary(x => x.Key, x => x.Value));
+            PositionNoteImmutableArray: positionNoteImmutableArray ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteArray: positionNoteArray ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteList: positionNoteList ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteImmutableList: positionNoteImmutableList ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteIImmutableList: positionNoteIImmutableList ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteIReadOnlyList: positionNoteIReadOnlyList ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteIImmutableSet: positionNoteIImmutableSet ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteImmutableHAshSet: positionNoteImmutableHAshSet ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteImmutableSortedSet: positionNoteImmutableSortedSet ?? [..GetSome(() => GeneratePositionNote())],
+            PositionNoteIReadOnlySet: positionNoteIReadOnlySet ?? GetSome(() => GeneratePositionNote()).ToHashSet(),
+            PositionNoteFrozenSet: positionNoteFrozenSet ?? GetSome(() => GeneratePositionNote()).ToFrozenSet(),
+            PositionNoteIImmutableDictionary: positionNoteIImmutableDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            PositionNoteImmutableDictionary: positionNoteImmutableDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            PositionNoteImmutableSortedDictionary: positionNoteImmutableSortedDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableSortedDictionary(x => x.Key, x => x.Value),
+            PositionNoteFrozenDictionary: positionNoteFrozenDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToFrozenDictionary(x => x.Key, x => x.Value),
+            PositionNoteDictionary: positionNoteDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToDictionary(x => x.Key, x => x.Value));
     }
 
     public ContactInfo GenerateContactInfo()
@@ -85,7 +85,7 @@ internal partial class MyTdf
         DateTimeOffset? deliveryDate = null)
     {
         return new Delivery(
-            Items: items ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GenerateItemPosition()).ToImmutableList(),
+            Items: items ?? [..GetSome(() => GenerateItemPosition())],
             DeliveryDate: deliveryDate ?? random.NextDateTimeOffset());
     }
 
@@ -125,10 +125,10 @@ internal partial class MyTdf
         return new Order(
             OrderId: orderId ?? random.NextGuid(),
             OrderDate: orderDate ?? random.NextDateTimeOffset(),
-            Position: position ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => GeneratePosition()).ToImmutableHashSet(),
+            Position: position ?? [..GetSome(() => GeneratePosition())],
             ContactInfo: contactInfo ?? GenerateContactInfo(),
             Delivery: delivery ?? GenerateDelivery(),
-            PriceByProductId: priceByProductId ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.NextGuid(), Value: GeneratePriceInformation())).ToImmutableDictionary(x => x.Key, x => x.Value),
+            PriceByProductId: priceByProductId ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePriceInformation())).ToImmutableDictionary(x => x.Key, x => x.Value),
             AllCollections: allCollections ?? GenerateAllCollections());
     }
 
@@ -180,7 +180,12 @@ internal partial class MyTdf
     {
         return new PriceInformation(
             BasePrice: basePrice ?? random.NextDecimal(),
-            DiscountPercentByCount: discountPercentByCount ?? Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: random.Next(), Value: random.NextDecimal())).ToImmutableDictionary(x => x.Key, x => x.Value));
+            DiscountPercentByCount: discountPercentByCount ?? GetSome(() => (Key: random.Next(), Value: random.NextDecimal())).ToImmutableDictionary(x => x.Key, x => x.Value));
+    }
+
+    public IEnumerable<T> GetSome<T>(Func<T> generator)
+    {
+        return Enumerable.Range(1, random.Next(0, GetZeroBiasedCount())).Select(_ => generator());
     }
 }
 

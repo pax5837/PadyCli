@@ -11,6 +11,6 @@ public interface IAssemblyLoader
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <param name="useOnTheFlyCompilation">Whether to use on the fly compilation. When set true it might not be able to load all dlls (nuget) and thus fail. When set to true, the user need to make sure the targeted project was built.</param>
     /// <returns></returns>
-    Task<Assembly> GetAssemblyAsync(string startDirectory, CancellationToken cancellationToken,
+    Task<Assembly> GetAssembly(string startDirectory, CancellationToken cancellationToken,
         bool useOnTheFlyCompilation = false);
 }

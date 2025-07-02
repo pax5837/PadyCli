@@ -18,7 +18,7 @@ internal class AssemblyLoader : IAssemblyLoader
         _logger = logger;
     }
 
-    public async Task<Assembly> GetAssemblyAsync(
+    public async Task<Assembly> GetAssembly(
         string startDirectory,
         CancellationToken cancellationToken,
         bool useOnTheFlyCompilation = false)

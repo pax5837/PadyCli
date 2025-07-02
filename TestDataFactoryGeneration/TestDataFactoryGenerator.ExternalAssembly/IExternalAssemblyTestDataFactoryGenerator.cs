@@ -4,7 +4,7 @@ namespace TestDataFactoryGenerator.TypeSelectionWrapper;
 
 public interface IExternalAssemblyTestDataFactoryGenerator
 {
-    Task<IImmutableList<string>> GenerateTestDataFactoryAsync(
+    Task<IImmutableList<string>> GenerateTestDataFactory(
         GenerationParameters generationParameters,
         CancellationToken cancellationToken);
 }

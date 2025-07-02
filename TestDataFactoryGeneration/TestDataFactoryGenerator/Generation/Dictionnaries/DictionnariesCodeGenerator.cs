@@ -4,6 +4,7 @@ namespace TestDataFactoryGenerator.Generation.Dictionnaries;
 
 internal class DictionnariesCodeGenerator : IDictionnariesCodeGenerator
 {
+    private readonly GenerationInformation _generationInformation;
 
     private static readonly ImmutableDictionary<string, string> DictionaryMap =
         new (string CollectionTypeName, string ToMethod)[]
@@ -17,9 +18,12 @@ internal class DictionnariesCodeGenerator : IDictionnariesCodeGenerator
 
     private readonly string _leadingUnderscore;
 
-    public DictionnariesCodeGenerator(TdfGeneratorConfiguration config)
+    public DictionnariesCodeGenerator(
+        TdfGeneratorConfiguration config,
+        GenerationInformation generationInformation)
     {
         _leadingUnderscore = config.LeadingUnderscore();
+        _generationInformation = generationInformation;
     }
 
     public bool IsADictionary(Type type)
@@ -36,6 +40,8 @@ internal class DictionnariesCodeGenerator : IDictionnariesCodeGenerator
         var keyType = type.GenericTypeArguments[0];
         var valueType = type.GenericTypeArguments[1];
 
-        return $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => (Key: {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(keyType, dependencies)}, Value: {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(valueType, dependencies)})).{DictionaryMap[typeName]}";
+        _generationInformation.CollectionsGenerated = true;
+
+        return $"GetSome(() => (Key: {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(keyType, dependencies)}, Value: {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(valueType, dependencies)})).{DictionaryMap[typeName]}";
     }
 }

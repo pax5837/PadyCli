@@ -35,7 +35,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
         OutputToConsole: false,
         WorkingDirectory: executionDirectory,
         IncludeOptionalsCode: true);
-    var lines = await generator.GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
+    var lines = await generator.GenerateTestDataFactory(generationParameters, cancellationToken);
 
     foreach (var line in lines)
     {
