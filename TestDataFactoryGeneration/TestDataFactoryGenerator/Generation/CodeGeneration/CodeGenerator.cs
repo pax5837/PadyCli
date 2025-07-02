@@ -80,10 +80,11 @@ internal class CodeGenerator : ICodeGenerator
                 .Concat(codeDoc)
                 .Concat(starOfClass)
                 .Concat(methods)
+                .Concat(_helpersGenerator.GenerateCollectionHelperCode())
                 .Concat(userDefinedMethods)
                 .RemoveLastWhiteLine()
                 .Concat(endOfClass)
-                .Concat(_helpersGenerator.GenerateHelpersCode(includeHelperClasses))
+                .Concat(_helpersGenerator.GenerateNonTdfSpecificHelperCode(includeHelperClasses))
                 .ToImmutableList();
     }
 

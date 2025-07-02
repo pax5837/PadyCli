@@ -4,18 +4,39 @@ namespace TestDataFactoryGenerator.Generation.Helpers;
 
 internal class HelpersGenerator : IHelpersGenerator
 {
+    private readonly GenerationInformation _generationInformation;
     private readonly string indent;
     private readonly string thisField;
     private readonly string leadingUnderscore;
 
-    public HelpersGenerator(TdfGeneratorConfiguration generatorConfiguration)
+    public HelpersGenerator(
+        TdfGeneratorConfiguration generatorConfiguration,
+        GenerationInformation generationInformation)
     {
+        _generationInformation = generationInformation;
         this.indent = generatorConfiguration.Indent;
         this.thisField = generatorConfiguration.This();
         this.leadingUnderscore = generatorConfiguration.LeadingUnderscore();
     }
 
-    public IImmutableList<string> GenerateHelpersCode(bool includeHelperClasses)
+    public IImmutableList<string> GenerateCollectionHelperCode()
+    {
+        if (!_generationInformation.CollectionsGenerated)
+        {
+            return [];
+        }
+
+        return
+        [
+            $"{indent}public IEnumerable<T> GetSome<T>(Func<T> generator)",
+            $"{indent}{{",
+            $"{indent}{indent}return Enumerable.Range(1, {leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => generator());",
+            $"{indent}}}",
+            string.Empty,
+        ];
+    }
+
+    public IImmutableList<string> GenerateNonTdfSpecificHelperCode(bool includeHelperClasses)
     {
         if (!includeHelperClasses)
         {

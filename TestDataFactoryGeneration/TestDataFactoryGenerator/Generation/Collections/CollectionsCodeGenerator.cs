@@ -4,29 +4,34 @@ namespace TestDataFactoryGenerator.Generation.Collections;
 
 internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
 {
+    private readonly GenerationInformation _generationInformation;
+
     private static readonly IImmutableDictionary<string, string> CollectionMap =
         new (string CollectionTypeName, string ToMethod)[]
         {
-            ("IImmutableList", "ToImmutableList()"),
-            ("ImmutableList", "ToImmutableList()"),
-            ("IReadOnlyList", "ToList()"),
-            ("List", "ToList()"),
+            ("IImmutableList", string.Empty),
+            ("ImmutableList", string.Empty),
+            ("IReadOnlyList", string.Empty),
+            ("List", string.Empty),
 
-            ("IImmutableSet", "ToImmutableHashSet()"),
-            ("ImmutableHashSet", "ToImmutableHashSet()"),
-            ("ImmutableSortedSet", "ToImmutableSortedSet()"),
+            ("IImmutableSet", string.Empty),
+            ("ImmutableHashSet", string.Empty),
+            ("ImmutableSortedSet", string.Empty),
             ("IReadOnlySet", "ToHashSet()"),
             ("FrozenSet", "ToFrozenSet()"),
 
 
-            ("ImmutableArray", "ToImmutableArray()"),
-            ("Array", "ToArray()"),
+            ("ImmutableArray", string.Empty),
+            ("Array", string.Empty),
         }.ToImmutableDictionary(x => x.CollectionTypeName, x => x.ToMethod);
 
     private readonly string _leadingUnderscore;
 
-    public CollectionsCodeGenerator(TdfGeneratorConfiguration config)
+    public CollectionsCodeGenerator(
+        TdfGeneratorConfiguration config,
+        GenerationInformation generationInformation)
     {
+        _generationInformation = generationInformation;
         _leadingUnderscore = config.LeadingUnderscore();
     }
 
@@ -48,11 +53,13 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
 
         dependencies.Add("System.Linq");
 
-        var toMethod = isArray
-            ? "ToArray()"
-            : CollectionMap[CollectionMap.Keys.First(type.Name.StartsWith)];
+        var toMethod = CollectionMap[isArray ? "Array" :CollectionMap.Keys.First(type.Name.StartsWith)];
+
+        _generationInformation.CollectionsGenerated = true;
 
         return
-            $"Enumerable.Range(1, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{toMethod}";
+            string.IsNullOrEmpty(toMethod)
+                ? $"[..GetSome(() => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)})]"
+                : $"GetSome(() => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{toMethod}";
     }
 }

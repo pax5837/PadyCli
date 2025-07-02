@@ -26,6 +26,7 @@ public static class ServiceConfiguration
 
         services
             .AddSingleton<TdfGeneratorConfiguration>(config)
+            .AddScoped<GenerationInformation>()
             .AddScoped<IUserDefinedGenericsCodeGenerator, UserDefinedGenericsCodeGenerator>()
             .AddScoped<IEitherInformationService, EitherInformationService>()
             .AddScoped<IEitherCodeGenerator, EitherCodeGenerator>()

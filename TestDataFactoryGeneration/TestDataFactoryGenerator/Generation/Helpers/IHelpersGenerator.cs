@@ -4,5 +4,7 @@ namespace TestDataFactoryGenerator.Generation.Helpers;
 
 internal interface IHelpersGenerator
 {
-    IImmutableList<string> GenerateHelpersCode(bool includeHelperClasses);
+    IImmutableList<string> GenerateCollectionHelperCode();
+
+    IImmutableList<string> GenerateNonTdfSpecificHelperCode(bool includeHelperClasses);
 }

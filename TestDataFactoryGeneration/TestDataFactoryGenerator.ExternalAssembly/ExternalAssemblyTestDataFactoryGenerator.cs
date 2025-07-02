@@ -23,13 +23,13 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
         _logger = logger;
     }
 
-    public async Task<IImmutableList<string>> GenerateTestDataFactoryAsync(
+    public async Task<IImmutableList<string>> GenerateTestDataFactory(
         GenerationParameters generationParameters,
         CancellationToken cancellationToken)
     {
         var currentDirectory = generationParameters.WorkingDirectory ?? Directory.GetCurrentDirectory();
 
-        var assembly = await _assemblyLoader.GetAssemblyAsync(
+        var assembly = await _assemblyLoader.GetAssembly(
             startDirectory: currentDirectory,
             useOnTheFlyCompilation: false,
             cancellationToken: cancellationToken);

@@ -33,7 +33,7 @@ internal class TestDataFactoryGenerator
         }
 
         var lines = await _externalAssemblyTestDataFactoryGenerator
-            .GenerateTestDataFactoryAsync(generationParameters, cancellationToken);
+            .GenerateTestDataFactory(generationParameters, cancellationToken);
 
         ClipboardService.SetText(string.Join("\n", lines));
 
