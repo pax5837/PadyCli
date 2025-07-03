@@ -101,8 +101,10 @@ internal class TypeLister : ITypeLister
         HashSet<Type> types)
     {
         var propertyTypes = _protoCodeGenerator.GetNestedTypes(type);
+        var tfn = type.FullName;
         foreach (var propertyType in propertyTypes)
         {
+            var typeFullName =  propertyType.FullName;
             if (_protoInformationService.IsProtoRepeatedField(propertyType))
             {
                 var genericType = propertyType.GenericTypeArguments.Single();
@@ -111,7 +113,7 @@ internal class TypeLister : ITypeLister
                     PopulateType(genericType, types);
                 }
 
-                return;
+                continue;
             }
 
             if (!types.Contains(propertyType))

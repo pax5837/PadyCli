@@ -310,7 +310,7 @@ internal struct OptionalValue<T> where T : struct
 
 internal static class RandomExtensions
 {
-    public static string NextString(this Random r, string? prefix) => $"{prefix ?? "RandomString"}_{r.Next(1, 1_000_000)}";
+    public static string NextString(this Random r, string? prefix = null) => $"{prefix ?? "RandomString"}_{r.Next(1, 1_000_000)}";
 
     public static byte[] NextBytes(this Random r, int length = 10)
     {
@@ -332,4 +332,6 @@ internal static class RandomExtensions
     public static long NextLong(this Random r) => r.NextInt64();
 
     public static decimal NextDecimal(this Random r) => (decimal)r.NextDouble();
+
+    public static T NextEnum<T>(this Random r) => Enum.GetValues(typeof(T)).Cast<T>().MinBy(x => r.NextGuid());
 }

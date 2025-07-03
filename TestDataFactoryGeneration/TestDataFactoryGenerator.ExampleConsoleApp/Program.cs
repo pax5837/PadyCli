@@ -8,12 +8,45 @@ using TextCopy;
 Console.WriteLine("Use custom config? [y/n]");
 var useCustomConfig = Console.ReadLine()?.ToLowerInvariant() == "y";
 var config = useCustomConfig ? BuildTdfGeneratorConfig() : null;
-await GenerateAndPrintTestDataTdfGeneratorVariant2Async(config, CancellationToken.None);
+
+Console.WriteLine("Which types to generate for?\n[1] -> Order, Delivery\n[2] -> HelloRequest , HelloResposne (Proto)");
+var typeChoice = int.Parse(Console.ReadLine());
+
+Console.WriteLine("Include Optionals code? y/n");
+var includeOptionalsCode = Console.ReadLine()?.ToLowerInvariant() == "y";
+
+switch (typeChoice)
+{
+    case 1:
+        await GenerateAndPrintTestDataTdfGenerator(config: config,
+            cancellationToken: CancellationToken.None,
+            testDataFactoryName: "Tdf",
+            targetTypes: ["Delivery", "Order"],
+            tdfNamespace: "TestDataForTestDataFactoryGenerator",
+            includeOptionalsCode: includeOptionalsCode);
+        break;
+    case 2:
+        await GenerateAndPrintTestDataTdfGenerator(config: config,
+            cancellationToken: CancellationToken.None,
+            testDataFactoryName: "TdfProto",
+            targetTypes: ["HelloRequest", "HelloResponse"],
+            tdfNamespace: "TestDataForTestDataFactoryGenerator",
+            includeOptionalsCode: includeOptionalsCode);
+        break;
+    default:
+        throw new ArgumentOutOfRangeException(nameof(typeChoice), typeChoice, null);
+}
 
 Task.Delay(500).Wait();
 
 
-async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition? config, CancellationToken cancellationToken)
+async Task GenerateAndPrintTestDataTdfGenerator(
+    TdfConfigDefinition? config,
+    CancellationToken cancellationToken,
+    string testDataFactoryName,
+    IImmutableSet<string> targetTypes,
+    string tdfNamespace,
+    bool includeOptionalsCode)
 {
     var services = new ServiceCollection()
         .AddLogging()
@@ -29,12 +62,12 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
         "TestData\\TestDataForTestDataFactoryGenerator");
 
     var generationParameters = new GenerationParameters(
-        TestDataFactoryName: "MyTdf",
-        NameSpace: "TestDataForTestDataFactoryGenerator",
-        TypeNames: ["Order", "Delivery"],
+        TestDataFactoryName: testDataFactoryName,
+        NameSpace: tdfNamespace,
+        TypeNames: targetTypes,
         OutputToConsole: false,
         WorkingDirectory: executionDirectory,
-        IncludeOptionalsCode: true);
+        IncludeOptionalsCode: includeOptionalsCode);
     var lines = await generator.GenerateTestDataFactory(generationParameters, cancellationToken);
 
     foreach (var line in lines)
@@ -53,7 +86,7 @@ TdfConfigDefinition BuildTdfGeneratorConfig()
 
     ImmutableList<InstantiationConfigurationForType> instantiationConfigurationForTypes =
     [
-        new(typeof(string), $"{randomField}.NextString(\"#########\")", "System.String", []),
+        new(typeof(string), $"{randomField}.NextString()", "System.String", []),
         new(typeof(int), $"{randomField}.Next()", null, []),
         new(typeof(Guid), $"{randomField}.NextGuid()", null, []),
         new(typeof(DateTimeOffset), $"{randomField}.NextDateTimeOffset()", null, []),

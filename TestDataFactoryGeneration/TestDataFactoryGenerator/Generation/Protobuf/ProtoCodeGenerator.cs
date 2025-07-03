@@ -6,6 +6,7 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
 {
     private readonly ITypeNameGenerator _typeNameGenerator;
     private readonly IProtoInformationService _protoInformationService;
+    private readonly GenerationInformation _generationInformation;
     private readonly TdfGeneratorConfiguration _config;
 
     private readonly string _leadingUnderscore;
@@ -13,10 +14,12 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
     public ProtoCodeGenerator(
         ITypeNameGenerator typeNameGenerator,
         IProtoInformationService protoInformationService,
+        GenerationInformation generationInformation,
         TdfGeneratorConfiguration config)
     {
         _typeNameGenerator = typeNameGenerator;
         _protoInformationService = protoInformationService;
+        _generationInformation = generationInformation;
         _config = config;
         _leadingUnderscore = config.LeadingUnderscore();
     }
@@ -120,10 +123,11 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         HashSet<string> dependencies,
         IParameterInstantiationCodeGenerator parameterInstantiationCodeGenerator)
     {
+        _generationInformation.CollectionsGenerated = true;
         var genericType = type.GenericTypeArguments.Single();
         dependencies.Add("System.Linq");
-        dependencies.Add("System.Collections.Generic");
+        dependencies.Add("System.Collections.Immutable");
         var generateParameterInstantiation = parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies);
-        return $"Enumerable.Range(0, {_leadingUnderscore}random.Next(0, GetZeroBiasedCount())).Select(_ => {generateParameterInstantiation}";
+        return $"GetSome(() => {generateParameterInstantiation}";
     }
 }
