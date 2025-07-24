@@ -59,6 +59,8 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
 
         var nestedProperties = GetNestedProperties(type);
 
+        var valueOfEnums = GetValueOfTypeGroups(type, nestedProperties);
+
         var endOfMethodLine = nestedProperties.Count == 0 ? "()" : "(";
         lines.Add(1, $"public {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}{endOfMethodLine}");
 
@@ -118,6 +120,19 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         return lines.ToImmutableList();
     }
 
+    private static ImmutableArray<OneOfGroup> GetValueOfTypeGroups(Type type, ImmutableList<PropertyInfo> nestedProperties)
+    {
+        return [..type.GetNestedTypes()
+            .Where(t => t.IsEnum && t.Name.EndsWith("OneofCase"))
+            .Select(tEnum => new OneOfGroup(tEnum.Name.Replace("OneofCase", string.Empty), ExtractPropertiesInGroup(nestedProperties, tEnum)))];
+    }
+
+    private static ImmutableList<PropertyInfo> ExtractPropertiesInGroup(ImmutableList<PropertyInfo> nestedProperties, Type tEnum)
+    {
+        var expectedPropertyNames = Enum.GetNames(tEnum);
+        return nestedProperties.Where(p => expectedPropertyNames.Contains(p.Name)).ToImmutableList();
+    }
+
     public string GenerateInstantiationCodeForProtobufRepeatedType(
         Type type,
         HashSet<string> dependencies,
@@ -130,4 +145,6 @@ internal class ProtoCodeGenerator : IProtoCodeGenerator
         var generateParameterInstantiation = parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies);
         return $"GetSome(() => {generateParameterInstantiation}";
     }
+
+    private record OneOfGroup(string OneOfName, IImmutableList<PropertyInfo> PropertiesInGroup);
 }

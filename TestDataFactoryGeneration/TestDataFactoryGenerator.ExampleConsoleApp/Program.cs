@@ -9,7 +9,7 @@ Console.WriteLine("Use custom config? [y/n]");
 var useCustomConfig = Console.ReadLine()?.ToLowerInvariant() == "y";
 var config = useCustomConfig ? BuildTdfGeneratorConfig() : null;
 
-Console.WriteLine("Which types to generate for?\n[1] -> Order, Delivery\n[2] -> HelloRequest , HelloResposne (Proto)");
+Console.WriteLine("Which types to generate for?\n[1] -> Order, Delivery\n[2] -> HelloRequest , HelloResponse (Proto)\n[3] -> Field (Proto)");
 var typeChoice = int.Parse(Console.ReadLine());
 
 Console.WriteLine("Include Optionals code? y/n");
@@ -30,6 +30,14 @@ switch (typeChoice)
             cancellationToken: CancellationToken.None,
             testDataFactoryName: "TdfProto",
             targetTypes: ["HelloRequest", "HelloResponse"],
+            tdfNamespace: "TestDataForTestDataFactoryGenerator",
+            includeOptionalsCode: includeOptionalsCode);
+        break;
+    case 3:
+        await GenerateAndPrintTestDataTdfGenerator(config: config,
+            cancellationToken: CancellationToken.None,
+            testDataFactoryName: "TdfFieldProto",
+            targetTypes: ["Field"],
             tdfNamespace: "TestDataForTestDataFactoryGenerator",
             includeOptionalsCode: includeOptionalsCode);
         break;
