@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace TestDataForTestDataFactoryGenerator.Served;
+namespace TestDataFactoryGenerator.TestData.Served;
 
 internal record Order(
     Guid OrderId,

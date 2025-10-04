@@ -5,13 +5,16 @@ namespace TestDataFactoryGenerator.Generation.AbstractClasses;
 internal class AbstractOneOfClassGenerationCreationService : IAbstractOneOfClassGenerationCreationService
 {
     private readonly IAbstractClassInformationService _infoService;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
     private readonly TdfGeneratorConfiguration _config;
 
     public AbstractOneOfClassGenerationCreationService(
         IAbstractClassInformationService infoService,
+        INamespaceAliasManager namespaceAliasManager,
         TdfGeneratorConfiguration config)
     {
         _infoService = infoService;
+        _namespaceAliasManager = namespaceAliasManager;
         _config = config;
     }
 
@@ -19,10 +22,12 @@ internal class AbstractOneOfClassGenerationCreationService : IAbstractOneOfClass
     {
         var lines = new Lines(_config);
 
+        _namespaceAliasManager.AddNamespaceForType(type);
+
         var derivedTypes = _infoService.GetDerivedTypes(type, _ => true).ToImmutableList();
 
         lines
-            .Add(1, $"public {type.Name} {Definitions.GenerationMethodPrefix}{type.Name}()")
+            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(type.Namespace)}{type.Name} {Definitions.GenerationMethodPrefix}{type.Name}()")
             .Add(1, "{")
             .Add(2, $"return {_config.LeadingUnderscore()}random.Next(0, {derivedTypes.Count}) switch {{");
 

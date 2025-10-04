@@ -13,6 +13,7 @@ internal class CodeGenerator : ICodeGenerator
     private readonly ISimpleTypeGenerator _simpleTypeGenerator;
     private readonly IAbstractClassInformationService _abstractClassInformationService;
     private readonly IAbstractOneOfClassGenerationCreationService _abstractOneOfClassGenerationCreationService;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
     private readonly TdfGeneratorConfiguration _config;
 
     public CodeGenerator(
@@ -24,6 +25,7 @@ internal class CodeGenerator : ICodeGenerator
         ISimpleTypeGenerator simpleTypeGenerator,
         IAbstractClassInformationService abstractClassInformationService,
         IAbstractOneOfClassGenerationCreationService abstractOneOfClassGenerationCreationService,
+        INamespaceAliasManager namespaceAliasManager,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
@@ -34,6 +36,7 @@ internal class CodeGenerator : ICodeGenerator
         _simpleTypeGenerator = simpleTypeGenerator;
         _abstractClassInformationService = abstractClassInformationService;
         _abstractOneOfClassGenerationCreationService = abstractOneOfClassGenerationCreationService;
+        _namespaceAliasManager = namespaceAliasManager;
         _config = config;
     }
 
@@ -60,13 +63,20 @@ internal class CodeGenerator : ICodeGenerator
         var systemUsings = dependencies
             .Where(x => x.StartsWith("System"))
             .OrderBy(x => x)
-            .Select(d => $"using {d};").ToImmutableList();
+            .Select(d => $"using {d};")
+            .ToImmutableList();
 
+        var namespacesWithAliases = _namespaceAliasManager.GetNamespacesWithAliases();
         var usings = dependencies
             .Where(x => !x.StartsWith("System"))
             .Where(x => !IsSubsetOfNamespace(x, nameSpace))
+            .Where(x => !namespacesWithAliases.Contains(x))
             .OrderBy(x => x)
-            .Select(d => $"using {d};").ToImmutableList();
+            .Select(d => $"using {d};")
+            .ToImmutableList();
+
+        var aliases = _namespaceAliasManager
+            .GetNamespaceAliasesUsings();
 
         var endOfClass = new[] { "}" }.ToImmutableList();
 
@@ -74,6 +84,8 @@ internal class CodeGenerator : ICodeGenerator
             systemUsings
                 .Append(string.Empty)
                 .Concat(usings)
+                .Append(string.Empty)
+                .Concat(aliases)
                 .Append(string.Empty)
                 .Append($"namespace {nameSpace};")
                 .Append(string.Empty)

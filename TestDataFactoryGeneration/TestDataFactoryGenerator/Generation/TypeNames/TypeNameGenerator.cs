@@ -6,6 +6,7 @@ internal class TypeNameGenerator : ITypeNameGenerator
 {
     private readonly IEitherInformationService _eitherInformationService;
     private readonly IProtoInformationService _protoInformationService;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
 
     private static readonly IImmutableDictionary<Type, string> TypeMap = new (Type, string)[]
     {
@@ -26,14 +27,18 @@ internal class TypeNameGenerator : ITypeNameGenerator
 
     public TypeNameGenerator(
         IEitherInformationService eitherInformationService,
-        IProtoInformationService protoInformationService)
+        IProtoInformationService protoInformationService,
+        INamespaceAliasManager namespaceAliasManager)
     {
         _eitherInformationService = eitherInformationService;
         _protoInformationService = protoInformationService;
+        _namespaceAliasManager = namespaceAliasManager;
     }
 
     public string GetTypeNameForParameter(Type parameterType)
     {
+        _namespaceAliasManager.AddNamespaceForType(parameterType);
+
         if (TypeMap.Keys.Contains(parameterType))
         {
             return TypeMap[parameterType];
@@ -64,6 +69,6 @@ internal class TypeNameGenerator : ITypeNameGenerator
                 $"{className}<{string.Join(", ", parameterType.GenericTypeArguments.Select(GetTypeNameForParameter))}>";
         }
 
-        return parameterType.Name;
+        return $"{_namespaceAliasManager.GetNamespaceAliasWithDot(parameterType.Namespace)}{parameterType.Name}";
     }
 }

@@ -35,7 +35,10 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
             cancellationToken: cancellationToken);
 
         var actualTypes = generationParameters.TypeNames
-            .Select(tn => _typeSelector.SelectType(tn, assembly).Switch<Type?>(t => t, _ => HandleNoTypeSelected(tn)))
+            .Select(tn => _typeSelector.SelectType(typeIdentifier: tn, assembly: assembly)
+                .Switch<Type?>(
+                    whenA: t => t,
+                    whenB: _ => HandleNoTypeSelected(tn)))
             .OfType<Type>()
             .ToImmutableHashSet();
 

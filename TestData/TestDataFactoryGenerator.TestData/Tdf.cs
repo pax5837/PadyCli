@@ -1,17 +1,19 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using TestDataForTestDataFactoryGenerator.Served;
 
-namespace TestDataForTestDataFactoryGenerator;
+using TTS = TestDataFactoryGenerator.TestData.SharedStuff;
+using TTS1 = TestDataFactoryGenerator.TestData.Served;
+
+namespace TestDataFactoryGenerator.TestData;
 
 /// <summary>
 /// This class was auto generated using TestDataFactoryGenerator, for following types:<br/>
-/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Delivery"/><br/>
-/// - <see cref="TestDataForTestDataFactoryGenerator.Served.Order"/><br/>
+/// - <see cref="TestDataFactoryGenerator.TestData.Served.Delivery"/><br/>
+/// - <see cref="TestDataFactoryGenerator.TestData.Served.Order"/><br/>
 /// This class can be edited, but it is preferable to not touch this file, and extend the partial class in a separate file.
 /// </summary>
-internal partial class MyTdf
+internal partial class Tdf
 {
     private static readonly IImmutableList<int> zeroBiasedCounts = [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2];
 
@@ -19,40 +21,50 @@ internal partial class MyTdf
 
     private readonly Random random;
 
-    public MyTdf()
+    public Tdf()
     {
         this.random = new Random();
     }
 
-    public MyTdf(int seed)
+    public Tdf(int seed)
     {
         this.random = new Random(seed);
     }
 
-    public MyTdf(Random random)
+    public Tdf(Random random)
     {
         this.random = random;
     }
 
-    public AllCollections GenerateAllCollections(
-        ImmutableArray<PositionNote>? positionNoteImmutableArray = null,
-        PositionNote[]? positionNoteArray = null,
-        List<PositionNote>? positionNoteList = null,
-        ImmutableList<PositionNote>? positionNoteImmutableList = null,
-        IImmutableList<PositionNote>? positionNoteIImmutableList = null,
-        IReadOnlyList<PositionNote>? positionNoteIReadOnlyList = null,
-        IImmutableSet<PositionNote>? positionNoteIImmutableSet = null,
-        ImmutableHashSet<PositionNote>? positionNoteImmutableHAshSet = null,
-        ImmutableSortedSet<PositionNote>? positionNoteImmutableSortedSet = null,
-        IReadOnlySet<PositionNote>? positionNoteIReadOnlySet = null,
-        FrozenSet<PositionNote>? positionNoteFrozenSet = null,
-        IImmutableDictionary<Guid, PositionNote>? positionNoteIImmutableDictionary = null,
-        ImmutableDictionary<Guid, PositionNote>? positionNoteImmutableDictionary = null,
-        ImmutableSortedDictionary<Guid, PositionNote>? positionNoteImmutableSortedDictionary = null,
-        FrozenDictionary<Guid, PositionNote>? positionNoteFrozenDictionary = null,
-        Dictionary<Guid, PositionNote>? positionNoteDictionary = null)
+    public TTS.Address GenerateAddress(
+        string? street = null,
+        string? city = null)
     {
-        return new AllCollections(
+        return new TTS.Address(
+            Street: street ?? random.NextString(""),
+            City: city ?? random.NextString(""));
+    }
+
+    public TTS1.AllCollections GenerateAllCollections(
+        ImmutableArray<TTS1.PositionNote>? positionNoteImmutableArray = null,
+        TTS1.PositionNote[]? positionNoteArray = null,
+        List<TTS1.PositionNote>? positionNoteList = null,
+        ImmutableList<TTS1.PositionNote>? positionNoteImmutableList = null,
+        IImmutableList<TTS1.PositionNote>? positionNoteIImmutableList = null,
+        IReadOnlyList<TTS1.PositionNote>? positionNoteIReadOnlyList = null,
+        IImmutableSet<TTS1.PositionNote>? positionNoteIImmutableSet = null,
+        ImmutableHashSet<TTS1.PositionNote>? positionNoteImmutableHAshSet = null,
+        ImmutableSortedSet<TTS1.PositionNote>? positionNoteImmutableSortedSet = null,
+        IReadOnlySet<TTS1.PositionNote>? positionNoteIReadOnlySet = null,
+        FrozenSet<TTS1.PositionNote>? positionNoteFrozenSet = null,
+        IImmutableDictionary<Guid, TTS1.PositionNote>? positionNoteIImmutableDictionary = null,
+        ImmutableDictionary<Guid, TTS1.PositionNote>? positionNoteImmutableDictionary = null,
+        ImmutableSortedDictionary<Guid, TTS1.PositionNote>? positionNoteImmutableSortedDictionary = null,
+        FrozenDictionary<Guid, TTS1.PositionNote>? positionNoteFrozenDictionary = null,
+        Dictionary<Guid, TTS1.PositionNote>? positionNoteDictionary = null,
+        OptionalRef<FrozenSet<TTS1.PositionNote>> optionalPositionNoteFrozenSet = default)
+    {
+        return new TTS1.AllCollections(
             PositionNoteImmutableArray: positionNoteImmutableArray ?? [..GetSome(() => GeneratePositionNote())],
             PositionNoteArray: positionNoteArray ?? [..GetSome(() => GeneratePositionNote())],
             PositionNoteList: positionNoteList ?? [..GetSome(() => GeneratePositionNote())],
@@ -68,44 +80,45 @@ internal partial class MyTdf
             PositionNoteImmutableDictionary: positionNoteImmutableDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableDictionary(x => x.Key, x => x.Value),
             PositionNoteImmutableSortedDictionary: positionNoteImmutableSortedDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToImmutableSortedDictionary(x => x.Key, x => x.Value),
             PositionNoteFrozenDictionary: positionNoteFrozenDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToFrozenDictionary(x => x.Key, x => x.Value),
-            PositionNoteDictionary: positionNoteDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToDictionary(x => x.Key, x => x.Value));
+            PositionNoteDictionary: positionNoteDictionary ?? GetSome(() => (Key: random.NextGuid(), Value: GeneratePositionNote())).ToDictionary(x => x.Key, x => x.Value),
+            OptionalPositionNoteFrozenSet: optionalPositionNoteFrozenSet.Unwrap(whenAutoGenerated: () => GetSome(() => GeneratePositionNote()).ToFrozenSet()));
     }
 
-    public ContactInfo GenerateContactInfo()
+    public TTS1.ContactInfo GenerateContactInfo()
     {
         return random.Next(0, 2) switch {
-            0 => GeneratePhoneContactInfo(),
-            1 => GenerateEmailContactInfo(),
+            0 => GenerateEmailContactInfo(),
+            1 => GeneratePhoneContactInfo(),
             _ => throw new InvalidOperationException("Unexpected constructor number"),
         };
     }
 
-    public Delivery GenerateDelivery(
-        IImmutableList<ItemPosition>? items = null,
+    public TTS1.Delivery GenerateDelivery(
+        IImmutableList<TTS1.ItemPosition>? items = null,
         DateTimeOffset? deliveryDate = null)
     {
-        return new Delivery(
+        return new TTS1.Delivery(
             Items: items ?? [..GetSome(() => GenerateItemPosition())],
             DeliveryDate: deliveryDate ?? random.NextDateTimeOffset());
     }
 
-    public EmailContactInfo GenerateEmailContactInfo(
-        Person? person = null,
+    public TTS1.EmailContactInfo GenerateEmailContactInfo(
+        TTS1.Person? person = null,
         string? email = null)
     {
-        return new EmailContactInfo(
+        return new TTS1.EmailContactInfo(
             Person: person ?? GeneratePerson(),
             Email: email ?? random.NextString(""));
     }
 
-    public ItemPosition GenerateItemPosition(
+    public TTS1.ItemPosition GenerateItemPosition(
         Guid? itemPositionId = null,
         Guid? productId = null,
         string? productShortName = null,
         int? itemCount = null,
         decimal? positionPrice = null)
     {
-        return new ItemPosition(
+        return new TTS1.ItemPosition(
             ItemPositionId: itemPositionId ?? random.NextGuid(),
             ProductId: productId ?? random.NextGuid(),
             ProductShortName: productShortName ?? random.NextString(""),
@@ -113,16 +126,16 @@ internal partial class MyTdf
             PositionPrice: positionPrice ?? random.NextDecimal());
     }
 
-    public Order GenerateOrder(
+    public TTS1.Order GenerateOrder(
         Guid? orderId = null,
         DateTimeOffset? orderDate = null,
-        IImmutableSet<Position>? position = null,
-        ContactInfo? contactInfo = null,
-        Delivery? delivery = null,
-        IImmutableDictionary<Guid, PriceInformation>? priceByProductId = null,
-        AllCollections? allCollections = null)
+        IImmutableSet<TTS1.Position>? position = null,
+        TTS1.ContactInfo? contactInfo = null,
+        TTS1.Delivery? delivery = null,
+        IImmutableDictionary<Guid, TTS1.PriceInformation>? priceByProductId = null,
+        TTS1.AllCollections? allCollections = null)
     {
-        return new Order(
+        return new TTS1.Order(
             OrderId: orderId ?? random.NextGuid(),
             OrderDate: orderDate ?? random.NextDateTimeOffset(),
             Position: position ?? [..GetSome(() => GeneratePosition())],
@@ -132,34 +145,36 @@ internal partial class MyTdf
             AllCollections: allCollections ?? GenerateAllCollections());
     }
 
-    public Person GeneratePerson(
+    public TTS1.Person GeneratePerson(
         Guid? id = null,
         string? firstName = null,
-        string? lastName = null)
+        string? lastName = null,
+        TTS.Address? address = null)
     {
-        return new Person(
+        return new TTS1.Person(
             Id: id ?? random.NextGuid(),
             FirstName: firstName ?? random.NextString(""),
-            LastName: lastName ?? random.NextString(""));
+            LastName: lastName ?? random.NextString(""),
+            Address: address ?? GenerateAddress());
     }
 
-    public PhoneContactInfo GeneratePhoneContactInfo(
-        Person? person = null,
+    public TTS1.PhoneContactInfo GeneratePhoneContactInfo(
+        TTS1.Person? person = null,
         string? phoneNumber = null)
     {
-        return new PhoneContactInfo(
+        return new TTS1.PhoneContactInfo(
             Person: person ?? GeneratePerson(),
             PhoneNumber: phoneNumber ?? random.NextString(""));
     }
 
-    public Position GeneratePosition(
+    public TTS1.Position GeneratePosition(
         Guid? positionId = null,
         Guid? productId = null,
         int? count = null,
-        OptionalRef<PositionNote> positionNote = default,
+        OptionalRef<TTS1.PositionNote> positionNote = default,
         OptionalValue<int> batchSize = default)
     {
-        return new Position(
+        return new TTS1.Position(
             PositionId: positionId ?? random.NextGuid(),
             ProductId: productId ?? random.NextGuid(),
             Count: count ?? random.Next(),
@@ -167,18 +182,18 @@ internal partial class MyTdf
             BatchSize: batchSize.Unwrap(whenAutoGenerated: () => random.Next()));
     }
 
-    public PositionNote GeneratePositionNote(
+    public TTS1.PositionNote GeneratePositionNote(
         string? note = null)
     {
-        return new PositionNote(
+        return new TTS1.PositionNote(
             Note: note ?? random.NextString(""));
     }
 
-    public PriceInformation GeneratePriceInformation(
+    public TTS1.PriceInformation GeneratePriceInformation(
         decimal? basePrice = null,
         IImmutableDictionary<int, decimal>? discountPercentByCount = null)
     {
-        return new PriceInformation(
+        return new TTS1.PriceInformation(
             BasePrice: basePrice ?? random.NextDecimal(),
             DiscountPercentByCount: discountPercentByCount ?? GetSome(() => (Key: random.Next(), Value: random.NextDecimal())).ToImmutableDictionary(x => x.Key, x => x.Value));
     }

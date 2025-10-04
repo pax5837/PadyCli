@@ -1,8 +1,6 @@
-namespace TestDataForTestDataFactoryGenerator.Served;
+namespace TestDataFactoryGenerator.TestData.Served;
 
 internal abstract record ContactInfo(Person Person);
-
-internal record Person(Guid Id, string FirstName, string LastName);
 
 internal record EmailContactInfo(Person Person, string Email) : ContactInfo(Person);
 

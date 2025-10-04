@@ -38,7 +38,7 @@ internal class TypeLister : ITypeLister
         }
 
         var allTypes = types
-            .Where(IsNotInSystemNamespace)
+            .Where(t => t.IsNotInSystemNamespace())
             .Where(t => !t.IsArray)
             .ToImmutableHashSet();
 
@@ -51,13 +51,6 @@ internal class TypeLister : ITypeLister
         }
 
         return allTypes;
-    }
-
-    private static bool IsNotInSystemNamespace(Type type)
-    {
-        return
-            type.Namespace != null &&
-            !type.Namespace.StartsWith("System", StringComparison.OrdinalIgnoreCase);
     }
 
     private void PopulateType(Type type, HashSet<Type> allTypes)
@@ -77,7 +70,7 @@ internal class TypeLister : ITypeLister
         {
             PopulateNestedTypesForProtobufRepeatedType(type, allTypes);
         }
-        else if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type, IsNotInSystemNamespace))
+        else if (_abstractClassInformationService.IsAbstractClassUsedAsOneOf(type, t => t.IsNotInSystemNamespace()))
         {
             PopulateDerivedTypes(type, allTypes);
         }
@@ -89,7 +82,7 @@ internal class TypeLister : ITypeLister
 
     private void PopulateDerivedTypes(Type type, HashSet<Type> allTypes)
     {
-        var derivedTypes = _abstractClassInformationService.GetDerivedTypes(type, IsNotInSystemNamespace);
+        var derivedTypes = _abstractClassInformationService.GetDerivedTypes(type, t => t.IsNotInSystemNamespace());
         foreach (var derivedType in derivedTypes)
         {
             PopulateType(derivedType, allTypes);
