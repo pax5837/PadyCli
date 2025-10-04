@@ -15,10 +15,12 @@
     <Project Path="TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/Features/TestDataFactoryGeneration/">
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" Type="Classic C#" />
     <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" Type="Classic C#" />
     <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" Type="Classic C#" />
-    <Project Path="TestData\TestDataForTestDataFactoryGenerator\TestDataForTestDataFactoryGenerator.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/Features/TestDataFactoryGeneration/ManualTesting/">
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" Type="Classic C#" />
+    <Project Path="TestData\TestDataFactoryGenerator.TestData\TestDataFactoryGenerator.TestData.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/Features/TestingHelpers/">
     <Project Path="TestData\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" Type="Classic C#" />

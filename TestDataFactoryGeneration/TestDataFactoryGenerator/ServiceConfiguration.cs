@@ -7,6 +7,7 @@ using TestDataFactoryGenerator.Generation.Dictionnaries;
 using TestDataFactoryGenerator.Generation.Either;
 using TestDataFactoryGenerator.Generation.FactoryGeneration;
 using TestDataFactoryGenerator.Generation.Helpers;
+using TestDataFactoryGenerator.Generation.NamespaceAliases;
 using TestDataFactoryGenerator.Generation.ParameterInstantiation;
 using TestDataFactoryGenerator.Generation.Protobuf;
 using TestDataFactoryGenerator.Generation.SimpleTypeGenerator;
@@ -43,7 +44,8 @@ public static class ServiceConfiguration
             .AddScoped<ISimpleTypeGenerator, SimpleTypeGenerator>()
             .AddScoped<IAbstractClassInformationService, AbstractClassInformationService>()
             .AddScoped<IAbstractOneOfClassGenerationCreationService, AbstractOneOfClassGenerationCreationService>()
-            .AddScoped<IHelpersGenerator, HelpersGenerator>();
+            .AddScoped<IHelpersGenerator, HelpersGenerator>()
+            .AddScoped<INamespaceAliasManager, NamespaceAliasManager>();
 
         return services;
     }
