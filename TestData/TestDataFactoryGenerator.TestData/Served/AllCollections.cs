@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-namespace TestDataForTestDataFactoryGenerator.Served;
+namespace TestDataFactoryGenerator.TestData.Served;
 
 internal record AllCollections(
     ImmutableArray<PositionNote> PositionNoteImmutableArray,
@@ -22,4 +22,6 @@ internal record AllCollections(
     ImmutableDictionary<Guid, PositionNote> PositionNoteImmutableDictionary,
     ImmutableSortedDictionary<Guid, PositionNote> PositionNoteImmutableSortedDictionary,
     FrozenDictionary<Guid, PositionNote> PositionNoteFrozenDictionary,
-    Dictionary<Guid, PositionNote> PositionNoteDictionary);
+    Dictionary<Guid, PositionNote> PositionNoteDictionary,
+
+    FrozenSet<PositionNote>? OptionalPositionNoteFrozenSet);

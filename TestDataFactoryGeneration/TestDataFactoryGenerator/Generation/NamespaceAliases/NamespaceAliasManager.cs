@@ -28,12 +28,13 @@ internal class NamespaceAliasManager : INamespaceAliasManager
             if (!_aliasesByNamespace.Values.Contains(currentAliasCandiate))
             {
                 _aliasesByNamespace.Add(ns, currentAliasCandiate);
+                return;
             }
 
             aliasIndex++;
             currentAliasCandiate = $"{originalAliasCandidate}{aliasIndex}";
 
-            if (aliasIndex >= _aliasesByNamespace.Count)
+            if (aliasIndex > _aliasesByNamespace.Count)
             {
                 var currentAliases = string.Join("\n", _aliasesByNamespace.Select(kvp => $"- {kvp.Key}:{kvp.Value}"));
                 throw new InvalidOperationException($"Can not add namespace alias {originalAliasCandidate}, current aliases:\n{currentAliases}");
@@ -57,6 +58,13 @@ internal class NamespaceAliasManager : INamespaceAliasManager
             .Select(kvp => $"using {kvp.Value} = {kvp.Key};")
             .OrderBy(x => x)
             .ToImmutableList();
+    }
+
+    public IImmutableSet<string> GetNamespacesWithAliases()
+    {
+        return _aliasesByNamespace
+            .Keys
+            .ToImmutableHashSet();
     }
 
     private static string GenerateNamespaceAlias(string @namespace)

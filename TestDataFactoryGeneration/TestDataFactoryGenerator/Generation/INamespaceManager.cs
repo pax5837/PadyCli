@@ -9,4 +9,6 @@ internal interface INamespaceAliasManager
     string GetNamespaceAliasWithDot(string? @namespace);
 
     IImmutableList<string> GetNamespaceAliasesUsings();
+
+    IImmutableSet<string> GetNamespacesWithAliases();
 }

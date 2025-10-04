@@ -29,7 +29,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
         "TestData\\TestDataFactoryGenerator.TestData");
 
     var generationParameters = new GenerationParameters(
-        TestDataFactoryName: "MyTdf",
+        TestDataFactoryName: "Tdf",
         NameSpace: "TestDataFactoryGenerator.TestData",
         TypeNames: ["Order", "Delivery"],
         OutputToConsole: false,
