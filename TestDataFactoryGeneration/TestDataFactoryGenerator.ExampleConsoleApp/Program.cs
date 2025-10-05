@@ -47,7 +47,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
 
 TdfConfigDefinition BuildTdfGeneratorConfig()
 {
-    var useLeadingUnderscoreForPrivateFields = false;
+    var useLeadingUnderscoreForPrivateFields = true;
 
     var randomField = useLeadingUnderscoreForPrivateFields ? "_random" : "random";
 
