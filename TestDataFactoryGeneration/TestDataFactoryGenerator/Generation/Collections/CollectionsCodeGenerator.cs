@@ -5,33 +5,46 @@ namespace TestDataFactoryGenerator.Generation.Collections;
 internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
 {
     private readonly GenerationInformation _generationInformation;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
 
-    private static readonly IImmutableDictionary<string, string> CollectionMap =
-        new (string CollectionTypeName, string ToMethod)[]
+    private static readonly IImmutableDictionary<string, Instantiation?> CollectionMap =
+        new (string CollectionTypeName, Instantiation? Instantiation)[]
         {
-            ("IImmutableList", string.Empty),
-            ("ImmutableList", string.Empty),
-            ("IReadOnlyList", string.Empty),
-            ("List", string.Empty),
+            ("IImmutableList", null),
+            ("ImmutableList", null),
+            ("IReadOnlyList", null),
+            ("List", null),
+            ("LinkedList", new Instantiation(InstantiationMethod.ConstructionMethod, "new LinkedList")),
 
-            ("IImmutableSet", string.Empty),
-            ("ImmutableHashSet", string.Empty),
-            ("ImmutableSortedSet", string.Empty),
-            ("IReadOnlySet", "ToHashSet()"),
-            ("FrozenSet", "ToFrozenSet()"),
+            ("ISet", new Instantiation(InstantiationMethod.ConstructionMethod, "new HashSet")),
+            ("IImmutableSet", null),
+            ("ImmutableHashSet", null),
+            ("ImmutableSortedSet", null),
+            ("IReadOnlySet", new Instantiation(InstantiationMethod.ToMethod, "ToHashSet()")),
+            ("FrozenSet", new Instantiation(InstantiationMethod.ToMethod, "ToFrozenSet()")),
+            ("SortedSet", null),
 
+            ("ImmutableArray", null),
+            ("Array", null),
 
-            ("ImmutableArray", string.Empty),
-            ("Array", string.Empty),
-        }.ToImmutableDictionary(x => x.CollectionTypeName, x => x.ToMethod);
+            ("ICollection", null),
+            ("IReadOnlyCollection", null),
+
+            ("IEnumerable", null),
+
+            ("Queue", new Instantiation(InstantiationMethod.ConstructionMethod, "new Queue")),
+            ("Stack", new Instantiation(InstantiationMethod.ConstructionMethod, "new Stack")),
+        }.ToImmutableDictionary(x => x.CollectionTypeName, x => x.Instantiation);
 
     private readonly string _leadingUnderscore;
 
     public CollectionsCodeGenerator(
         TdfGeneratorConfiguration config,
-        GenerationInformation generationInformation)
+        GenerationInformation generationInformation,
+        INamespaceAliasManager namespaceAliasManager)
     {
         _generationInformation = generationInformation;
+        _namespaceAliasManager = namespaceAliasManager;
         _leadingUnderscore = config.LeadingUnderscore();
     }
 
@@ -53,13 +66,33 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
 
         dependencies.Add("System.Linq");
 
-        var toMethod = CollectionMap[isArray ? "Array" :CollectionMap.Keys.First(type.Name.StartsWith)];
+        var instantiation = CollectionMap[isArray ? "Array" : CollectionMap.Keys.First(type.Name.StartsWith)];
 
         _generationInformation.CollectionsGenerated = true;
 
         return
-            string.IsNullOrEmpty(toMethod)
+            instantiation is null
                 ? $"[..GetSome(() => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)})]"
-                : $"GetSome(() => {parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies)}).{toMethod}";
+                : instantiation.Generate(parameterInstantiationCodeGenerator.GenerateParameterInstantiation(genericType, dependencies), genericType, _namespaceAliasManager);
+    }
+
+    private sealed record Instantiation(InstantiationMethod Method, string code)
+    {
+        public string Generate(string parameterInstantiation, Type type, INamespaceAliasManager namespaceAliasManager)
+        {
+            return Method switch
+            {
+                InstantiationMethod.ToMethod
+                    => $"GetSome(() => {parameterInstantiation}).{code}",
+                InstantiationMethod.ConstructionMethod
+                    => $"{code}<{namespaceAliasManager.GetNamespaceAliasWithDot(type.Namespace)}{type.Name}>([..GetSome(() => {parameterInstantiation})])",
+            };
+        }
+    }
+
+    private enum InstantiationMethod
+    {
+        ToMethod = 1,
+        ConstructionMethod = 2,
     }
 }

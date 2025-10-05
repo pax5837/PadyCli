@@ -26,7 +26,7 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
     var currentDirectory = new DirectoryInfo(Environment.CurrentDirectory);
     var executionDirectory = Path.Combine(
         currentDirectory.Parent.Parent.Parent.Parent.Parent.FullName,
-        "TestData\\TestDataFactoryGenerator.TestData");
+        "TestDataFactoryGeneration\\TestDataFactoryGenerator.TestData");
 
     var generationParameters = new GenerationParameters(
         TestDataFactoryName: "Tdf",
