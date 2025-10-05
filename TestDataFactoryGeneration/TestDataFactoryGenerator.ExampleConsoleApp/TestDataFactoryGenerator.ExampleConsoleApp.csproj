@@ -16,7 +16,6 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TestData\TestDataFactoryGenerator.TestData\TestDataFactoryGenerator.TestData.csproj" />
       <ProjectReference Include="..\..\DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" />
       <ProjectReference Include="..\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" />
       <ProjectReference Include="..\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" />
