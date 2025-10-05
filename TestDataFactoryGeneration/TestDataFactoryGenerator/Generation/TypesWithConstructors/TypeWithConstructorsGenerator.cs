@@ -10,6 +10,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
     private readonly ITypeNameGenerator _typeNameGenerator;
     private readonly IUserDefinedGenericsCodeGenerator _userDefinedGenericsCodeGenerator;
     private readonly IProtoInformationService _protoInformationService;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
     private readonly TdfGeneratorConfiguration _config;
 
     private readonly string _leadingUnderscore;
@@ -20,6 +21,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         ITypeNameGenerator typeNameGenerator,
         IUserDefinedGenericsCodeGenerator userDefinedGenericsCodeGenerator,
         IProtoInformationService protoInformationService,
+        INamespaceAliasManager namespaceAliasManager,
         TdfGeneratorConfiguration config)
     {
         _parameterInstantiationCodeGenerator = parameterInstantiationCodeGenerator;
@@ -27,6 +29,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         _typeNameGenerator = typeNameGenerator;
         _userDefinedGenericsCodeGenerator = userDefinedGenericsCodeGenerator;
         _protoInformationService = protoInformationService;
+        _namespaceAliasManager = namespaceAliasManager;
         _config = config;
         _leadingUnderscore = config.LeadingUnderscore();
     }
@@ -64,9 +67,10 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         HashSet<string> dependencies)
     {
         var lines = new Lines(_config);
+        _namespaceAliasManager.AddNamespaceForType(t);
 
         lines
-            .Add(1, $"public {t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
+            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
             .Add(1, "{")
             .Add(2, $"var constructorNumber = {_leadingUnderscore}random.Next(0, {constructors.Count()});")
             .Add(2, $"return constructorNumber switch {{");
@@ -75,7 +79,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         {
             var constructor = constructors[j];
 
-            lines.Add(3, $"{j} => new {t.Name}(");
+            lines.Add(3, $"{j} => new {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name}(");
 
             var parameters = constructor.GetParameters();
             for (int i = 0; i < parameters.Length; i++)

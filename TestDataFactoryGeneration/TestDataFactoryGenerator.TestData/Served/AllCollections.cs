@@ -35,4 +35,6 @@ internal record AllCollections(
     Queue<PositionNote> PositionNoteQueue,
     Stack<PositionNote> PositionNoteStack,
 
-    FrozenSet<PositionNote>? OptionalPositionNoteFrozenSet);
+    FrozenSet<PositionNote>? OptionalPositionNoteFrozenSet,
+
+    ListWrapper<PositionNote, Delivery> PositionNoteListWrapper);

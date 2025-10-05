@@ -4,6 +4,13 @@ namespace TestDataFactoryGenerator.Generation.UserDefinedGenerics;
 
 internal class UserDefinedGenericsCodeGenerator : IUserDefinedGenericsCodeGenerator
 {
+    private readonly INamespaceAliasManager _namespaceAliasManager;
+
+    public UserDefinedGenericsCodeGenerator(INamespaceAliasManager namespaceAliasManager)
+    {
+        _namespaceAliasManager = namespaceAliasManager;
+    }
+
     public bool IsAUserDefinedGenericType(Type type)
     {
         return type.IsGenericType && !type.Namespace!.StartsWith("System");
@@ -18,6 +25,7 @@ internal class UserDefinedGenericsCodeGenerator : IUserDefinedGenericsCodeGenera
     {
         var genericTypes = type.GenericTypeArguments;
         var typeName = RemoveGenericPart(type.Name);
+        _namespaceAliasManager.AddNamespaceForType(type);
         var genericTypeNames = genericTypes.Select((gt, index) => $"T{index + 1}{RemoveGenericPart(gt.Name)}")
             .ToImmutableList();
 
