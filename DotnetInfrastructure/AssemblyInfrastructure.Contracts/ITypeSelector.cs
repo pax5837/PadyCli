@@ -6,5 +6,8 @@ namespace DotnetInfrastructure.Contracts;
 
 public interface ITypeSelector
 {
-    Either<Type, ExitRequested> SelectType(string typeIdentifier, Assembly assembly);
+    Either<Type, ExitRequested> SelectType(
+        string typeIdentifier,
+        Assembly mainAssembly,
+        IReadOnlyList<Assembly> referencedAssemblies);
 }

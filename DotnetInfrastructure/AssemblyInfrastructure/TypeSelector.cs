@@ -9,20 +9,19 @@ namespace DotnetInfrastructure;
 
 internal class TypeSelector : ITypeSelector
 {
-    private readonly AssemblyInfo _assemblyInfo;
     private readonly ILogger<TypeSelector> _logger;
 
-    public TypeSelector(
-        AssemblyInfo assemblyInfo,
-        ILogger<TypeSelector> logger)
+    public TypeSelector(ILogger<TypeSelector> logger)
     {
-        _assemblyInfo = assemblyInfo;
         _logger = logger;
     }
 
-    public Either<Type, ExitRequested> SelectType(string typeIdentifier, Assembly assembly)
+    public Either<Type, ExitRequested> SelectType(
+        string typeIdentifier,
+        Assembly mainAssembly,
+        IReadOnlyList<Assembly> referencedAssemblies)
     {
-        var types = GetTypes(assembly).ToImmutableList();
+        var types = GetTypes(mainAssembly, referencedAssemblies).ToImmutableList();
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
@@ -41,7 +40,7 @@ internal class TypeSelector : ITypeSelector
                 $"\n\nNo type found matching '{typeIdentifier}'."
                 + "\nThis error could be cause by a type located in a dll from a nuget package, you could:"
                 + "\n- use <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> in your csproj"
-                + "\n- run a `dotnet publish` or `dotnet publish --self-contained true`, and pick the dll in the publish directory."
+                + "\n- run a `dotnet build --sc`, `dotnet publish` or `dotnet publish --sc`, and pick the dll in the publish directory."
                 + "\n\n\n");
         }
 
@@ -65,30 +64,23 @@ internal class TypeSelector : ITypeSelector
         return candidateTypes.Single();
     }
 
-    private Type[] GetTypes(Assembly assembly)
+    private Type[] GetTypes(Assembly assembly, IReadOnlyList<Assembly> referencedAssemblies)
     {
         try
         {
             List<Type> allTypes = new List<Type>();
             allTypes.AddRange(assembly.GetTypes());
 
-            var referencedAssemblies = assembly.GetReferencedAssemblies()
-                .Where(ra => ra.Name is not null && ra.Name.StartsWith("MT.LXC.RA.MetaData.ReadWrite"))
-                .ToImmutableList();
             foreach (var referencedAssembly in referencedAssemblies)
             {
-                var pathToDll = Path.Combine(_assemblyInfo.PathToBinFolder, $"{referencedAssembly.Name}.dll");
-                if (File.Exists(pathToDll))
+                try
                 {
-                    try
-                    {
-                        var assy = _assemblyInfo.AssemblyLoadContext.LoadFromAssemblyPath(pathToDll);
-                        allTypes.AddRange(assy.GetExportedTypes());
-                    }
-                    catch (Exception)
-                    {
-                        _logger.LogWarning("Could not load {DLL}", pathToDll);
-                    }
+                    var exportedTypes = referencedAssembly.GetExportedTypes();
+                    allTypes.AddRange(exportedTypes);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Could extract types form assembly {assy}", referencedAssembly.FullName);
                 }
             }
 

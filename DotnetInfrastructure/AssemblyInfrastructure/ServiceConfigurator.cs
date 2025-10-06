@@ -9,7 +9,6 @@ public static class ServiceConfigurator
     {
         services
             .AddSingleton<IAssemblyLoader, AssemblyLoader>()
-            .AddSingleton<AssemblyInfo>()
             .AddSingleton<ITypeSelector, TypeSelector>();
 
         return services;
