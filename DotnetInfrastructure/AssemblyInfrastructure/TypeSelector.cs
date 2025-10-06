@@ -9,21 +9,25 @@ namespace DotnetInfrastructure;
 
 internal class TypeSelector : ITypeSelector
 {
+    private readonly AssemblyInfo _assemblyInfo;
     private readonly ILogger<TypeSelector> _logger;
 
-    public TypeSelector(ILogger<TypeSelector> logger)
+    public TypeSelector(
+        AssemblyInfo assemblyInfo,
+        ILogger<TypeSelector> logger)
     {
+        _assemblyInfo = assemblyInfo;
         _logger = logger;
     }
 
     public Either<Type, ExitRequested> SelectType(string typeIdentifier, Assembly assembly)
     {
-        var types = GetTypes(assembly);
+        var types = GetTypes(assembly).ToImmutableList();
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogTrace("Found {TypeCount} types:\n{AllTypes}",
-                types.Length,
+                types.Count,
                 string.Join("\n", types.Select(t => $"  - {t.Name}")));
         }
 
@@ -65,7 +69,31 @@ internal class TypeSelector : ITypeSelector
     {
         try
         {
-            return assembly.GetTypes();
+            List<Type> allTypes = new List<Type>();
+            allTypes.AddRange(assembly.GetTypes());
+
+            var referencedAssemblies = assembly.GetReferencedAssemblies()
+                .Where(ra => ra.Name is not null && ra.Name.StartsWith("MT.LXC.RA.MetaData.ReadWrite"))
+                .ToImmutableList();
+            foreach (var referencedAssembly in referencedAssemblies)
+            {
+                var pathToDll = Path.Combine(_assemblyInfo.PathToBinFolder, $"{referencedAssembly.Name}.dll");
+                if (File.Exists(pathToDll))
+                {
+                    try
+                    {
+                        var assy = _assemblyInfo.AssemblyLoadContext.LoadFromAssemblyPath(pathToDll);
+                        allTypes.AddRange(assy.GetExportedTypes());
+                    }
+                    catch (Exception)
+                    {
+                        _logger.LogWarning("Could not load {DLL}", pathToDll);
+                    }
+                }
+            }
+
+            var array = allTypes.Distinct().ToArray();
+            return array;
         }
         catch (ReflectionTypeLoadException e)
         {

@@ -11,10 +11,12 @@ namespace DotnetInfrastructure;
 
 internal class AssemblyLoader : IAssemblyLoader
 {
+    private readonly AssemblyInfo _assemblyInfo;
     private readonly ILogger<AssemblyLoader> _logger;
 
-    public AssemblyLoader(ILogger<AssemblyLoader> logger)
+    public AssemblyLoader(AssemblyInfo assemblyInfo, ILogger<AssemblyLoader> logger)
     {
+        _assemblyInfo = assemblyInfo;
         _logger = logger;
     }
 
@@ -63,7 +65,10 @@ internal class AssemblyLoader : IAssemblyLoader
                 $"Could not find a dll in the directory: {binDirectory}, try to build your project.");
         }
 
-        return Assembly.LoadFrom(PickDll(dllsFound));
+        var pathToPickedDll = PickDll(dllsFound);
+        _assemblyInfo.PathToBinFolder = Directory.GetParent(pathToPickedDll).FullName;
+        _assemblyInfo.AssemblyLoadContext = new CustomAssemblyLoadContext(_assemblyInfo.PathToBinFolder);
+        return _assemblyInfo.AssemblyLoadContext.LoadFromAssemblyPath(pathToPickedDll);
     }
 
     private async Task<Assembly> LoadAssemblyViaCompilationAsync(

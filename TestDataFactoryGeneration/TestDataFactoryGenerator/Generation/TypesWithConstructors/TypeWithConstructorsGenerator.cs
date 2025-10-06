@@ -89,7 +89,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
                     type: parameters[i].ParameterType,
                     dependencies: dependencies);
 
-                lines.Add(4, $"{parameters[i].Name}: {parameterInstantiation}{endOfLine}");
+                lines.Add(4, $"{parameters[i].SanitizedName()}: {parameterInstantiation}{endOfLine}");
             }
         }
 
@@ -141,11 +141,11 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
                 var optionalType = parameterKind.IsValueType
                     ? "OptionalValue"
                     : "OptionalRef";
-                lines.Add(2, $"{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase()} = default{endOfLine}");
+                lines.Add(2, $"{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase().SanitizedName()} = default{endOfLine}");
             }
             else
             {
-                lines.Add(2, $"{typeNameForParameter}? {parameter.Name!.ToCamelCase()} = null{endOfLine}");
+                lines.Add(2, $"{typeNameForParameter}? {parameter.Name!.ToCamelCase().SanitizedName()} = null{endOfLine}");
             }
         }
 
@@ -162,7 +162,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
             var generateParameterInstantiation = _parameterInstantiationCodeGenerator.GenerateParameterInstantiation(
                 type: parameter.ParameterType,
                 dependencies: dependencies);
-            var methodParameterName = parameter.Name!.ToCamelCase();
+            var methodParameterName = parameter.Name!.ToCamelCase().SanitizedName();
             var kind = parameter.GetKind(nullabilityKind);
             if (kind.IsNullable)
             {
