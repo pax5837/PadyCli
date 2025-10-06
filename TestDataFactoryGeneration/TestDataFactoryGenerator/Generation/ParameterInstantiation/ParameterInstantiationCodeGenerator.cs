@@ -10,6 +10,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
     private readonly IDictionnariesCodeGenerator _dictionnariesCodeGenerator;
     private readonly ICollectionsCodeGenerator _collectionsCodeGenerator;
     private readonly ISimpleTypeGenerator _simpleTypeGenerator;
+    private readonly INamespaceAliasManager _namespaceAliasManager;
     private readonly TdfGeneratorConfiguration _config;
 
     public ParameterInstantiationCodeGenerator(
@@ -21,6 +22,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         IDictionnariesCodeGenerator  dictionnariesCodeGenerator,
         ICollectionsCodeGenerator collectionsCodeGenerator,
         ISimpleTypeGenerator simpleTypeGenerator,
+        INamespaceAliasManager namespaceAliasManager,
         TdfGeneratorConfiguration config)
     {
         _eitherCodeGenerator = eitherCodeGenerator;
@@ -31,6 +33,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
         _dictionnariesCodeGenerator = dictionnariesCodeGenerator;
         _collectionsCodeGenerator = collectionsCodeGenerator;
         _simpleTypeGenerator = simpleTypeGenerator;
+        _namespaceAliasManager = namespaceAliasManager;
         _config = config;
     }
 
@@ -46,7 +49,7 @@ internal class ParameterInstantiationCodeGenerator : IParameterInstantiationCode
 
         if (type.IsEnum)
         {
-            return $"{_config.LeadingUnderscore()}random.NextEnum<{type.Name}>()";
+            return $"{_config.LeadingUnderscore()}random.NextEnum<{_namespaceAliasManager.GetNamespaceAliasWithDot(type)}{type.Name}>()";
         }
 
         if (_eitherInformationService.IsEither(type))

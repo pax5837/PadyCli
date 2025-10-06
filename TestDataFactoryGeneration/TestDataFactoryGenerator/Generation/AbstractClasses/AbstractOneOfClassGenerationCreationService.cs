@@ -27,7 +27,7 @@ internal class AbstractOneOfClassGenerationCreationService : IAbstractOneOfClass
         var derivedTypes = _infoService.GetDerivedTypes(type, _ => true).ToImmutableList();
 
         lines
-            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(type.Namespace)}{type.Name} {Definitions.GenerationMethodPrefix}{type.Name}()")
+            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(type)}{type.Name} {Definitions.GenerationMethodPrefix}{type.Name}()")
             .Add(1, "{")
             .Add(2, $"return {_config.LeadingUnderscore()}random.Next(0, {derivedTypes.Count}) switch {{");
 

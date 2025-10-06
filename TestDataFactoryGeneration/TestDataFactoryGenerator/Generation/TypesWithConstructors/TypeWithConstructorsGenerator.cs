@@ -70,7 +70,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         _namespaceAliasManager.AddNamespaceForType(t);
 
         lines
-            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
+            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(t)}{t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
             .Add(1, "{")
             .Add(2, $"var constructorNumber = {_leadingUnderscore}random.Next(0, {constructors.Count()});")
             .Add(2, $"return constructorNumber switch {{");
@@ -79,7 +79,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         {
             var constructor = constructors[j];
 
-            lines.Add(3, $"{j} => new {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name}(");
+            lines.Add(3, $"{j} => new {_namespaceAliasManager.GetNamespaceAliasWithDot(t)}{t.Name}(");
 
             var parameters = constructor.GetParameters();
             for (int i = 0; i < parameters.Length; i++)
