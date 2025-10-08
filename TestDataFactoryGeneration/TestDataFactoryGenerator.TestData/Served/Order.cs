@@ -7,6 +7,6 @@ internal record Order(
     DateTimeOffset OrderDate,
     IImmutableSet<Position> Position,
     ContactInfo ContactInfo,
-    Delivery Delivery,
+    Delivery? Delivery,
     IImmutableDictionary<Guid, PriceInformation> PriceByProductId,
     AllCollections AllCollections);

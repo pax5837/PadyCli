@@ -10,20 +10,20 @@ internal class NamespaceAliasManager : INamespaceAliasManager
     {
         GetNamespaceAliasWithDot(type);
     }
-    
+
     public string GetNamespaceAliasWithDot(Type type)
     {
         if (string.IsNullOrWhiteSpace(type.Namespace) || type.IsInSystemNamespace())
         {
             return string.Empty;
         }
-        
+
         var ns = GetFullyQualifiedNameSpace(type);
         if (string.IsNullOrEmpty(ns))
         {
             return string.Empty;
         }
-        
+
         AddNamespaceAlias(ns);
 
         return _aliasesByNamespace.TryGetValue(ns, out var alias) ? $"{alias}." : string.Empty;
@@ -46,7 +46,7 @@ internal class NamespaceAliasManager : INamespaceAliasManager
 
     private static string? GetFullyQualifiedNameSpace(Type type)
     {
-        var ns = type.DeclaringType?.FullName ?? type.Namespace;
+        var ns = type.DeclaringType?.FullName?.Replace("+", ".") ?? type.Namespace;
         return string.IsNullOrEmpty(ns) ? null : ns;
     }
 

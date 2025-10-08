@@ -24,18 +24,17 @@ async Task GenerateAndPrintTestDataTdfGeneratorVariant2Async(TdfConfigDefinition
     var generator = services.GetRequiredService<IExternalAssemblyTestDataFactoryGenerator>();
 
     var currentDirectory = new DirectoryInfo(Environment.CurrentDirectory);
-    // var executionDirectory = Path.Combine(
-    //     currentDirectory.Parent.Parent.Parent.Parent.Parent.FullName,
-    //     "TestDataFactoryGeneration\\TestDataFactoryGenerator.TestData");
-    var executionDirectory = "C:\\App\\LXC1\\Services\\mg-record\\src";
+    var executionDirectory = Path.Combine(
+        currentDirectory.Parent.Parent.Parent.Parent.Parent.FullName,
+        "TestDataFactoryGeneration\\TestDataFactoryGenerator.TestData");
 
     var generationParameters = new GenerationParameters(
-        TestDataFactoryName: "SearchFolderExecutionTestDataFactory2",
-        NameSpace: "MT.LXC.MG.Record.Tests.TestInfrastructure.TestDataFactories.Contract.Boundaries",
-        TypeNames: ["ObjectDataPartWithVersion", "ObjectDataHeader"],
+        TestDataFactoryName: "Tdf",
+        NameSpace: "TestDataFactoryGenerator.TestData",
+        TypeNames: ["GetOrdersResquest", "GetOrdersResponse"],
         OutputToConsole: false,
         WorkingDirectory: executionDirectory,
-        IncludeOptionalsCode: false);
+        IncludeOptionalsCode: true);
     var lines = await generator.GenerateTestDataFactory(generationParameters, cancellationToken);
 
     foreach (var line in lines)

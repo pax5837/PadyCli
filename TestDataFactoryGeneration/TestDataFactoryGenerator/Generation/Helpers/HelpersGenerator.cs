@@ -227,6 +227,8 @@ internal class HelpersGenerator : IHelpersGenerator
             $"{indent}public static long NextLong(this Random r) => r.NextInt64();",
             string.Empty,
             $"{indent}public static decimal NextDecimal(this Random r) => (decimal)r.NextDouble();",
+            string.Empty,
+            $"{indent}public static T NextEnum<T>(this Random r) where T : struct, Enum => Enum.GetValues<T>().OrderBy(_ => r.Next()).First();",
             "}"
         ];
     }
