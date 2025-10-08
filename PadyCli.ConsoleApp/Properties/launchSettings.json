@@ -68,6 +68,12 @@
 			"environmentVariables": {
 			},
 			"commandLineArgs": "run-cont"
+		},
+		"PadyCli (json sanitizer)": {
+			"commandName": "Project",
+			"environmentVariables": {
+			},
+			"commandLineArgs": "jsani"
 		}
 	}
 }
