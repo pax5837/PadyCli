@@ -8,6 +8,8 @@ internal class JsonSanitizerService
     {
         var text = ClipboardService.GetText();
         var sanitizedText = text
+                .ReplaceWhen("{{", "{", options.SanitizeDoubleCurlyBraces)
+                .ReplaceWhen("}}", "}", options.SanitizeDoubleCurlyBraces)
                 .Replace("\"{", "{")
                 .Replace("}\"", "}")
                 .Replace("\\\"", "\"")
