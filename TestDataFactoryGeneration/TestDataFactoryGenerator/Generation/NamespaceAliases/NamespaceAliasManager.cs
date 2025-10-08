@@ -8,14 +8,51 @@ internal class NamespaceAliasManager : INamespaceAliasManager
 
     public void AddNamespaceForType(Type type)
     {
-        if (type.IsInSystemNamespace())
+        GetNamespaceAliasWithDot(type);
+    }
+    
+    public string GetNamespaceAliasWithDot(Type type)
+    {
+        if (string.IsNullOrWhiteSpace(type.Namespace) || type.IsInSystemNamespace())
         {
-            return;
+            return string.Empty;
         }
+        
+        var ns = GetFullyQualifiedNameSpace(type);
+        if (string.IsNullOrEmpty(ns))
+        {
+            return string.Empty;
+        }
+        
+        AddNamespaceAlias(ns);
 
-        var ns = type.Namespace ?? string.Empty;
+        return _aliasesByNamespace.TryGetValue(ns, out var alias) ? $"{alias}." : string.Empty;
+    }
 
-        if (_aliasesByNamespace.ContainsKey(ns))
+    public IImmutableList<string> GetNamespaceAliasesUsings()
+    {
+        return _aliasesByNamespace
+            .Select(kvp => $"using {kvp.Value} = {kvp.Key};")
+            .OrderBy(x => x)
+            .ToImmutableList();
+    }
+
+    public IImmutableSet<string> GetNamespacesWithAliases()
+    {
+        return _aliasesByNamespace
+            .Keys
+            .ToImmutableHashSet();
+    }
+
+    private static string? GetFullyQualifiedNameSpace(Type type)
+    {
+        var ns = type.DeclaringType?.FullName ?? type.Namespace;
+        return string.IsNullOrEmpty(ns) ? null : ns;
+    }
+
+    private void AddNamespaceAlias(string ns)
+    {
+        if (string.IsNullOrWhiteSpace(ns) || _aliasesByNamespace.ContainsKey(ns))
         {
             return;
         }
@@ -40,31 +77,6 @@ internal class NamespaceAliasManager : INamespaceAliasManager
                 throw new InvalidOperationException($"Can not add namespace alias {originalAliasCandidate}, current aliases:\n{currentAliases}");
             }
         }
-    }
-
-    public string GetNamespaceAliasWithDot(string? @namespace)
-    {
-        if (@namespace == null)
-        {
-            return string.Empty;
-        }
-
-        return _aliasesByNamespace.TryGetValue(@namespace, out var alias) ? $"{alias}." : string.Empty;
-    }
-
-    public IImmutableList<string> GetNamespaceAliasesUsings()
-    {
-        return _aliasesByNamespace
-            .Select(kvp => $"using {kvp.Value} = {kvp.Key};")
-            .OrderBy(x => x)
-            .ToImmutableList();
-    }
-
-    public IImmutableSet<string> GetNamespacesWithAliases()
-    {
-        return _aliasesByNamespace
-            .Keys
-            .ToImmutableHashSet();
     }
 
     private static string GenerateNamespaceAlias(string @namespace)

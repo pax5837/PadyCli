@@ -62,7 +62,7 @@ internal static class ConfigProvider
 
         var tdfGeneratorConfiguration1 = new TdfGeneratorConfiguration(
             NamespacesToAdd: [],
-            Indent: "    ",
+            Indent: "\t",
             EitherNamespace: null,
             CustomInstantiationForWellKnownProtobufTypes: [],
             SimpleTypeConfiguration: simpleTypeConfiguration,

@@ -85,7 +85,7 @@ internal class CollectionsCodeGenerator : ICollectionsCodeGenerator
                 InstantiationMethod.ToMethod
                     => $"GetSome(() => {parameterInstantiation}).{code}",
                 InstantiationMethod.ConstructionMethod
-                    => $"{code}<{namespaceAliasManager.GetNamespaceAliasWithDot(type.Namespace)}{type.Name}>([..GetSome(() => {parameterInstantiation})])",
+                    => $"{code}<{namespaceAliasManager.GetNamespaceAliasWithDot(type)}{type.Name}>([..GetSome(() => {parameterInstantiation})])",
             };
         }
     }

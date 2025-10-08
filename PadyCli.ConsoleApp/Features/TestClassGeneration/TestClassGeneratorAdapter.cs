@@ -25,7 +25,6 @@ internal class TestClassGeneratorAdapter
 
         var lines = await _testClassGenerator.GenerateTestClassAsync(
             options.ClassName,
-            options.UseOnTheFlyCompilation,
             cancellationToken);
 
         foreach (var line in lines)

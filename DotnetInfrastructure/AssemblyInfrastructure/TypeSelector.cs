@@ -16,14 +16,17 @@ internal class TypeSelector : ITypeSelector
         _logger = logger;
     }
 
-    public Either<Type, ExitRequested> SelectType(string typeIdentifier, Assembly assembly)
+    public Either<Type, ExitRequested> SelectType(
+        string typeIdentifier,
+        Assembly mainAssembly,
+        IReadOnlyList<Assembly> referencedAssemblies)
     {
-        var types = GetTypes(assembly);
+        var types = GetTypes(mainAssembly, referencedAssemblies).ToImmutableList();
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
             _logger.LogTrace("Found {TypeCount} types:\n{AllTypes}",
-                types.Length,
+                types.Count,
                 string.Join("\n", types.Select(t => $"  - {t.Name}")));
         }
 
@@ -37,7 +40,7 @@ internal class TypeSelector : ITypeSelector
                 $"\n\nNo type found matching '{typeIdentifier}'."
                 + "\nThis error could be cause by a type located in a dll from a nuget package, you could:"
                 + "\n- use <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies> in your csproj"
-                + "\n- run a `dotnet publish` or `dotnet publish --self-contained true`, and pick the dll in the publish directory."
+                + "\n- run a `dotnet build --sc`, `dotnet publish` or `dotnet publish --sc`, and pick the dll in the publish directory."
                 + "\n\n\n");
         }
 
@@ -61,11 +64,28 @@ internal class TypeSelector : ITypeSelector
         return candidateTypes.Single();
     }
 
-    private Type[] GetTypes(Assembly assembly)
+    private Type[] GetTypes(Assembly assembly, IReadOnlyList<Assembly> referencedAssemblies)
     {
         try
         {
-            return assembly.GetTypes();
+            List<Type> allTypes = new List<Type>();
+            allTypes.AddRange(assembly.GetTypes());
+
+            foreach (var referencedAssembly in referencedAssemblies)
+            {
+                try
+                {
+                    var exportedTypes = referencedAssembly.GetExportedTypes();
+                    allTypes.AddRange(exportedTypes);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Could extract types form assembly {assy}", referencedAssembly.FullName);
+                }
+            }
+
+            var array = allTypes.Distinct().ToArray();
+            return array;
         }
         catch (ReflectionTypeLoadException e)
         {

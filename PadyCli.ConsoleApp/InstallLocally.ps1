@@ -1,7 +1,7 @@
 ﻿try {
-    Write-Host("Generating third party license info")
-    thirdlicense --project PadyCli.ConsoleApp.csproj
-    if ($LASTEXITCODE -ne 0) { throw "thirdlicense command failed" }
+#    Write-Host("Generating third party license info")
+#    thirdlicense --project PadyCli.ConsoleApp.csproj
+#    if ($LASTEXITCODE -ne 0) { throw "thirdlicense command failed" }
 
     Write-Host("Building")
     dotnet build

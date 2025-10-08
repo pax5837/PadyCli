@@ -26,16 +26,18 @@ internal class TestClassGenerator : ITestClassGenerator
 
     public async Task<IImmutableList<string>> GenerateTestClassAsync(
         string targetClassName,
-        bool compileOnTheFly,
         CancellationToken cancellationToken)
     {
         var currentDirectory = Directory.GetCurrentDirectory();
 
-        var assembly = await _assemblyLoader.GetAssembly(
-            startDirectory: currentDirectory,
-            useOnTheFlyCompilation: compileOnTheFly,
+        var getAssemblyResponse = await _assemblyLoader.GetAssembly(
+            projectDirectoryPath: currentDirectory,
+            includeReferencedAssemblies: true,
             cancellationToken: cancellationToken);
-        var typeToProcessOrExit = _typeSelector.SelectType(targetClassName, assembly);
+        var typeToProcessOrExit = _typeSelector.SelectType(
+            typeIdentifier: targetClassName,
+            mainAssembly: getAssemblyResponse.MainAssembly,
+            referencedAssemblies: getAssemblyResponse.ReferencedAssemblies);
 
         return typeToProcessOrExit.Switch(
             whenA: ProcessType,

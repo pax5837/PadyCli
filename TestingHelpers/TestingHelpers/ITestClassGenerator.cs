@@ -4,8 +4,6 @@ namespace TestingHelpers;
 
 public interface ITestClassGenerator
 {
-    public Task<IImmutableList<string>> GenerateTestClassAsync(
-        string targetClassName,
-        bool compileOnTheFly,
+    public Task<IImmutableList<string>> GenerateTestClassAsync(string targetClassName,
         CancellationToken cancellationToken);
 }

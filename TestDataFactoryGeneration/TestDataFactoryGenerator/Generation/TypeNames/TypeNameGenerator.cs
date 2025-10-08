@@ -66,9 +66,9 @@ internal class TypeNameGenerator : ITypeNameGenerator
             var className = parameterType.Name
                 .Split('`', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).First();
             return
-                $"{_namespaceAliasManager.GetNamespaceAliasWithDot(parameterType.Namespace)}{className}<{string.Join(", ", parameterType.GenericTypeArguments.Select(GetTypeNameForParameter))}>";
+                $"{_namespaceAliasManager.GetNamespaceAliasWithDot(parameterType)}{className}<{string.Join(", ", parameterType.GenericTypeArguments.Select(GetTypeNameForParameter))}>";
         }
 
-        return $"{_namespaceAliasManager.GetNamespaceAliasWithDot(parameterType.Namespace)}{parameterType.Name}";
+        return $"{_namespaceAliasManager.GetNamespaceAliasWithDot(parameterType)}{parameterType.Name}";
     }
 }

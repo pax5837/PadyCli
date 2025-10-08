@@ -70,7 +70,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         _namespaceAliasManager.AddNamespaceForType(t);
 
         lines
-            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
+            .Add(1, $"public {_namespaceAliasManager.GetNamespaceAliasWithDot(t)}{t.Name} {Definitions.GenerationMethodPrefix}{t.Name}()")
             .Add(1, "{")
             .Add(2, $"var constructorNumber = {_leadingUnderscore}random.Next(0, {constructors.Count()});")
             .Add(2, $"return constructorNumber switch {{");
@@ -79,7 +79,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
         {
             var constructor = constructors[j];
 
-            lines.Add(3, $"{j} => new {_namespaceAliasManager.GetNamespaceAliasWithDot(t.Namespace)}{t.Name}(");
+            lines.Add(3, $"{j} => new {_namespaceAliasManager.GetNamespaceAliasWithDot(t)}{t.Name}(");
 
             var parameters = constructor.GetParameters();
             for (int i = 0; i < parameters.Length; i++)
@@ -89,7 +89,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
                     type: parameters[i].ParameterType,
                     dependencies: dependencies);
 
-                lines.Add(4, $"{parameters[i].Name}: {parameterInstantiation}{endOfLine}");
+                lines.Add(4, $"{parameters[i].SanitizedName()}: {parameterInstantiation}{endOfLine}");
             }
         }
 
@@ -141,11 +141,11 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
                 var optionalType = parameterKind.IsValueType
                     ? "OptionalValue"
                     : "OptionalRef";
-                lines.Add(2, $"{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase()} = default{endOfLine}");
+                lines.Add(2, $"{optionalType}<{typeNameForParameter}> {parameter.Name!.ToCamelCase().SanitizedName()} = default{endOfLine}");
             }
             else
             {
-                lines.Add(2, $"{typeNameForParameter}? {parameter.Name!.ToCamelCase()} = null{endOfLine}");
+                lines.Add(2, $"{typeNameForParameter}? {parameter.Name!.ToCamelCase().SanitizedName()} = null{endOfLine}");
             }
         }
 
@@ -162,7 +162,7 @@ internal class TypeWithConstructorsGenerator : ITypeWithConstructorsGenerator
             var generateParameterInstantiation = _parameterInstantiationCodeGenerator.GenerateParameterInstantiation(
                 type: parameter.ParameterType,
                 dependencies: dependencies);
-            var methodParameterName = parameter.Name!.ToCamelCase();
+            var methodParameterName = parameter.Name!.ToCamelCase().SanitizedName();
             var kind = parameter.GetKind(nullabilityKind);
             if (kind.IsNullable)
             {

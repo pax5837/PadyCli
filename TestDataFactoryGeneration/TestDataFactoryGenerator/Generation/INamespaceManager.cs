@@ -6,7 +6,7 @@ internal interface INamespaceAliasManager
 {
     void AddNamespaceForType(Type type);
 
-    string GetNamespaceAliasWithDot(string? @namespace);
+    string GetNamespaceAliasWithDot(Type type);
 
     IImmutableList<string> GetNamespaceAliasesUsings();
 

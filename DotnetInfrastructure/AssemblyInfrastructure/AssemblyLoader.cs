@@ -1,8 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
 using DotnetInfrastructure.Contracts;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Emit;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
@@ -18,12 +16,9 @@ internal class AssemblyLoader : IAssemblyLoader
         _logger = logger;
     }
 
-    public async Task<Assembly> GetAssembly(
-        string startDirectory,
-        CancellationToken cancellationToken,
-        bool useOnTheFlyCompilation = false)
+    public async Task<GetAssemblyResponse> GetAssembly(string projectDirectoryPath, bool includeReferencedAssemblies, CancellationToken cancellationToken)
     {
-        var pathToCsProjFile = FindCsprojFile(startDirectory);
+        var pathToCsProjFile = FindCsprojFile(projectDirectoryPath);
         if (pathToCsProjFile is null)
         {
             throw new InvalidOperationException("No csproj file found.");
@@ -40,22 +35,57 @@ internal class AssemblyLoader : IAssemblyLoader
             projectName,
             projectDirectory);
 
-        return useOnTheFlyCompilation
-            ? await LoadAssemblyViaCompilationAsync(pathToCsProjFile, cancellationToken)
-            : LoadAssemblyViaDllLoader(projectDirectory, projectName);
+        var pathToDll = PickDllAndReturnPath(projectDirectory, projectName);
+        var pathToDllFolder = Directory.GetParent(pathToDll).FullName;
+        var assemblyLoadContext = new CustomAssemblyLoadContext(pathToDllFolder);
+        var mainAssembly = assemblyLoadContext.LoadFromAssemblyPath(pathToDll);
+
+        await Task.Delay(1);
+
+        if (!includeReferencedAssemblies)
+        {
+            return new GetAssemblyResponse(mainAssembly, new List<Assembly>());
+        }
+
+        var referencedAssemblies = LoadReferencedAssemblies(mainAssembly, pathToDll, pathToDllFolder, assemblyLoadContext);
+        return new GetAssemblyResponse(mainAssembly, referencedAssemblies);
     }
 
+    private List<Assembly> LoadReferencedAssemblies(Assembly mainAssembly, string pathToDll, string pathToDllFolder,
+        CustomAssemblyLoadContext assemblyLoadContext)
+    {
+        var referencedAssemblies = new List<Assembly>();
+        var referencedAssemblyNames = mainAssembly.GetReferencedAssemblies().Where(ra => ra.Name is not null);
+        foreach (var assemblyName in referencedAssemblyNames)
+        {
+            var pathToReferencedDll = Path.Combine(pathToDllFolder, $"{assemblyName.Name}.dll");
+            if (File.Exists(pathToReferencedDll))
+            {
+                try
+                {
+                    var assy = assemblyLoadContext.LoadFromAssemblyPath(pathToReferencedDll);
+                    referencedAssemblies.Add(assy);
+                }
+                catch (Exception)
+                {
+                    _logger.LogError("Could not load {DLL}", pathToReferencedDll);
+                }
+            }
+        }
 
-    private Assembly LoadAssemblyViaDllLoader(
+        return referencedAssemblies;
+    }
+
+    private string PickDllAndReturnPath(
         DirectoryInfo projectDirectory,
         string projectName)
     {
         var binDirectory = Path.Combine(projectDirectory!.FullName, "bin");
         var dllsFound = Directory
             .EnumerateFiles(
-                binDirectory,
-                $"{projectName}.dll",
-                SearchOption.AllDirectories)
+                path: binDirectory,
+                searchPattern: $"{projectName}.dll",
+                searchOption: SearchOption.AllDirectories)
             .ToImmutableList();
         if (!dllsFound.Any())
         {
@@ -63,62 +93,10 @@ internal class AssemblyLoader : IAssemblyLoader
                 $"Could not find a dll in the directory: {binDirectory}, try to build your project.");
         }
 
-        return Assembly.LoadFrom(PickDll(dllsFound));
+        return RequestUserToPickDll(dllsFound);
     }
 
-    private async Task<Assembly> LoadAssemblyViaCompilationAsync(
-        string pathToCsProjFile,
-        CancellationToken cancellationToken)
-    {
-        using var workspace = CreateMSBuildWorkspace();
-        workspace.Properties.Add("RestorePackages", "true");
-        workspace.Properties.Add("AlwaysRestore", "true");
-
-        // Log workspace diagnostics (for debugging purposes)
-        workspace.WorkspaceFailed += (sender, diagnostic) =>
-        {
-            _logger.LogTrace(
-                "Workspace error: {Kind} - {Message}",
-                diagnostic.Diagnostic.Kind,
-                diagnostic.Diagnostic.Message);
-        };
-
-        var project = await workspace.OpenProjectAsync(pathToCsProjFile, cancellationToken: cancellationToken);
-
-        _logger.LogInformation("Project {ProjectName} loaded successfully", project.Name);
-        var compilation = project.GetCompilationAsync().GetAwaiter().GetResult();
-        if (compilation is null)
-        {
-            throw new InvalidOperationException("compilation is null");
-        }
-
-        return LoadAssemblyFromCompilation(compilation);
-    }
-
-    private Assembly LoadAssemblyFromCompilation(Compilation compilation)
-    {
-        using var memoryStream = new MemoryStream();
-
-        EmitResult result = compilation.Emit(memoryStream);
-
-        if (result.Success)
-        {
-            _logger.LogInformation("Project compiled successfully");
-
-            // Load the assembly from the memory stream
-            memoryStream.Seek(0, SeekOrigin.Begin);
-            var assembly = Assembly.Load(memoryStream.ToArray());
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, e) => { return ResolveAssembly(e.Name); };
-
-            return assembly;
-        }
-        else
-        {
-            throw new InvalidOperationException("Compilation failed.");
-        }
-    }
-
-    private string PickDll(IImmutableList<string> dllsFound)
+    private string RequestUserToPickDll(IImmutableList<string> dllsFound)
     {
         while (true)
         {

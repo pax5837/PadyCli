@@ -29,13 +29,16 @@ internal class ExternalAssemblyTestDataFactoryGenerator : IExternalAssemblyTestD
     {
         var currentDirectory = generationParameters.WorkingDirectory ?? Directory.GetCurrentDirectory();
 
-        var assembly = await _assemblyLoader.GetAssembly(
-            startDirectory: currentDirectory,
-            useOnTheFlyCompilation: false,
+        var getAssemblyResponse = await _assemblyLoader.GetAssembly(
+            projectDirectoryPath: currentDirectory,
+            includeReferencedAssemblies: true,
             cancellationToken: cancellationToken);
 
         var actualTypes = generationParameters.TypeNames
-            .Select(tn => _typeSelector.SelectType(typeIdentifier: tn, assembly: assembly)
+            .Select(tn => _typeSelector.SelectType(
+                    typeIdentifier: tn,
+                    mainAssembly: getAssemblyResponse.MainAssembly,
+                    referencedAssemblies: getAssemblyResponse.ReferencedAssemblies)
                 .Switch<Type?>(
                     whenA: t => t,
                     whenB: _ => HandleNoTypeSelected(tn)))
