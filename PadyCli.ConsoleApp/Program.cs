@@ -10,6 +10,7 @@ using PadyCli.ConsoleApp.Features.CsProjectMover;
 using PadyCli.ConsoleApp.Features.Docker;
 using PadyCli.ConsoleApp.Features.GuidGeneration;
 using PadyCli.ConsoleApp.Features.JsonSanitizer;
+using PadyCli.ConsoleApp.Features.LineDeletion;
 using PadyCli.ConsoleApp.Features.ProtoToUmlConverter;
 using PadyCli.ConsoleApp.Features.TestClassGeneration;
 using PadyCli.ConsoleApp.Features.TestDataFactoryGeneration;
@@ -58,6 +59,7 @@ var parserResult = Parser.Default
         TestDataFactoryGenerationOptions,
         DockerOptions,
         JsonSanitizerOptions,
+        LineFilteringOptions,
         AboutOptions>(args);
 
 await parserResult.WithParsedAsync(async (TestClassGeneratorOptions opts)
@@ -86,6 +88,9 @@ parserResult.WithParsed((DockerOptions opts)
 
 parserResult.WithParsed((JsonSanitizerOptions opts)
     => serviceProvider.GetService<JsonSanitizerService>()!.Run(opts));
+
+parserResult.WithParsed((LineFilteringOptions opts)
+    => serviceProvider.GetService<LineFilterer>()!.Run(opts));
 
 await parserResult.WithParsedAsync((AboutOptions opts)
     => serviceProvider.GetService<About>()!.RunAsync(opts));

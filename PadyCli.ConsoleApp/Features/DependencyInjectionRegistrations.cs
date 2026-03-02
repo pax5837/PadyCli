@@ -3,6 +3,7 @@ using PadyCli.ConsoleApp.Features.CsProjectMover;
 using PadyCli.ConsoleApp.Features.Docker;
 using PadyCli.ConsoleApp.Features.GuidGeneration;
 using PadyCli.ConsoleApp.Features.JsonSanitizer;
+using PadyCli.ConsoleApp.Features.LineDeletion;
 using PadyCli.ConsoleApp.Features.ProtoToUmlConverter;
 using PadyCli.ConsoleApp.Features.TestClassGeneration;
 
@@ -20,6 +21,7 @@ internal static class DependencyInjectionRegistrations
             .AddSingleton<ProcessRunner>()
             .AddSingleton<DockerService>()
             .AddSingleton<JsonSanitizerService>()
+            .AddSingleton<LineFilterer>()
             .AddSingleton<TestDataFactoryGeneration.TestDataFactoryGenerator>();
 
         return services;
