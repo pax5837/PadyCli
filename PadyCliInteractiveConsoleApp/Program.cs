@@ -24,7 +24,7 @@ const string FilterLines = "Filter lines from the text in the clipboard";
 const string RunDockerContainer = "Run docker container";
 const string GenerateUmlDiagramForProto = "Generate UML diagram for proto files";
 const string GenerateTdf = "Generate Test Data Factory for given types";
-const string ChangeLogLevel = "ChangeLogLevel";
+const string ChangeLogLevel = "Change logging level of this application";
 const string Exit = "Exit";
 
 var logLevelSwitch = new LoggingLevelSwitch();

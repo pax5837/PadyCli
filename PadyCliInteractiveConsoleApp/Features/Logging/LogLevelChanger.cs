@@ -17,7 +17,7 @@ internal class LogLevelChanger
     {
         var logLevelChoice = AnsiConsole
             .Prompt(new SelectionPrompt<string>()
-                .Title("Choose logLevel")
+                .Title($"Choose logLevel (current: {loggingLevelSwitch.MinimumLevel})")
                 .AddChoices(LogLevelVerbose, LogLevelDebug, LogLevelInfo, LogLevelWarning, LogLevelError, LogLevelFatal));
 
         LogEventLevel logLevel = logLevelChoice switch

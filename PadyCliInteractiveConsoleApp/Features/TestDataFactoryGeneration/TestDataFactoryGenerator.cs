@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using Microsoft.Extensions.Logging;
-using Serilog.Events;
 using Spectre.Console;
 using TestDataFactoryGenerator.TypeSelectionWrapper;
 using TextCopy;
