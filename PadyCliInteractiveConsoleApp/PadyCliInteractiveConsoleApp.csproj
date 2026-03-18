@@ -21,4 +21,11 @@
         <PackageReference Include="TextCopy" Version="6.1.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" />
+        <ProjectReference Include="..\ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" />
+        <ProjectReference Include="..\TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" />
+        <ProjectReference Include="..\TestingHelpers\TestingHelpers\TestingHelpers.csproj" />
+    </ItemGroup>
+
 </Project>
