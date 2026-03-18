@@ -1,37 +1,38 @@
 ﻿<Solution>
   <Folder Name="/Features/" />
   <Folder Name="/Features/AssemblyInfrastructure/">
-    <Project Path="DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" Type="C#" />
-    <Project Path="DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" Type="C#" />
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure.Contracts\AssemblyInfrastructure.Contracts.csproj" />
+    <Project Path="DotnetInfrastructure\AssemblyInfrastructure\AssemblyInfrastructure.csproj" />
   </Folder>
   <Folder Name="/Features/CsProjectMover/">
-    <Project Path="CsProjMover\CsprojMover\CsProjMover.csproj" Type="C#" />
+    <Project Path="CsProjMover\CsprojMover\CsProjMover.csproj" />
   </Folder>
   <Folder Name="/Features/Infrastructure/">
-    <Project Path="Infrastructure\Infrastructure\Infrastructure.csproj" Type="C#" />
+    <Project Path="Infrastructure\Infrastructure\Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Features/ProtoToUmlConverter/">
-    <Project Path="ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" Type="C#" />
-    <Project Path="TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" Type="C#" />
+    <Project Path="ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" />
+    <Project Path="TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" />
   </Folder>
   <Folder Name="/Features/TestDataFactoryGeneration/">
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" Type="C#" />
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" Type="C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator\TestDataFactoryGenerator.csproj" />
   </Folder>
   <Folder Name="/Features/TestDataFactoryGeneration/ManualTesting/">
     <Project Path="TestDataFactoryGeneration/TestDataFactoryGenerator.ConsoleApp/TestDataFactoryGenerator.ConsoleApp.csproj" />
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" Type="C#" />
-    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.TestData\TestDataFactoryGenerator.TestData.csproj" Type="C#" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExampleConsoleApp\TestDataFactoryGenerator.ExampleConsoleApp.csproj" />
+    <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.TestData\TestDataFactoryGenerator.TestData.csproj" />
   </Folder>
   <Folder Name="/Features/TestingHelpers/">
-    <Project Path="TestData\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" Type="C#" />
-    <Project Path="TestData\TestSetupGeneratorManualTestWebApi\TestSetupGeneratorManualTestWebApi.csproj" Type="C#" />
-    <Project Path="TestingHelpers\TestingHelpers\TestingHelpers.csproj" Type="C#" />
+    <Project Path="TestData\TestSetupGeneratorManualTestProject\TestSetupGeneratorManualTestProject.csproj" />
+    <Project Path="TestData\TestSetupGeneratorManualTestWebApi\TestSetupGeneratorManualTestWebApi.csproj" />
+    <Project Path="TestingHelpers\TestingHelpers\TestingHelpers.csproj" />
   </Folder>
   <Folder Name="/_SolutionItems/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="PadyCli.ConsoleApp\PadyCli.ConsoleApp.csproj" Type="C#" />
+  <Project Path="PadyCli.ConsoleApp\PadyCli.ConsoleApp.csproj" />
+  <Project Path="PadyCliInteractiveConsoleApp/PadyCliInteractiveConsoleApp.csproj" />
 </Solution>
