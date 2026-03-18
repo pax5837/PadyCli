@@ -4,12 +4,13 @@ namespace TestDataFactoryGenerator;
 
 public static class TdfGeneratorFactory
 {
-    public static ITestDataFactoryGenerator GetNew(TdfConfigDefinition? config = null)
+    public static ITestDataFactoryGenerator GetNew(
+        Action<IServiceCollection> loggingRegistration,
+        TdfConfigDefinition? config = null)
     {
-        var serviceProvides = new ServiceCollection()
-            .AddTestDataFactoryGeneration(config)
-            .BuildServiceProvider();
+        var services = new ServiceCollection().AddTestDataFactoryGeneration(config);
+        loggingRegistration(services);
 
-        return serviceProvides.GetService<ITestDataFactoryGenerator>();
+        return services.BuildServiceProvider()!.GetService<ITestDataFactoryGenerator>()!;
     }
 }
