@@ -12,11 +12,11 @@
     if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed" }
 
     Write-Host("Uninstall previous")
-    dotnet tool uninstall -g PadyCliInteractive.ConsoleApp
+    dotnet tool uninstall -g PadyCliInteractiveConsoleApp
     # Don't check exit code here as it might not be installed
 
     Write-Host("Install")
-    dotnet tool install --global --ignore-failed-sources --add-source ./nupkg PadyCliInteractive.ConsoleApp
+    dotnet tool install --global --ignore-failed-sources --add-source ./nupkg PadyCliInteractiveConsoleApp
     if ($LASTEXITCODE -ne 0) { throw "dotnet tool install failed" }
 
     Write-Host("All commands completed successfully!")
