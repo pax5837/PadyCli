@@ -30,6 +30,23 @@ internal class JsonSanitizerService
 
         var sanitizeDoubleCurlyBraces = choice.Equals("Yes");
 
+        Sanitize(text, sanitizeDoubleCurlyBraces);
+        
+        AnsiConsole.MarkupLine("[green]The sanitized JSON text has been copied to the clipboard.[/]");
+
+        return OperationResult.Continue;
+    }
+
+    public int Run(JsonSanitizerOptions options)
+    {
+        var text = ClipboardService.GetText();
+        Sanitize(text, options.SanitizeDoubleCurlyBraces);
+        return 0;
+    }
+    
+
+    private static void Sanitize(string? text, bool sanitizeDoubleCurlyBraces)
+    {
         var sanitizedText = text!
             .ReplaceWhen("{{", "{", sanitizeDoubleCurlyBraces)
             .ReplaceWhen("}}", "}", sanitizeDoubleCurlyBraces)
@@ -38,8 +55,5 @@ internal class JsonSanitizerService
             .Replace("\\\"", "\"");
 
         ClipboardService.SetText(sanitizedText);
-        AnsiConsole.MarkupLine("[green]The sanitized JSON text has been copied to the clipboard.[/]");
-
-        return OperationResult.Continue;
     }
 }

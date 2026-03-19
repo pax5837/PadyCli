@@ -7,6 +7,7 @@ namespace PadyCliInteractiveConsoleApp.Features.Logging;
 
 internal class LogLevelChanger
 {
+    private readonly LoggingLevelSwitch _loggingLevelSwitch;
     private const string LogLevelVerbose = "Verbose";
     private const string LogLevelDebug = "Debug";
     private const string LogLevelInfo = "Info";
@@ -30,14 +31,19 @@ internal class LogLevelChanger
     private static IImmutableDictionary<LogEventLevel, string> LogLevelStringByEnum
         = LogLevels.ToImmutableDictionary(x => x.LogLevelEnum, x => x.LogLevelString);
 
-    public OperationResult ChangeLogLevel(LoggingLevelSwitch loggingLevelSwitch)
+    public LogLevelChanger(LoggingLevelSwitch loggingLevelSwitch)
+    {
+        _loggingLevelSwitch = loggingLevelSwitch;
+    }
+    
+    public OperationResult ChangeLogLevel()
     {
         var logLevelChoice = AnsiConsole
             .Prompt(new SelectionPrompt<string>()
-                .Title($"Choose logLevel (current: {LogLevelStringByEnum[loggingLevelSwitch.MinimumLevel]})")
+                .Title($"Choose logLevel (current: {LogLevelStringByEnum[_loggingLevelSwitch.MinimumLevel]})")
                 .AddChoices(LogLevelVerbose, LogLevelDebug, LogLevelInfo, LogLevelWarning, LogLevelError, LogLevelFatal));
 
-        loggingLevelSwitch.MinimumLevel = LogLevelEnumByString[logLevelChoice];
+        _loggingLevelSwitch.MinimumLevel = LogLevelEnumByString[logLevelChoice];
         
         return OperationResult.Continue;
     }
