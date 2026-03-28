@@ -13,6 +13,7 @@
   <Folder Name="/Features/ProtoToUmlConverter/">
     <Project Path="ProtoToUmlConverter\ProtoToUmlConverter\ProtoToUmlConverter.csproj" />
     <Project Path="TestData\TestDataForProtoConverter\TestDataForProtoConverter.csproj" />
+    <Project Path="ProtoEditoConsoleApp\src\ProtoEditorConsoleApp.csproj" />
   </Folder>
   <Folder Name="/Features/TestDataFactoryGeneration/">
     <Project Path="TestDataFactoryGeneration\TestDataFactoryGenerator.ExternalAssembly\TestDataFactoryGenerator.ExternalAssembly.csproj" />
